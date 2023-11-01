@@ -1,0 +1,60 @@
+{
+  "name": "@print-one/print-one-js",
+  "version": "0.0.1",
+  "description": "The official javascript client for Print.one",
+  "license": "MIT",
+  "author": "Print.one",
+  "homepage": "https://github.com/Print-one/print-one-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Print-one/print-one-js.git"
+  },
+  "bugs": "https://github.com/Print-one/print-one-js/issues",
+  "main": "lib/index.js",
+  "files": [
+    "lib/**"
+  ],
+  "scripts": {
+    "build": "bsm",
+    "clean": "bsm",
+    "format": "bsm",
+    "lint": "bsm",
+    "semantic-release": "semantic-release"
+  },
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "debug": "^4.3.4"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.1",
+    "@types/debug": "^4.1.10",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "@under_koen/bsm": "^1.2.1",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-no-relative-import-paths": "^1.5.3",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.0.3",
+    "prettier-package-json": "^2.8.0",
+    "semantic-release": "^22.0.6",
+    "typescript": "^5.2.2",
+    "typescript-transform-paths": "^3.4.6"
+  },
+  "keywords": [
+    "print.one",
+    "api",
+    "rest",
+    "node",
+    "printing",
+    "post",
+    "postcard",
+    "print-and-mail"
+  ]
+}
