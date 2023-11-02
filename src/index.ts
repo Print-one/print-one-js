@@ -8,7 +8,7 @@ export { Address } from "./models/Address";
 export { Company } from "./models/Company";
 export { CustomFile } from "./models/CustomFile";
 export { Order } from "./models/Order";
-export { PaginatedResponse } from "./models/PaginatedResponse";
+export { PaginatedResponse, Meta, Links } from "./models/PaginatedResponse";
 export { Preview } from "./models/Preview";
 export { PreviewDetails } from "./models/PreviewDetails";
 export { Template } from "./models/Template";

@@ -4,6 +4,7 @@ import { PrintOneError } from "../errors/PrintOneError";
 import { PreviewDetails } from "./PreviewDetails";
 import { IPreviewDetails } from "./_interfaces/IPreviewDetails";
 import { TimeoutError } from "../errors/TimeoutError";
+import { sleep } from "../utils";
 
 export class Preview {
   private _data: IPreview;
@@ -30,13 +31,13 @@ export class Preview {
   /**
    * Get the details of the preview.
    * @param polling Whether to poll for the details until they are available.
-   * @param timeout How long it should poll until it gives up.
+   * @param timeoutSeconds How long it should poll until it gives up.
    * @throws { TimeoutError } If the timeout is reached.
    * @throws { PrintOneError } If the details could not be retrieved.
    */
   public async getDetails(
     polling = true,
-    timeout = 20,
+    timeoutSeconds = 20,
   ): Promise<PreviewDetails> {
     let time = 0;
     do {
@@ -51,9 +52,9 @@ export class Preview {
           const error = e as PrintOneError;
 
           if (error.statusCode === 404) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
 
-            if (time++ >= timeout) {
+            if (time++ >= timeoutSeconds) {
               throw new TimeoutError("Timeout reached");
             }
 
@@ -71,11 +72,14 @@ export class Preview {
   /**
    * Download the preview.
    * @param polling Whether to poll for the image until they are available.
-   * @param timeout How long it should poll until it gives up.
+   * @param timeoutSeconds How long it should poll until it gives up.
    * @throws { TimeoutError } If the timeout is reached.
    * @throws { PrintOneError } If the details could not be retrieved.
    */
-  public async download(polling = true, timeout = 20): Promise<ArrayBuffer> {
+  public async download(
+    polling = true,
+    timeoutSeconds = 20,
+  ): Promise<ArrayBuffer> {
     let time = 0;
     do {
       try {
@@ -87,9 +91,9 @@ export class Preview {
           const error = e as PrintOneError;
 
           if (error.statusCode === 404) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await sleep(1000);
 
-            if (time++ >= timeout) {
+            if (time++ >= timeoutSeconds) {
               throw new TimeoutError("Timeout reached");
             }
 

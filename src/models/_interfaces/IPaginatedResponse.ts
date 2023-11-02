@@ -7,4 +7,5 @@ export type IPaginatedResponse<T = unknown> = {
   pages: number;
   pageSize: number;
   total: number;
+  filterOptions: Record<string, string[]>;
 };

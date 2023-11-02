@@ -5,6 +5,7 @@ import { Format } from "../enums/Format";
 import { Address } from "../models/Address";
 import { Template } from "./Template";
 import { Status } from "../enums/Status";
+import { sleep } from "../utils";
 
 export class Order {
   private _data: IOrder;
@@ -116,14 +117,21 @@ export class Order {
   /**
    * Download the order preview
    * @param polling If true, the order will be polled until it has finished processing.
-   * @param timeout How long it should poll until it gives up.
+   * @param timeoutSeconds How long it should poll until it gives up.
    * @throws { PrintOneError } If the order could not be downloaded.
    */
-  public async download(polling = true, timeout = 20): Promise<ArrayBuffer> {
+  public async download(
+    polling = true,
+    timeoutSeconds = 20,
+  ): Promise<ArrayBuffer> {
     let time = 0;
-    while (polling && this.status === Status.order_created && time < timeout) {
+    while (
+      polling &&
+      this.status === Status.order_created &&
+      time < timeoutSeconds
+    ) {
       await this.refresh();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await sleep(1000);
       time++;
     }
 
@@ -145,7 +153,7 @@ export class Order {
     let time = 0;
     while (polling && this.status === Status.order_created && time < timeout) {
       await this.refresh();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await sleep(1000);
       time++;
     }
 

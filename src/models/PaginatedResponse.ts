@@ -1,6 +1,20 @@
 import { IPaginatedResponse } from "./_interfaces/IPaginatedResponse";
 import { Protected } from "../PrintOne";
 
+export type Meta = {
+  total: number;
+  filterOptions: Record<string, string[]>;
+  pages: number;
+  page: number;
+  pageSize: number;
+};
+
+export type Links = {
+  previousUrl: string | null;
+  currentUrl: string;
+  nextUrl: string | null;
+};
+
 export class PaginatedResponse<T = unknown> {
   protected readonly _data: IPaginatedResponse<T>;
 
@@ -28,20 +42,22 @@ export class PaginatedResponse<T = unknown> {
     };
   }
 
-  public get page(): number {
-    return this._data.page;
+  public get meta(): Meta {
+    return {
+      total: this._data.total,
+      filterOptions: this._data.filterOptions,
+      pages: this._data.pages,
+      page: this._data.page,
+      pageSize: this._data.pageSize,
+    };
   }
 
-  public get pages(): number {
-    return this._data.pages;
-  }
-
-  public get pageSize(): number {
-    return this._data.pageSize;
-  }
-
-  public get total(): number {
-    return this._data.total;
+  public get links(): Links {
+    return {
+      previousUrl: this._data.previousUrl,
+      currentUrl: this._data.currentUrl,
+      nextUrl: this._data.nextUrl,
+    };
   }
 
   public get data(): T[] {

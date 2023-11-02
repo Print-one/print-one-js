@@ -25,6 +25,7 @@ import { Finish } from "./enums/Finish";
 import { Order } from "./models/Order";
 import { IOrder } from "./models/_interfaces/IOrder";
 import { FriendlyStatus } from "./enums/Status";
+import { Format } from "./enums/Format";
 
 export type PrintOneOptions = Partial<{
   url: string;
@@ -103,7 +104,7 @@ export class PrintOne {
    */
   public async getCustomFiles(
     options: PaginationOptions<
-      "createdAt" | "fileName" | "size" | "id" | "fileExtension" | string
+      "createdAt" | "fileName" | "size" | "id" | "fileExtension"
     > = {},
   ): Promise<PaginatedResponse<CustomFile>> {
     const data = await this.client.GET<IPaginatedResponse<ICustomFile>>(
@@ -209,7 +210,7 @@ export class PrintOne {
     sender?: Address;
     template: Template | string;
     /**
-     * Defaults to GLOSSY
+     * @default GLOSSY
      */
     finish?: Finish;
     mergeVariables?: Record<string, unknown>;
@@ -259,8 +260,8 @@ export class PrintOne {
       filter?: {
         friendlyStatus?: InFilter<FriendlyStatus>;
         billingId?: InFilter;
-        format?: InFilter;
-        finish?: InFilter;
+        format?: InFilter<Format>;
+        finish?: InFilter<Finish>;
         isBillable?: boolean;
         createdAt?: DateFilter;
         anonymizedAt?: DateFilter | boolean;
