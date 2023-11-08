@@ -159,7 +159,7 @@ export class PrintOne {
       filter?: {
         name?: InFilter;
         labels?: ContainsFilter;
-        format?: InFilter;
+        format?: InFilter<Format>;
         deleted?: boolean;
       };
     } = {},
@@ -215,10 +215,14 @@ export class PrintOne {
     finish?: Finish;
     mergeVariables?: Record<string, unknown>;
     billingId?: string;
-    sendDate?: Date;
+    sendDate?: Date | string;
   }): Promise<Order> {
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
+    const sendDateStr =
+      data.sendDate instanceof Date
+        ? data.sendDate.toISOString()
+        : data.sendDate;
 
     const response = await this.client.POST<IOrder>("orders", {
       sender: data.sender,
@@ -227,7 +231,7 @@ export class PrintOne {
       finish: data.finish,
       mergeVariables: data.mergeVariables,
       billingId: data.billingId,
-      sendDate: data.sendDate?.toISOString(),
+      sendDate: sendDateStr,
     });
 
     return new Order(this.protected, response);

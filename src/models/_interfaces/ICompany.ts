@@ -90,5 +90,5 @@ export type ICompany = {
   /**
    * Email Verified At
    */
-  emailVerifiedAt: string;
+  emailVerifiedAt?: string;
 };

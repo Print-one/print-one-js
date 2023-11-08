@@ -3,17 +3,19 @@ export async function sleep(ms: number): Promise<void> {
 }
 
 export type SortDirection = "ASC" | "DESC";
-export type SortBy<T> = {
-  order: SortDirection;
-  field: T;
-};
-export type PaginationOptions<T> = {
+export type SortBy<T extends string> =
+  | {
+      order: SortDirection;
+      field: T;
+    }
+  | `${T}:${SortDirection}`;
+export type PaginationOptions<T extends string> = {
   limit?: number;
   page?: number;
   sortBy?: SortBy<T>[] | SortBy<T>;
 };
 
-export function sortToQuery<T>(
+export function sortToQuery<T extends string>(
   options: PaginationOptions<T>,
 ): Record<string, unknown> {
   const query: Record<string, unknown> = {};
@@ -24,7 +26,9 @@ export function sortToQuery<T>(
       : [options.sortBy];
 
     query.sortBy = sortBy
-      .map((sort) => `${sort.field}:${sort.order}`)
+      .map((sort) =>
+        typeof sort === "string" ? sort : `${sort.field}:${sort.order}`,
+      )
       .join(",");
   }
 
@@ -116,8 +120,8 @@ export function invertedFilterToQuery(
 }
 
 export type DateFilter = {
-  from?: Date;
-  to?: Date;
+  from?: string | Date;
+  to?: string | Date;
 };
 
 export function dateFilterToQuery(
@@ -130,14 +134,16 @@ export function dateFilterToQuery(
 
   const query: Record<string, unknown> = {};
 
-  if (values.from && values.to) {
-    query[
-      `filter.${field}`
-    ] = `btw:${values.from.toISOString()},${values.to.toISOString()}`;
+  const from =
+    values.from instanceof Date ? values.from.toISOString() : values.from;
+  const to = values.to instanceof Date ? values.to.toISOString() : values.to;
+
+  if (from && to) {
+    query[`filter.${field}`] = `btw:${from},${to}`;
   } else if (values.from) {
-    query[`filter.${field}`] = `$gte:${values.from.toISOString()}`;
+    query[`filter.${field}`] = `$gte:${from}`;
   } else if (values.to) {
-    query[`filter.${field}`] = `$lte:${values.to.toISOString()}`;
+    query[`filter.${field}`] = `$lte:${to}`;
   }
 
   return query;

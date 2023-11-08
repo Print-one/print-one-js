@@ -95,7 +95,8 @@ export class Company {
     return new Date(this._data.updatedAt);
   }
 
-  public get emailVerifiedAt(): Date {
+  public get emailVerifiedAt(): Date | undefined {
+    if (this._data.emailVerifiedAt === undefined) return undefined;
     return new Date(this._data.emailVerifiedAt);
   }
 }

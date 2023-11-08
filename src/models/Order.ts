@@ -4,7 +4,7 @@ import { Finish } from "../enums/Finish";
 import { Format } from "../enums/Format";
 import { Address } from "../models/Address";
 import { Template } from "./Template";
-import { Status } from "../enums/Status";
+import { FriendlyStatus, Status } from "../enums/Status";
 import { sleep } from "../utils";
 
 export class Order {
@@ -53,9 +53,10 @@ export class Order {
     return this._data.definitiveCountryId;
   }
 
-  public get deliverySpeed(): string {
-    return this._data.deliverySpeed;
-  }
+  // TODO not yet supported
+  // public get deliverySpeed(): string {
+  //   return this._data.deliverySpeed;
+  // }
 
   public get billingId(): string | undefined {
     return this._data.billingId;
@@ -72,8 +73,8 @@ export class Order {
     return this._data.status as Status;
   }
 
-  public get friendlyStatus(): string {
-    return this._data.friendlyStatus;
+  public get friendlyStatus(): FriendlyStatus {
+    return this._data.friendlyStatus as FriendlyStatus;
   }
 
   public get errors(): string[] {
