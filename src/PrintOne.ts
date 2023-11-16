@@ -1,7 +1,7 @@
 import { Company } from "./models/Company";
 import axios from "axios";
 import debug from "debug";
-import { AxiosHTTP, HTTP } from "./HttpHandler";
+import { AxiosHTTP } from "./HttpHandler";
 import { ICompany } from "./models/_interfaces/ICompany";
 import {
   ContainsFilter,
@@ -38,7 +38,7 @@ const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
 };
 
 export type Protected = {
-  client: HTTP;
+  client: AxiosHTTP;
   options: Required<PrintOneOptions>;
   debug: debug.Debugger;
   printOne: PrintOne;
@@ -57,7 +57,7 @@ export class PrintOne {
     return this.protected.options;
   }
 
-  private get client(): HTTP {
+  private get client(): AxiosHTTP {
     return this.protected.client;
   }
 

@@ -2,52 +2,11 @@ import { Axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import debug from "debug";
 import { PrintOneError } from "./errors/PrintOneError";
 
-export class HTTP {
-  private readonly parent: HTTP | null;
-  private readonly url: string;
-
-  constructor(parent: HTTP | null, url: string) {
-    this.parent = parent;
-    this.url = url;
-  }
-
-  public async GET<T>(
-    url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    return await this.parent!.GET<T>(`${this.url}/${url}`, options);
-  }
-
-  public async POST<T>(
-    url: string,
-    data: unknown,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    return await this.parent!.POST<T>(`${this.url}/${url}`, data, options);
-  }
-
-  public async PATCH<T>(
-    url: string,
-    data: unknown,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    return await this.parent!.PATCH<T>(`${this.url}/${url}`, data, options);
-  }
-
-  public async DELETE<T>(
-    url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    return await this.parent!.DELETE<T>(`${this.url}/${url}`, options);
-  }
-}
-
-export class AxiosHTTP extends HTTP {
+export class AxiosHTTP {
   private readonly client: Axios;
   private readonly debug: debug.Debugger;
 
   constructor(client: Axios, debug: debug.Debugger) {
-    super(null, "");
     this.client = client;
     this.debug = debug;
   }
