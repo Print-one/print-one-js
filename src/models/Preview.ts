@@ -24,6 +24,9 @@ export class Preview {
     return this._data.url;
   }
 
+  /**
+   * @deprecated Use `index` of array instead.
+   */
   public get orderingKey(): number {
     return this._data.orderingKey;
   }
@@ -66,6 +69,7 @@ export class Preview {
       }
     } while (polling);
 
+    // istanbul ignore next
     throw new Error("Unreachable");
   }
 
@@ -79,13 +83,11 @@ export class Preview {
   public async download(
     polling = true,
     timeoutSeconds = 20,
-  ): Promise<ArrayBuffer> {
+  ): Promise<Uint8Array> {
     let time = 0;
     do {
       try {
-        return await this._protected.client.GET<ArrayBuffer>(this.url, {
-          responseType: "arraybuffer",
-        });
+        return await this._protected.client.GETBuffer(this.url);
       } catch (e) {
         if (polling && e instanceof PrintOneError) {
           const error = e as PrintOneError;
@@ -105,6 +107,7 @@ export class Preview {
       }
     } while (polling);
 
+    //istanbul ignore next
     throw new Error("Unreachable");
   }
 }

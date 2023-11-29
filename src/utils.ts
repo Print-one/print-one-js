@@ -102,7 +102,7 @@ export function invertedFilterToQuery(
   field: string,
   values: undefined | boolean,
   operator: string,
-  invert = false,
+  invert: boolean,
 ): Record<string, unknown> {
   if (values === undefined) {
     return {};
@@ -139,7 +139,7 @@ export function dateFilterToQuery(
   const to = values.to instanceof Date ? values.to.toISOString() : values.to;
 
   if (from && to) {
-    query[`filter.${field}`] = `btw:${from},${to}`;
+    query[`filter.${field}`] = `$btw:${from},${to}`;
   } else if (values.from) {
     query[`filter.${field}`] = `$gte:${from}`;
   } else if (values.to) {

@@ -2,18 +2,18 @@ Contains information about Templates and methods to make previews.
 
 # Fields
 
-| Name             | Type                             | Description                                                                                             |
-|------------------|----------------------------------|---------------------------------------------------------------------------------------------------------|
-| `id`             | `string`                         | The ID of the template.                                                                                 |
-| `name`           | `string`                         | The name of the template.                                                                               |
-| `format`         | `string`                         | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
-| `labels`         | `string[]`                       | The labels of the template.                                                                             |
-| `mergeVariables` | `string[]`                       | The merge variables of the template.                                                                    |
-| `thumbnail`      | `string`                         | The thumbnail of the template in base64.                                                                |
-| `apiVersion`     | `string`                         | The API version of the template.                                                                        |
-| `version`        | `number`                         | The version of the template.                                                                            |
-| `updatedAt`      | `Date`                           | The date and time the template was last updated.                                                        |
-| `pages`          | [`Page[]`](#Page) \| `undefined` | The pages of the template. Is `undefined` if the template is not [loaded](#load).                       |
+| Name             | Type                      | Description                                                                                             |
+|------------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| `id`             | `string`                  | The ID of the template.                                                                                 |
+| `name`           | `string`                  | The name of the template.                                                                               |
+| `format`         | `string`                  | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
+| `labels`         | `string[]`                | The labels of the template.                                                                             |
+| `mergeVariables` | `string[]`                | The merge variables of the template.                                                                    |
+| `thumbnail`      | `string`                  | The thumbnail of the template in base64.                                                                |
+| `apiVersion`     | `string`                  | The API version of the template.                                                                        |
+| `version`        | `number`                  | The version of the template.                                                                            |
+| `updatedAt`      | `Date`                    | The date and time the template was last updated.                                                        |
+| `pages`          | `string[]` \| `undefined` | The pages of the template. Is `undefined` if the template is not [loaded](#load).                       |
 
 # Methods
 
@@ -69,6 +69,32 @@ await template.delete();
 ```
 
 ---
+
+## [`PrintOne.createTemplate(data)`](./PrintOne#createtemplatedata)
+
+Create a new template.
+
+**Parameters**
+
+| Name          | Type                      | Description                                                                                             |
+|---------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| `data.name`   | `string`                  | The name of the template.                                                                               |
+| `data.format` | `string`                  | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
+| `data.labels` | `string[]` \| `undefined` | The labels of the template.                                                                             |
+| `data.pages`  | `string[]`                | The pages of the template.                                                                              |
+
+**Returns: [`Promise<Template>`](./Template)**
+
+**Example**
+
+```js
+const template = await client.createTemplate({
+  name: "Example Template",
+  format: Format.POSTCARD_A5,
+  labels: ["example"],
+  pages: ["front", "back"],
+});
+```
 
 ## [`PrintOne.getTemplates([options])`](./PrintOne#gettemplatesoptions)
 
@@ -135,18 +161,5 @@ Get the template of the order.
 ```js
 const template = await order.getTemplate();
 ```
-
-# Interfaces
-
-## `Page`
-
-Contains information about a page.
-
-### Fields
-
-| Name          | Type     | Description                   |
-|---------------|----------|-------------------------------|
-| `orderingKey` | `string` | The ordering key of the page. |
-| `content`     | `string` | The content of the page.      |
 
 

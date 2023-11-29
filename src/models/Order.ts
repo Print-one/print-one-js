@@ -2,10 +2,23 @@ import { IOrder } from "./_interfaces/IOrder";
 import { Protected } from "../PrintOne";
 import { Finish } from "../enums/Finish";
 import { Format } from "../enums/Format";
-import { Address } from "../models/Address";
+import { Address } from "./Address";
 import { Template } from "./Template";
 import { FriendlyStatus, Status } from "../enums/Status";
 import { sleep } from "../utils";
+
+export type CreateOrder = {
+  recipient: Address;
+  sender?: Address;
+  template: Template | string;
+  /**
+   * @default GLOSSY
+   */
+  finish?: Finish;
+  mergeVariables?: Record<string, unknown>;
+  billingId?: string;
+  sendDate?: Date | string;
+};
 
 export class Order {
   private _data: IOrder;
@@ -124,7 +137,7 @@ export class Order {
   public async download(
     polling = true,
     timeoutSeconds = 20,
-  ): Promise<ArrayBuffer> {
+  ): Promise<Uint8Array> {
     let time = 0;
     while (
       polling &&
@@ -136,11 +149,8 @@ export class Order {
       time++;
     }
 
-    return await this._protected.client.GET<ArrayBuffer>(
+    return await this._protected.client.GETBuffer(
       `storage/order/preview/${this.id}`,
-      {
-        responseType: "arraybuffer",
-      },
     );
   }
 

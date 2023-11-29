@@ -19,10 +19,8 @@ import { ICustomFile } from "./models/_interfaces/ICustomFile";
 import { PaginatedResponse } from "./models/PaginatedResponse";
 import { CustomFile } from "./models/CustomFile";
 import { ITemplate } from "./models/_interfaces/ITemplate";
-import { Template } from "./models/Template";
-import { Address } from "./models/Address";
-import { Finish } from "./enums/Finish";
-import { Order } from "./models/Order";
+import { CreateTemplate, Template } from "./models/Template";
+import { CreateOrder, Order } from "./models/Order";
 import { IOrder } from "./models/_interfaces/IOrder";
 import { FriendlyStatus } from "./enums/Status";
 import { Format } from "./enums/Format";
@@ -65,6 +63,7 @@ export class PrintOne {
     return this.protected.debug;
   }
 
+  // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
     this._protected.options = { ...DEFAULT_OPTIONS, ...options };
     this._protected.client = new AxiosHTTP(
@@ -145,6 +144,22 @@ export class PrintOne {
   }
 
   /**
+   * Create an template.
+   */
+  public async createTemplate(data: CreateTemplate): Promise<Template> {
+    const response = await this.client.POST<ITemplate>("templates", {
+      name: data.name,
+      format: data.format,
+      labels: data.labels ?? [],
+      pages: data.pages?.map((page) => ({
+        content: page,
+      })),
+    });
+
+    return new Template(this.protected, response);
+  }
+
+  /**
    * Get all templates.
    * @param { PaginationOptions } options The options to use for pagination
    * @param options.limit The maximum amount of templates to return.
@@ -205,18 +220,7 @@ export class PrintOne {
   /**
    * Create an order
    */
-  public async createOrder(data: {
-    recipient: Address;
-    sender?: Address;
-    template: Template | string;
-    /**
-     * @default GLOSSY
-     */
-    finish?: Finish;
-    mergeVariables?: Record<string, unknown>;
-    billingId?: string;
-    sendDate?: Date | string;
-  }): Promise<Order> {
+  public async createOrder(data: CreateOrder): Promise<Order> {
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
     const sendDateStr =
@@ -265,7 +269,7 @@ export class PrintOne {
         friendlyStatus?: InFilter<FriendlyStatus>;
         billingId?: InFilter;
         format?: InFilter<Format>;
-        finish?: InFilter<Finish>;
+        // finish?: InFilter<Finish>;
         isBillable?: boolean;
         createdAt?: DateFilter;
         anonymizedAt?: DateFilter | boolean;
@@ -277,7 +281,7 @@ export class PrintOne {
       ...inFilterToQuery("friendlyStatus", options.filter?.friendlyStatus),
       ...inFilterToQuery("billingId", options.filter?.billingId),
       ...inFilterToQuery("format", options.filter?.format),
-      ...inFilterToQuery("finish", options.filter?.finish),
+      // ...inFilterToQuery("finish", options.filter?.finish),
       ...dateFilterToQuery("createdAt", options.filter?.createdAt),
     };
 

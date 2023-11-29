@@ -18,13 +18,20 @@ export const Status: {
 
 export type Status = (typeof Status)[keyof typeof Status];
 
-export declare const FriendlyStatus: {
+export const FriendlyStatus: {
   Processing: "Processing";
   Success: "Success";
   Sent: "Sent";
   Scheduled: "Scheduled";
   Cancelled: "Cancelled";
   Failed: "Failed";
+} = {
+  Processing: "Processing",
+  Success: "Success",
+  Sent: "Sent",
+  Scheduled: "Scheduled",
+  Cancelled: "Cancelled",
+  Failed: "Failed",
 };
 export type FriendlyStatus =
   (typeof FriendlyStatus)[keyof typeof FriendlyStatus];

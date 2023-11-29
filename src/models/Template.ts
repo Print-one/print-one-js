@@ -1,12 +1,15 @@
 import { Protected } from "../PrintOne";
-import {
-  IFullTemplate,
-  ITemplate,
-  ITemplatePage,
-} from "./_interfaces/ITemplate";
+import { IFullTemplate, ITemplate } from "./_interfaces/ITemplate";
 import { Format } from "../enums/Format";
 import { IPreview } from "./_interfaces/IPreview";
 import { Preview } from "./Preview";
+
+export type CreateTemplate = {
+  name: string;
+  format: Format;
+  labels?: string[];
+  pages: string[];
+};
 
 export class Template {
   private _data: IFullTemplate | ITemplate;
@@ -17,7 +20,7 @@ export class Template {
     _data: ITemplate | IFullTemplate,
   ) {
     this._data = _data;
-    if (_data.content) this._loaded = _data as IFullTemplate;
+    if (_data.pages) this._loaded = _data as IFullTemplate;
   }
 
   public get id(): string {
@@ -75,10 +78,10 @@ export class Template {
    * @throws { Error } When the template is not loaded
    * @returns { ITemplatePage[] } The pages of the template
    */
-  public get pages(): ITemplatePage[] {
-    if (!this._loaded) throw new Error("Template not loaded");
+  public get pages(): string[] {
+    if (this._loaded === undefined) throw new Error("Template not loaded");
 
-    return this._loaded?.pages ?? [];
+    return this._loaded.pages.map((page) => page.content);
   }
 
   /**

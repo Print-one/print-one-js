@@ -8,14 +8,20 @@ export type ITemplate = {
   apiVersion: number;
   version: number;
   updatedAt: string;
-  content: undefined;
+  pages: undefined;
 };
+
+type _FullTemplate = {
+  pages: ITemplatePage[];
+};
+
+export type IFullTemplate = Omit<ITemplate, keyof _FullTemplate> &
+  _FullTemplate;
 
 export type ITemplatePage = {
+  /**
+   * @deprecated Use index of the array instead
+   */
   orderingKey: number;
   content: string;
-};
-
-export type IFullTemplate = ITemplate & {
-  pages: ITemplatePage[];
 };

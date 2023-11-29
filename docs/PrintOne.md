@@ -74,6 +74,32 @@ const file = await client.uploadCustomFile("example.png", data);
 
 ---
 
+## `.createTemplate(data)`
+
+Create a new template.
+
+**Parameters**
+
+| Name          | Type                      | Description                                                                                             |
+|---------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| `data.name`   | `string`                  | The name of the template.                                                                               |
+| `data.format` | `string`                  | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
+| `data.labels` | `string[]` \| `undefined` | The labels of the template.                                                                             |
+| `data.pages`  | `string[]`                | The pages of the template.                                                                              |
+
+**Returns: [`Promise<Template>`](./Template)**
+
+**Example**
+
+```js
+const template = await client.createTemplate({
+  name: "Example Template",
+  format: Format.POSTCARD_A5,
+  labels: ["example"],
+  pages: ["front", "back"],
+});
+```
+
 ## `.getTemplates([options])`
 
 Get all templates.

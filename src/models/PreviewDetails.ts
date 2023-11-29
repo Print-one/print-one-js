@@ -27,9 +27,7 @@ export class PreviewDetails {
    * Download the preview.
    * @throws { PrintOneError } If the preview could not be downloaded.
    */
-  public async download(): Promise<ArrayBuffer> {
-    return this._protected.client.GET<ArrayBuffer>(this.imageUrl, {
-      responseType: "arraybuffer",
-    });
+  public async download(): Promise<Uint8Array> {
+    return this._protected.client.GETBuffer(this.imageUrl);
   }
 }

@@ -11,7 +11,7 @@ export class AxiosHTTP {
     this.debug = debug;
   }
   /**
-   * Performs a GET request to the Moneybird API
+   * Performs a GET request.
    * @param url The url to perform the request to
    * @param options The options for the request
    */
@@ -19,13 +19,13 @@ export class AxiosHTTP {
     url: string,
     options: AxiosRequestConfig = {},
   ): Promise<T> {
-    this.debug(`GET ${url}`);
-
     const response = await this.client.request<T>({
       method: "GET",
       url: url,
       ...options,
     });
+
+    this.debug(`GET ${response.request.path}`);
 
     this.handleErrors(response);
 
@@ -33,8 +33,30 @@ export class AxiosHTTP {
   }
 
   /**
-   * Performs a POST request to the Moneybird API
+   * Performs a GET request and returns the response as a ArrayBuffer.
    * @param url The url to perform the request to
+   * @param options The options for the request
+   */
+  public async GETBuffer(
+    url: string,
+    options: AxiosRequestConfig = {},
+  ): Promise<Uint8Array> {
+    const response = await this.client.request<Buffer>({
+      method: "GET",
+      url: url,
+      responseType: "arraybuffer",
+      ...options,
+    });
+
+    this.debug(`GET ${response.request.path}`);
+
+    this.handleErrors(response);
+
+    return Uint8Array.from(response.data);
+  }
+
+  /**
+   * Performs a POST request.
    * @param data The data to send with the request
    * @param options The options for the request
    */
@@ -43,8 +65,6 @@ export class AxiosHTTP {
     data: unknown,
     options: AxiosRequestConfig = {},
   ): Promise<T> {
-    this.debug(`POST ${url}`);
-
     const response = await this.client.request<T>({
       method: "POST",
       url: url,
@@ -52,30 +72,7 @@ export class AxiosHTTP {
       ...options,
     });
 
-    this.handleErrors(response);
-
-    return response.data;
-  }
-
-  /**
-   * Performs a PATCH request to the Moneybird API
-   * @param url The url to perform the request to
-   * @param data The data to send with the request
-   * @param options The options for the request
-   */
-  public async PATCH<T>(
-    url: string,
-    data: unknown,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    this.debug(`PATCH ${url}`);
-
-    const response = await this.client.request<T>({
-      method: "PATCH",
-      url: url,
-      data: data,
-      ...options,
-    });
+    this.debug(`POST ${response.request.path}`);
 
     this.handleErrors(response);
 
@@ -83,7 +80,7 @@ export class AxiosHTTP {
   }
 
   /**
-   * Performs a DELETE request to the Moneybird API
+   * Performs a DELETE request.
    * @param url The url to perform the request to
    * @param options The options for the request
    */
@@ -91,13 +88,13 @@ export class AxiosHTTP {
     url: string,
     options: AxiosRequestConfig = {},
   ): Promise<T> {
-    this.debug(`DELETE ${url}`);
-
     const response = await this.client.request<T>({
       method: "DELETE",
       url: url,
       ...options,
     });
+
+    this.debug(`DELETE ${response.request.path}`);
 
     this.handleErrors(response);
 

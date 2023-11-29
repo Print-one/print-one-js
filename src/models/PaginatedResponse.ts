@@ -45,7 +45,7 @@ export class PaginatedResponse<T = unknown> {
   public get meta(): Meta {
     return {
       total: this._data.total,
-      filterOptions: this._data.filterOptions,
+      filterOptions: this._data.meta.filterOptions,
       pages: this._data.pages,
       page: this._data.page,
       pageSize: this._data.pageSize,
