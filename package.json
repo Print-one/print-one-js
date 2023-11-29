@@ -19,6 +19,7 @@
     "clean": "bsm",
     "format": "bsm",
     "lint": "bsm",
+    "test": "bsm test.coverage",
     "semantic-release": "semantic-release"
   },
   "types": "lib/index.d.ts",

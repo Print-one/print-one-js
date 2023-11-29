@@ -54,13 +54,16 @@ describe("next()", function () {
 
   it("should return null if there is no next page", async function () {
     // arrange
-    const pag = await client.getTemplates({
+    const paginated = await client.getTemplates({
       limit: 1,
-      page: paginated.meta.pages,
+      page: 1,
+      filter: {
+        name: "this template does not exist",
+      },
     });
 
     // act
-    const nextNext = await pag?.next();
+    const nextNext = await paginated?.next();
 
     // assert
     expect(nextNext?.meta.pages).toEqual(undefined);
