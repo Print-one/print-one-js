@@ -11,7 +11,7 @@
 [build-img]:https://github.com/Print-one/print-one-js/actions/workflows/release.yml/badge.svg
 [build-url]:https://github.com/Print-one/print-one-js/actions/workflows/release.yml
 
-[issues-img]:https://img.shields.io/github/issues/Print-one/print-one-js
+[issues-img]:https://img.shields.io/github/issues/Print-one/print-one-js/bug
 [issues-url]:https://github.com/Print-one/print-one-js/issues
 
 [semantic-release-img]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
