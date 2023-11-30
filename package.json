@@ -1,6 +1,6 @@
 {
   "name": "@print-one/print-one-js",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "The official javascript client for Print.one",
   "license": "MIT",
   "author": "Print.one",
