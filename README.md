@@ -4,8 +4,18 @@
 [![Build Status][build-img]][build-url]
 [![Issues][issues-img]][issues-url]
 [![Semantic Release][semantic-release-img]][semantic-release-url]
-[![TypeScript][typescript-img]][typescript-url]
 
+[npm-img]:https://img.shields.io/npm/v/@print-one/print-one-js
+[npm-url]:https://www.npmjs.com/package/@print-one/print-one-js
+
+[build-img]:https://github.com/Print-one/print-one-js/actions/workflows/release.yml/badge.svg
+[build-url]:https://github.com/Print-one/print-one-js/actions/workflows/release.yml
+
+[issues-img]:https://img.shields.io/github/issues/Print-one/print-one-js
+[issues-url]:https://github.com/Print-one/print-one-js/issues
+
+[semantic-release-img]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release-url]:https://github.com/semantic-release/semantic-release
 
 > The official javascript client for [Print.one](https://print.one)
 
@@ -15,22 +25,51 @@
 npm install @print-one/print-one-js
 ```
 
-[npm-img]:https://img.shields.io/npm/v/@print-one/print-one-js
+## Example
 
-[npm-url]:https://www.npmjs.com/package/@print-one/print-one-js
+```js
+import { PrintOne } from '@print-one/print-one-js'
 
-[build-img]:https://github.com/Print-one/print-one-js/actions/workflows/release.yml/badge.svg
+const client = new PrintOne("<YOUR API TOKEN>");
 
-[build-url]:https://github.com/Print-one/print-one-js/actions/workflows/release.yml
+const templates = await client.getTemplates();
+const template = templates[0];
 
-[issues-img]:https://img.shields.io/github/issues/Print-one/print-one-js
+const order = await client.createOrder({
+    recipient: {
+        name: "John Doe",
+        address: "Example Street 2",
+        city: "Anytown",
+        postalCode: "1234AB",
+        country: "NL",
+    },
+    template: template,
+    // All other options are optional
+    sender: {
+        name: "Jane Doe",
+        address: "Example Street 1",
+        addressLine2: "Apt 1",
+        city: "Anytown",
+        postalCode: "1234AB",
+        country: "NL",
+    },
+    finish: Finish.GLOSSY,
+    mergeVariables: {
+        couponCode: "ABC123"
+    },
+    billingId: "8073",
+    sendDate: "2021-01-01",
+});
 
-[issues-url]:https://github.com/ryansonshine/Print-one/print-one-js/issues
+const download = await order.download();
 
-[semantic-release-img]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+fs.writeFileSync("order.pdf", download);
+```
 
-[semantic-release-url]:https://github.com/semantic-release/semantic-release
+## Help
 
-[typescript-img]:https://img.shields.io/github/languages/top/print-one/print-one-js?logo=typescript&logoColor=white
+- For documentation and more examples, see the [documentation](https://github.com/Print-one/print-one-js/wiki).
+- With problems, questions or suggestions, please file an [issue](https://github.com/Print-one/print-one-js/issues).
+- For other questions, feel free to contact us at [our support page](https://printone.atlassian.net/servicedesk/customer/portals).
 
-[typescript-url]:https://www.typescriptlang.org/
+

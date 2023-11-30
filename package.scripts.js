@@ -15,5 +15,10 @@ module.exports = {
       eslint: "eslint .",
       prettier: "prettier -c .",
     },
+    test: {
+      $env: "file:.env",
+      _default: "jest",
+      coverage: "bsm ~ -- --coverage",
+    },
   },
 };
