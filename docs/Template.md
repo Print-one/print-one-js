@@ -3,7 +3,7 @@ Contains information about Templates and methods to make previews.
 # Fields
 
 | Name             | Type                      | Description                                                                                             |
-|------------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| ---------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `id`             | `string`                  | The ID of the template.                                                                                 |
 | `name`           | `string`                  | The name of the template.                                                                               |
 | `format`         | `string`                  | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
@@ -40,7 +40,7 @@ Make a preview of the template.
 **Parameters**
 
 | Name             | Type     | Description                                                                                  |
-|------------------|----------|----------------------------------------------------------------------------------------------|
+| ---------------- | -------- | -------------------------------------------------------------------------------------------- |
 | `mergeVariables` | `object` | The merge variables to use in the preview. Is an object with the merge variable name as key. |
 
 **Returns: [`Promise<Preview>`](./Preview)**
@@ -50,7 +50,7 @@ Make a preview of the template.
 ```js
 const previews = await template.preview({
   name: "John Doe",
-  address: "Main Street 1"
+  address: "Main Street 1",
 });
 ```
 
@@ -77,7 +77,7 @@ Create a new template.
 **Parameters**
 
 | Name          | Type                      | Description                                                                                             |
-|---------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| ------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `data.name`   | `string`                  | The name of the template.                                                                               |
 | `data.format` | `string`                  | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
 | `data.labels` | `string[]` \| `undefined` | The labels of the template.                                                                             |
@@ -103,7 +103,7 @@ Get all templates.
 **Parameters**
 
 | Name                    | Type                               | Default          | Description                                                                                                                |
-|-------------------------|------------------------------------|------------------|----------------------------------------------------------------------------------------------------------------------------|
+| ----------------------- | ---------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `options.limit`         | `number`                           | `10`             | The maximum number of templates to return.                                                                                 |
 | `options.page`          | `number`                           | `1`              | The page of templates to return.                                                                                           |
 | `options.sortBy`        | [`sort`](./Filtering#Sorting)      | `updatedAt:DESC` | The field(s) to sort the templates by. Can be `updatedAt`                                                                  |
@@ -123,8 +123,8 @@ const templates = await client.getTemplates({
   filter: {
     name: "Example Template",
     labels: "example",
-    format: Format.POSTCARD_A5
-  }
+    format: Format.POSTCARD_A5,
+  },
 });
 ```
 
@@ -137,7 +137,7 @@ Get a template by its ID.
 **Parameters**
 
 | Name | Type     | Description                    |
-|------|----------|--------------------------------|
+| ---- | -------- | ------------------------------ |
 | `id` | `string` | The ID of the template to get. |
 
 **Returns: [`Promise<Template>`](./Template)**
@@ -161,5 +161,3 @@ Get the template of the order.
 ```js
 const template = await order.getTemplate();
 ```
-
-

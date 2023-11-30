@@ -11,7 +11,7 @@ Or:
 ```js
 const sortBy = {
   order: "<order>",
-  field: "<field>"
+  field: "<field>",
 };
 ```
 
@@ -35,7 +35,7 @@ const sortBy = ["<field1>:ASC", "<field2>:DESC"];
 // Object form
 const sortBy = {
   order: "ASC",
-  field: "<field>"
+  field: "<field>",
 };
 ```
 
@@ -44,12 +44,12 @@ const sortBy = {
 const sortBy = [
   {
     order: "ASC",
-    field: "<field1>"
+    field: "<field1>",
   },
   {
     order: "DESC",
-    field: "<field2>"
-  }
+    field: "<field2>",
+  },
 ];
 ```
 
@@ -67,7 +67,7 @@ Or if all field values must be contained:
 
 ```js
 const contains = {
-  all: ["<value1>", "<value2>"]
+  all: ["<value1>", "<value2>"],
 };
 ```
 
@@ -75,7 +75,7 @@ Or if any field value must be contained:
 
 ```js
 const contains = {
-  some: ["<value1>", "<value2>"]
+  some: ["<value1>", "<value2>"],
 };
 ```
 
@@ -101,8 +101,8 @@ Where `<date>` is the date to filter by.
 const filter = {
   date: {
     from: "2019-01-01",
-    to: "2019-12-31"
-  }
+    to: "2019-12-31",
+  },
 };
 ```
 
@@ -110,8 +110,8 @@ const filter = {
 // After a date
 const filter = {
   date: {
-    from: "2019-01-01"
-  }
+    from: "2019-01-01",
+  },
 };
 ```
 
@@ -119,7 +119,7 @@ const filter = {
 // Before a date
 const filter = {
   date: {
-    to: "2019-12-31"
-  }
+    to: "2019-12-31",
+  },
 };
 ```

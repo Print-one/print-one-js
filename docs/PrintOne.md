@@ -3,7 +3,7 @@ The main class of the library. It is used to create a client for the Print.one A
 # Constructor
 
 ```js
-import { PrintOne } from '@print-one/print-one-js'
+import { PrintOne } from "@print-one/print-one-js";
 
 const client = new PrintOne(apiKey);
 ```
@@ -31,7 +31,7 @@ Get all custom files.
 **Parameters**
 
 | Name             | Type                          | Default          | Description                                                                                               |
-|------------------|-------------------------------|------------------|-----------------------------------------------------------------------------------------------------------|
+| ---------------- | ----------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
 | `options.limit`  | `number`                      | `10`             | The maximum number of custom files to return.                                                             |
 | `options.page`   | `number`                      | `1`              | The page of custom files to return.                                                                       |
 | `options.sortBy` | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the custom files by. Can be `createdAt`, `fileName`, `size`, `id` or `fileExtension` |
@@ -44,7 +44,7 @@ Get all custom files.
 const customFiles = await client.getCustomFiles({
   limit: 20,
   page: 2,
-  sortBy: "fileName:ASC"
+  sortBy: "fileName:ASC",
 });
 ```
 
@@ -57,7 +57,7 @@ Upload a custom file. The file must be a image or font.
 **Parameters**
 
 | Name       | Type          | Description                                  |
-|------------|---------------|----------------------------------------------|
+| ---------- | ------------- | -------------------------------------------- |
 | `fileName` | `string`      | The name of the file.                        |
 | `file`     | `ArrayBuffer` | The file to upload. Must be a image or font. |
 
@@ -81,7 +81,7 @@ Create a new template.
 **Parameters**
 
 | Name          | Type                      | Description                                                                                             |
-|---------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| ------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `data.name`   | `string`                  | The name of the template.                                                                               |
 | `data.format` | `string`                  | The format of the template. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15` |
 | `data.labels` | `string[]` \| `undefined` | The labels of the template.                                                                             |
@@ -107,7 +107,7 @@ Get all templates.
 **Parameters**
 
 | Name                    | Type                               | Default          | Description                                                                                                                |
-|-------------------------|------------------------------------|------------------|----------------------------------------------------------------------------------------------------------------------------|
+| ----------------------- | ---------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `options.limit`         | `number`                           | `10`             | The maximum number of templates to return.                                                                                 |
 | `options.page`          | `number`                           | `1`              | The page of templates to return.                                                                                           |
 | `options.sortBy`        | [`sort`](./Filtering#Sorting)      | `updatedAt:DESC` | The field(s) to sort the templates by. Can be `updatedAt`                                                                  |
@@ -127,8 +127,8 @@ const templates = await client.getTemplates({
   filter: {
     name: "Example Template",
     labels: "example",
-    format: Format.POSTCARD_A5
-  }
+    format: Format.POSTCARD_A5,
+  },
 });
 ```
 
@@ -141,7 +141,7 @@ Get a template by its ID.
 **Parameters**
 
 | Name | Type     | Description                    |
-|------|----------|--------------------------------|
+| ---- | -------- | ------------------------------ |
 | `id` | `string` | The ID of the template to get. |
 
 **Returns: [`Promise<Template>`](./Template)**
@@ -161,7 +161,7 @@ Create a new order.
 **Parameters**
 
 | Name   | Type     | Description                                                                              |
-|--------|----------|------------------------------------------------------------------------------------------|
+| ------ | -------- | ---------------------------------------------------------------------------------------- |
 | `data` | `object` | The data to create the order with. See [`Order`](./Order#createorderdata) for more info. |
 
 **Returns: [`Promise<Order>`](./Order)**
@@ -176,8 +176,8 @@ const order = await client.createOrder({
     address: "Example Street 2",
     city: "Anytown",
     postalCode: "1234AB",
-    country: "NL"
-  }
+    country: "NL",
+  },
 });
 ```
 
@@ -190,7 +190,7 @@ Get an order by its ID.
 **Parameters**
 
 | Name | Type     | Description                 |
-|------|----------|-----------------------------|
+| ---- | -------- | --------------------------- |
 | `id` | `string` | The ID of the order to get. |
 
 **Returns: [`Promise<Order>`](./Order)**
@@ -210,10 +210,10 @@ Get all orders.
 **Parameters**
 
 | Name                            | Type                          | Default          | Description                                                                                                                        |
-|---------------------------------|-------------------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------- | ----------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `options.limit`                 | `number`                      | `10`             | The maximum number of orders to return.                                                                                            |
 | `options.page`                  | `number`                      | `1`              | The page of orders to return.                                                                                                      |
-| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the orders by. Can be  `createdAt`, `anonymizedAt`, `updatedAt`, `friendlyStatus` or `sendDate`               |
+| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the orders by. Can be `createdAt`, `anonymizedAt`, `updatedAt`, `friendlyStatus` or `sendDate`                |
 | `options.filter.friendlyStatus` | `string` \| `string[]`        | `undefined`      | The friendly status(es) of the order(s) to filter by. Can be `Processing`, `Success`, `Sent`, `Scheduled`, `Cancelled` or `Failed` |
 | `options.filter.billingId`      | `string` \| `string[]`        | `undefined`      | The billing ID(s) of the order(s) to filter by.                                                                                    |
 | `options.filter.format`         | `string` \| `string[]`        | `undefined`      | The format(s) of the order(s) to filter by. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15`            |
@@ -238,8 +238,8 @@ const orders = await client.getOrders({
     isBillable: true,
     createdAt: {
       from: "2020-01-01",
-      to: "2020-01-31"
-    }
-  }
+      to: "2020-01-31",
+    },
+  },
 });
 ```

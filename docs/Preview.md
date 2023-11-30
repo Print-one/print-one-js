@@ -3,7 +3,7 @@ Contains references to where to download or get details.
 # Fields
 
 | Name          | Type     | Description                                    |
-|---------------|----------|------------------------------------------------|
+| ------------- | -------- | ---------------------------------------------- |
 | `orderingKey` | `string` | The number of which page of the order this is. |
 | `url`         | `string` | The URL to download the page.                  |
 | `detailsUrl`  | `string` | The URL to get details about the page.         |
@@ -16,10 +16,10 @@ Download the page.
 
 **Parameters**
 
-| Name       | Type      | Default | Description                                                                         |
-|------------|-----------|---------|-------------------------------------------------------------------------------------|
-| `polling`  | `boolean` | `true`  | Whether to poll the API until the page is ready to download.                        |
-| `timeout`  | `number`  | `20`    | The maximum amount of time in seconds to wait for the page to be ready to download. |
+| Name      | Type      | Default | Description                                                                         |
+| --------- | --------- | ------- | ----------------------------------------------------------------------------------- |
+| `polling` | `boolean` | `true`  | Whether to poll the API until the page is ready to download.                        |
+| `timeout` | `number`  | `20`    | The maximum amount of time in seconds to wait for the page to be ready to download. |
 
 **Returns: `Promise<ArrayBuffer>`**
 
@@ -40,10 +40,10 @@ Get details about the page.
 
 **Parameters**
 
-| Name       | Type      | Default | Description                                                                         |
-|------------|-----------|---------|-------------------------------------------------------------------------------------|
-| `polling`  | `boolean` | `true`  | Whether to poll the API until the page is ready to download.                        |
-| `timeout`  | `number`  | `20`    | The maximum amount of time in seconds to wait for the page to be ready to download. |
+| Name      | Type      | Default | Description                                                                         |
+| --------- | --------- | ------- | ----------------------------------------------------------------------------------- |
+| `polling` | `boolean` | `true`  | Whether to poll the API until the page is ready to download.                        |
+| `timeout` | `number`  | `20`    | The maximum amount of time in seconds to wait for the page to be ready to download. |
 
 **Returns: [`Promise<PreviewDetails>`](./PreviewDetails)**
 
@@ -65,7 +65,7 @@ Make a preview of the template.
 **Parameters**
 
 | Name             | Type     | Description                                                                                  |
-|------------------|----------|----------------------------------------------------------------------------------------------|
+| ---------------- | -------- | -------------------------------------------------------------------------------------------- |
 | `mergeVariables` | `object` | The merge variables to use in the preview. Is an object with the merge variable name as key. |
 
 **Returns: [`Promise<Preview>`](./Preview)**
@@ -75,6 +75,6 @@ Make a preview of the template.
 ```js
 const previews = await template.preview({
   name: "John Doe",
-  address: "Main Street 1"
+  address: "Main Street 1",
 });
 ```

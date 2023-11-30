@@ -3,7 +3,7 @@ Contains information about CustomFiles and methods to download.
 # Fields
 
 | Name            | Type     | Description                                   |
-|-----------------|----------|-----------------------------------------------|
+| --------------- | -------- | --------------------------------------------- |
 | `id`            | `string` | The ID of the CustomFile.                     |
 | `fileName`      | `string` | The name of the CustomFile.                   |
 | `fileExtension` | `string` | The extension of the CustomFile.              |
@@ -46,10 +46,10 @@ Get all custom files.
 
 **Parameters**
 
-| Name             | Type                             | Default          | Description                                                                                               |
-|------------------|----------------------------------|------------------|-----------------------------------------------------------------------------------------------------------|
-| `options.limit`  | `number`                         | `10`             | The maximum number of custom files to return.                                                             |
-| `options.page`   | `number`                         | `1`              | The page of custom files to return.                                                                       |
+| Name             | Type                          | Default          | Description                                                                                               |
+| ---------------- | ----------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
+| `options.limit`  | `number`                      | `10`             | The maximum number of custom files to return.                                                             |
+| `options.page`   | `number`                      | `1`              | The page of custom files to return.                                                                       |
 | `options.sortBy` | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the custom files by. Can be `createdAt`, `fileName`, `size`, `id` or `fileExtension` |
 
 **Returns: [`Promise<CustomFile[]>`](./CustomFile)**
@@ -60,7 +60,7 @@ Get all custom files.
 const customFiles = await client.getCustomFiles({
   limit: 20,
   page: 2,
-  sortBy: "fileName:ASC"
+  sortBy: "fileName:ASC",
 });
 ```
 
@@ -73,7 +73,7 @@ Upload a custom file. The file must be a image or font.
 **Parameters**
 
 | Name       | Type          | Description                                  |
-|------------|---------------|----------------------------------------------|
+| ---------- | ------------- | -------------------------------------------- |
 | `fileName` | `string`      | The name of the file.                        |
 | `file`     | `ArrayBuffer` | The file to upload. Must be a image or font. |
 

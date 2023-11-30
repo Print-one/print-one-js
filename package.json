@@ -19,8 +19,9 @@
     "clean": "bsm",
     "format": "bsm",
     "lint": "bsm",
-    "test": "bsm test.coverage",
-    "semantic-release": "semantic-release"
+    "prepublishOnly": "bsm build",
+    "semantic-release": "semantic-release",
+    "test": "bsm test.coverage"
   },
   "types": "lib/index.d.ts",
   "dependencies": {

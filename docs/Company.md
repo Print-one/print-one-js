@@ -3,7 +3,7 @@ Contains all information about a given Company
 # Fields
 
 | Name                    | Type                  | Description                                       |
-|-------------------------|-----------------------|---------------------------------------------------|
+| ----------------------- | --------------------- | ------------------------------------------------- |
 | `id`                    | `string`              | The ID of the company.                            |
 | `firstName`             | `string`              | The first name of the contact person.             |
 | `lastName`              | `string`              | The last name of the contact person.              |
@@ -40,4 +40,3 @@ Get the company that the API key belongs to.
 ```js
 const company = await client.getSelf();
 ```
-

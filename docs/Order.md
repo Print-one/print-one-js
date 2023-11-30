@@ -3,7 +3,7 @@ Contains all information about a given Order
 # Fields
 
 | Name                  | Type                                 | Description                                                                                                                                                             |
-|-----------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`                  | `string`                             | The ID of the order.                                                                                                                                                    |
 | `companyId`           | `string`                             | The ID of the company the order belongs to.                                                                                                                             |
 | `templateId`          | `string`                             | The ID of the template the order is based on.                                                                                                                           |
@@ -47,7 +47,7 @@ Download the pdf of the order.
 **Parameters**
 
 | Name      | Type      | Default | Description                                                  |
-|-----------|-----------|---------|--------------------------------------------------------------|
+| --------- | --------- | ------- | ------------------------------------------------------------ |
 | `polling` | `boolean` | `true`  | Whether to poll the API until the pdf is ready.              |
 | `timeout` | `number`  | `20`    | The maximum time in seconds to wait for the pdf to be ready. |
 
@@ -68,7 +68,7 @@ Cancel the order. _Only possible when the order is not yet sent and finished pro
 **Parameters**
 
 | Name      | Type      | Default | Description                                                     |
-|-----------|-----------|---------|-----------------------------------------------------------------|
+| --------- | --------- | ------- | --------------------------------------------------------------- |
 | `polling` | `boolean` | `true`  | Whether to poll the API until the order is finished processing. |
 | `timeout` | `number`  | `20`    | The maximum time in seconds to wait for the order to cancel.    |
 
@@ -88,10 +88,10 @@ Create a new order.
 
 **Parameters**
 
-[//]: # (TODO: Add data description)
+[//]: # "TODO: Add data description"
 
 | Name   | Type     | Description                                                                          |
-|--------|----------|--------------------------------------------------------------------------------------|
+| ------ | -------- | ------------------------------------------------------------------------------------ |
 | `data` | `object` | The data to create the order with. See [`Order`](./Order#createOrder) for more info. |
 
 **Returns: [`Promise<Order>`](./Order)**
@@ -106,8 +106,8 @@ const order = await client.createOrder({
     address: "Example Street 2",
     city: "Anytown",
     postalCode: "1234AB",
-    country: "NL"
-  }
+    country: "NL",
+  },
 });
 ```
 
@@ -120,7 +120,7 @@ Get an order by its ID.
 **Parameters**
 
 | Name | Type     | Description                 |
-|------|----------|-----------------------------|
+| ---- | -------- | --------------------------- |
 | `id` | `string` | The ID of the order to get. |
 
 **Returns: [`Promise<Order>`](./Order)**
@@ -140,10 +140,10 @@ Get all orders.
 **Parameters**
 
 | Name                            | Type                          | Default          | Description                                                                                                                        |
-|---------------------------------|-------------------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------- | ----------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `options.limit`                 | `number`                      | `10`             | The maximum number of orders to return.                                                                                            |
 | `options.page`                  | `number`                      | `1`              | The page of orders to return.                                                                                                      |
-| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the orders by. Can be  `createdAt`, `anonymizedAt`, `updatedAt`, `friendlyStatus` or `sendDate`               |
+| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the orders by. Can be `createdAt`, `anonymizedAt`, `updatedAt`, `friendlyStatus` or `sendDate`                |
 | `options.filter.friendlyStatus` | `string` \| `string[]`        | `undefined`      | The friendly status(es) of the order(s) to filter by. Can be `Processing`, `Success`, `Sent`, `Scheduled`, `Cancelled` or `Failed` |
 | `options.filter.billingId`      | `string` \| `string[]`        | `undefined`      | The billing ID(s) of the order(s) to filter by.                                                                                    |
 | `options.filter.format`         | `string` \| `string[]`        | `undefined`      | The format(s) of the order(s) to filter by. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15`            |
@@ -168,9 +168,9 @@ const orders = await client.getOrders({
     isBillable: true,
     createdAt: {
       from: "2020-01-01",
-      to: "2020-01-31"
-    }
-  }
+      to: "2020-01-31",
+    },
+  },
 });
 ```
 
@@ -183,7 +183,7 @@ Contains all information about an address.
 ### Fields
 
 | Name          | Type     | Description                                 |
-|---------------|----------|---------------------------------------------|
+| ------------- | -------- | ------------------------------------------- |
 | `name`        | `string` | The name of the address.                    |
 | `address`     | `string` | The street and house number of the address. |
 | `adressLine2` | `string` | The second line of the address.             |

@@ -41,7 +41,7 @@ export class AxiosHTTP {
     url: string,
     options: AxiosRequestConfig = {},
   ): Promise<Uint8Array> {
-    const response = await this.client.request<Buffer>({
+    const response = await this.client.request<number[]>({
       method: "GET",
       url: url,
       responseType: "arraybuffer",
