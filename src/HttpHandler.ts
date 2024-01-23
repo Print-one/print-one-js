@@ -1,13 +1,14 @@
-import { Axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import debug from "debug";
 import { PrintOneError } from "./errors/PrintOneError";
+import { PrintOneOptions } from "./PrintOne";
 
-export class AxiosHTTP {
-  private readonly client: Axios;
-  private readonly debug: debug.Debugger;
+export abstract class HttpHandler<RequestOptions, Response> {
+  protected readonly debug: debug.Debugger;
 
-  constructor(client: Axios, debug: debug.Debugger) {
-    this.client = client;
+  constructor(token: string, protected readonly options: Required<PrintOneOptions>, debug: debug.Debugger) {
+    // We require these, so each extended class has type-safe auto-fill
+    token;
+
     this.debug = debug;
   }
   /**
@@ -15,97 +16,49 @@ export class AxiosHTTP {
    * @param url The url to perform the request to
    * @param options The options for the request
    */
-  public async GET<T>(
+  public abstract GET<T>(
     url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    const response = await this.client.request<T>({
-      method: "GET",
-      url: url,
-      ...options,
-    });
-
-    this.debug(`GET ${response.request.path}`);
-
-    this.handleErrors(response);
-
-    return response.data;
-  }
+    options?: RequestOptions,
+  ): Promise<T>;
 
   /**
    * Performs a GET request and returns the response as a ArrayBuffer.
    * @param url The url to perform the request to
    * @param options The options for the request
    */
-  public async GETBuffer(
+  public abstract GETBuffer(
     url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<Uint8Array> {
-    const response = await this.client.request<number[]>({
-      method: "GET",
-      url: url,
-      responseType: "arraybuffer",
-      ...options,
-    });
-
-    this.debug(`GET ${response.request.path}`);
-
-    this.handleErrors(response);
-
-    return Uint8Array.from(response.data);
-  }
+    options?: RequestOptions,
+  ): Promise<Uint8Array>;
 
   /**
    * Performs a POST request.
    * @param data The data to send with the request
    * @param options The options for the request
    */
-  public async POST<T>(
+  public abstract POST<T>(
     url: string,
     data: unknown,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    const response = await this.client.request<T>({
-      method: "POST",
-      url: url,
-      data: data,
-      ...options,
-    });
-
-    this.debug(`POST ${response.request.path}`);
-
-    this.handleErrors(response);
-
-    return response.data;
-  }
+    options?: RequestOptions,
+  ): Promise<T>;
 
   /**
    * Performs a DELETE request.
    * @param url The url to perform the request to
    * @param options The options for the request
    */
-  public async DELETE<T>(
+  public abstract DELETE<T>(
     url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<T> {
-    const response = await this.client.request<T>({
-      method: "DELETE",
-      url: url,
-      ...options,
-    });
+    options?: RequestOptions,
+  ): Promise<T>;
 
-    this.debug(`DELETE ${response.request.path}`);
+  protected handleErrors(response: Response) {
+    const res = response as { status: number; data: { statusCode?: number; message: string[] } }
 
-    this.handleErrors(response);
-
-    return response.data;
-  }
-
-  private handleErrors(response: AxiosResponse) {
-    if (response.status >= 400) {
+    if (res.status >= 400) {
       throw new PrintOneError(
-        response.data.statusCode ?? response.status,
-        response.data.message,
+        res.data.statusCode ?? res.status,
+        res.data.message,
       );
     }
   }
