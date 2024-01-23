@@ -1,7 +1,6 @@
 import { Company } from "./models/Company";
-import axios from "axios";
 import debug from "debug";
-import { AxiosHTTP } from "./HttpHandler";
+import { HttpHandler } from "./HttpHandler";
 import { ICompany } from "./models/_interfaces/ICompany";
 import {
   ContainsFilter,
@@ -24,19 +23,26 @@ import { CreateOrder, Order } from "./models/Order";
 import { IOrder } from "./models/_interfaces/IOrder";
 import { FriendlyStatus } from "./enums/Status";
 import { Format } from "./enums/Format";
+import { AxiosHTTPHandler } from "./AxiosHttpHandler";
+
+export type RequestHandler = new (token: string, options: Required<PrintOneOptions>, debug: debug.Debugger) => HttpHandler<unknown, unknown>;
 
 export type PrintOneOptions = Partial<{
   url: string;
   version: "v2";
+  
+  /** Overwrite the default client */
+  client?: RequestHandler;
 }>;
 
 const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
   url: "https://api.print.one/",
   version: "v2",
+  client: AxiosHTTPHandler
 };
 
 export type Protected = {
-  client: AxiosHTTP;
+  client: HttpHandler<unknown, unknown>;
   options: Required<PrintOneOptions>;
   debug: debug.Debugger;
   printOne: PrintOne;
@@ -47,36 +53,27 @@ export class PrintOne {
     debug: debug("print-one"),
     printOne: this,
   };
-  private get protected(): Protected {
+
+  protected get protected(): Protected {
     return this._protected as Protected;
   }
 
-  private get options(): Required<PrintOneOptions> {
+  protected get options(): Required<PrintOneOptions> {
     return this.protected.options;
   }
 
-  private get client(): AxiosHTTP {
+  protected get client(): HttpHandler<unknown, unknown> {
     return this.protected.client;
   }
 
-  private get debug(): debug.Debugger {
+  protected get debug(): debug.Debugger {
     return this.protected.debug;
   }
 
   // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
-    this._protected.options = { ...DEFAULT_OPTIONS, ...options };
-    this._protected.client = new AxiosHTTP(
-      axios.create({
-        baseURL: new URL(this.options.version, this.options.url).href + "/",
-        responseType: "json",
-        validateStatus: () => true,
-        headers: {
-          "x-api-key": token,
-        },
-      }),
-      this.debug,
-    );
+    this._protected.options = { ...DEFAULT_OPTIONS, ...options } as Required<PrintOneOptions>;
+    this._protected.client = new this._protected.options.client(token, this.options, this.debug);
 
     this.debug("Initialized");
   }
