@@ -53,26 +53,27 @@ export class PrintOne {
     debug: debug("print-one"),
     printOne: this,
   };
-  private get protected(): Protected {
+
+  protected get protected(): Protected {
     return this._protected as Protected;
   }
 
-  private get options(): Required<PrintOneOptions> {
+  protected get options(): Required<PrintOneOptions> {
     return this.protected.options;
   }
 
-  private get client(): HttpHandler<unknown, unknown> {
+  protected get client(): HttpHandler<unknown, unknown> {
     return this.protected.client;
   }
 
-  private get debug(): debug.Debugger {
+  protected get debug(): debug.Debugger {
     return this.protected.debug;
   }
 
   // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
     this._protected.options = { ...DEFAULT_OPTIONS, ...options } as Required<PrintOneOptions>;
-    this._protected.client = new this.options.client(token, this.options, this.debug);
+    this._protected.client = new this._protected.options.client(token, this.options, this.debug);
 
     this.debug("Initialized");
   }
