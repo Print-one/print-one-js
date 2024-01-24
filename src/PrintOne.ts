@@ -24,8 +24,10 @@ import { IOrder } from "./models/_interfaces/IOrder";
 import { FriendlyStatus } from "./enums/Status";
 import { Format } from "./enums/Format";
 import { AxiosHTTPHandler } from "./AxiosHttpHandler";
+import { CreateCsvOrder, CsvOrder } from "./models/CsvOrder";
+import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
 
-export type RequestHandler = new (token: string, options: Required<PrintOneOptions>, debug: debug.Debugger) => HttpHandler<unknown, unknown>;
+export type RequestHandler = new (token: string, options: Required<PrintOneOptions>, debug: debug.Debugger) => HttpHandler<{ headers: Record<string, string> }, unknown>;
 
 export type PrintOneOptions = Partial<{
   url: string;
@@ -46,6 +48,21 @@ export type Protected = {
   options: Required<PrintOneOptions>;
   debug: debug.Debugger;
   printOne: PrintOne;
+};
+
+export type OrderPaginatedQuery = PaginationOptions<
+"createdAt" | "anonymizedAt" | "updatedAt" | "friendlyStatus" | "sendDate"
+> & {
+filter?: {
+  friendlyStatus?: InFilter<FriendlyStatus>;
+  billingId?: InFilter;
+  format?: InFilter<Format>;
+  // finish?: InFilter<Finish>;
+  isBillable?: boolean;
+  createdAt?: DateFilter;
+  anonymizedAt?: DateFilter | boolean;
+  csvId?: InFilter;
+};
 };
 
 export class PrintOne {
@@ -238,6 +255,43 @@ export class PrintOne {
     return new Order(this.protected, response);
   }
 
+  public async createCsvOrder(data: CreateCsvOrder): Promise<CsvOrder> {
+    const templateId =
+      typeof data.template === "string" ? data.template : data.template.id;
+
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new Blob([data.file], { type: "text/csv" }),
+      "upload.csv",
+    );
+    formData.append("mapping", JSON.stringify(data.mapping));
+    formData.append(
+      "orderData",
+      JSON.stringify({
+      sender: data.sender,
+      templateId,
+      finish: data.finish,
+      billingId: data.billingId,
+      }),
+    );
+
+    const response = await this.client.POST<{ id: string }>(
+      "orders/csv",
+      formData,
+      {
+      headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    const id = response.id;
+    const csvInfo = await this.client.GET<ICsvOrder>(`orders/csv/${id}`);
+
+    return new CsvOrder(this.protected, csvInfo);
+  }
+
   /**
    * Get an order by its id.
    * @param { string } id The id of the order.
@@ -259,19 +313,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getOrders(
-    options: PaginationOptions<
-      "createdAt" | "anonymizedAt" | "updatedAt" | "friendlyStatus" | "sendDate"
-    > & {
-      filter?: {
-        friendlyStatus?: InFilter<FriendlyStatus>;
-        billingId?: InFilter;
-        format?: InFilter<Format>;
-        // finish?: InFilter<Finish>;
-        isBillable?: boolean;
-        createdAt?: DateFilter;
-        anonymizedAt?: DateFilter | boolean;
-      };
-    } = {},
+    options: OrderPaginatedQuery = {},
   ): Promise<PaginatedResponse<Order>> {
     let params = {
       ...sortToQuery(options),
@@ -280,6 +322,7 @@ export class PrintOne {
       ...inFilterToQuery("format", options.filter?.format),
       // ...inFilterToQuery("finish", options.filter?.finish),
       ...dateFilterToQuery("createdAt", options.filter?.createdAt),
+      ...inFilterToQuery("csvOrderId", options.filter?.csvId),
     };
 
     if (typeof options.filter?.isBillable === "boolean") {
@@ -287,7 +330,7 @@ export class PrintOne {
         ...params,
         "filter.isBillable": `$eq:${options.filter.isBillable}`,
       };
-    }
+    };
 
     if (typeof options.filter?.anonymizedAt === "boolean") {
       params = {
