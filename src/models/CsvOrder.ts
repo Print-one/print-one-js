@@ -50,7 +50,7 @@ export class CsvOrder {
     return this._data.mapping.recipient;
   }
 
-  public get mergeVariableMapping(): Record<string, unknown> {
+  public get mergeVariableMapping(): Record<string, string> {
     return this._data.mapping.mergeVariables;
   }
 
