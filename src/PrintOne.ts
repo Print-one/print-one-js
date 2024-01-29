@@ -25,12 +25,16 @@ import { FriendlyStatus } from "./enums/Status";
 import { Format } from "./enums/Format";
 import { AxiosHTTPHandler } from "./AxiosHttpHandler";
 
-export type RequestHandler = new (token: string, options: Required<PrintOneOptions>, debug: debug.Debugger) => HttpHandler<unknown, unknown>;
+export type RequestHandler = new (
+  token: string,
+  options: Required<PrintOneOptions>,
+  debug: debug.Debugger,
+) => HttpHandler<unknown, unknown>;
 
 export type PrintOneOptions = Partial<{
   url: string;
   version: "v2";
-  
+
   /** Overwrite the default client */
   client?: RequestHandler;
 }>;
@@ -38,7 +42,7 @@ export type PrintOneOptions = Partial<{
 const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
   url: "https://api.print.one/",
   version: "v2",
-  client: AxiosHTTPHandler
+  client: AxiosHTTPHandler,
 };
 
 export type Protected = {
@@ -72,8 +76,15 @@ export class PrintOne {
 
   // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
-    this._protected.options = { ...DEFAULT_OPTIONS, ...options } as Required<PrintOneOptions>;
-    this._protected.client = new this._protected.options.client(token, this.options, this.debug);
+    this._protected.options = {
+      ...DEFAULT_OPTIONS,
+      ...options,
+    } as Required<PrintOneOptions>;
+    this._protected.client = new this._protected.options.client(
+      token,
+      this.options,
+      this.debug,
+    );
 
     this.debug("Initialized");
   }

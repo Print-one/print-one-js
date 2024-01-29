@@ -5,7 +5,11 @@ import { PrintOneOptions } from "./PrintOne";
 export abstract class HttpHandler<RequestOptions, Response> {
   protected readonly debug: debug.Debugger;
 
-  constructor(token: string, protected readonly options: Required<PrintOneOptions>, debug: debug.Debugger) {
+  constructor(
+    token: string,
+    protected readonly options: Required<PrintOneOptions>,
+    debug: debug.Debugger,
+  ) {
     // We require these, so each extended class has type-safe auto-fill
     token;
 
@@ -16,10 +20,7 @@ export abstract class HttpHandler<RequestOptions, Response> {
    * @param url The url to perform the request to
    * @param options The options for the request
    */
-  public abstract GET<T>(
-    url: string,
-    options?: RequestOptions,
-  ): Promise<T>;
+  public abstract GET<T>(url: string, options?: RequestOptions): Promise<T>;
 
   /**
    * Performs a GET request and returns the response as a ArrayBuffer.
@@ -47,13 +48,13 @@ export abstract class HttpHandler<RequestOptions, Response> {
    * @param url The url to perform the request to
    * @param options The options for the request
    */
-  public abstract DELETE<T>(
-    url: string,
-    options?: RequestOptions,
-  ): Promise<T>;
+  public abstract DELETE<T>(url: string, options?: RequestOptions): Promise<T>;
 
   protected handleErrors(response: Response) {
-    const res = response as { status: number; data: { statusCode?: number; message: string[] } }
+    const res = response as {
+      status: number;
+      data: { statusCode?: number; message: string[] };
+    };
 
     if (res.status >= 400) {
       throw new PrintOneError(
