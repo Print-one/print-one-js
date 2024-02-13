@@ -3,10 +3,17 @@ import debug from "debug";
 import { HttpHandler } from "./HttpHandler";
 import { PrintOneOptions } from "./PrintOne";
 
-export class AxiosHTTPHandler extends HttpHandler<AxiosRequestConfig, AxiosResponse> {
+export class AxiosHTTPHandler extends HttpHandler<
+  AxiosRequestConfig,
+  AxiosResponse
+> {
   private readonly client: Axios;
 
-  constructor(token: string, options: Required<PrintOneOptions>, debug: debug.Debugger) {
+  constructor(
+    token: string,
+    options: Required<PrintOneOptions>,
+    debug: debug.Debugger,
+  ) {
     super(token, options, debug);
     this.client = axios.create({
       baseURL: new URL(options.version, options.url).href + "/",

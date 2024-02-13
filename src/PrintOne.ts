@@ -27,12 +27,16 @@ import { AxiosHTTPHandler } from "./AxiosHttpHandler";
 import { CreateCsvOrder, CsvOrder } from "./models/CsvOrder";
 import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
 
-export type RequestHandler = new (token: string, options: Required<PrintOneOptions>, debug: debug.Debugger) => HttpHandler<{ headers: Record<string, string> }, unknown>;
+export type RequestHandler = new (
+  token: string,
+  options: Required<PrintOneOptions>,
+  debug: debug.Debugger,
+) => HttpHandler<string, unknown>;
 
 export type PrintOneOptions = Partial<{
   url: string;
   version: "v2";
-  
+
   /** Overwrite the default client */
   client?: RequestHandler;
 }>;
@@ -40,7 +44,7 @@ export type PrintOneOptions = Partial<{
 const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
   url: "https://api.print.one/",
   version: "v2",
-  client: AxiosHTTPHandler
+  client: AxiosHTTPHandler,
 };
 
 export type Protected = {
@@ -89,8 +93,15 @@ export class PrintOne {
 
   // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
-    this._protected.options = { ...DEFAULT_OPTIONS, ...options } as Required<PrintOneOptions>;
-    this._protected.client = new this._protected.options.client(token, this.options, this.debug);
+    this._protected.options = {
+      ...DEFAULT_OPTIONS,
+      ...options,
+    } as Required<PrintOneOptions>;
+    this._protected.client = new this._protected.options.client(
+      token,
+      this.options,
+      this.debug,
+    );
 
     this.debug("Initialized");
   }
