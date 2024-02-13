@@ -31,8 +31,7 @@ export type RequestHandler = new (
   token: string,
   options: Required<PrintOneOptions>,
   debug: debug.Debugger,
-) => HttpHandler<string, unknown>;
-
+) => HttpHandler<{ headers: Record<string, string> }, unknown>;
 export type PrintOneOptions = Partial<{
   url: string;
   version: "v2";
@@ -55,18 +54,18 @@ export type Protected = {
 };
 
 export type OrderPaginatedQuery = PaginationOptions<
-"createdAt" | "anonymizedAt" | "updatedAt" | "friendlyStatus" | "sendDate"
+  "createdAt" | "anonymizedAt" | "updatedAt" | "friendlyStatus" | "sendDate"
 > & {
-filter?: {
-  friendlyStatus?: InFilter<FriendlyStatus>;
-  billingId?: InFilter;
-  format?: InFilter<Format>;
-  // finish?: InFilter<Finish>;
-  isBillable?: boolean;
-  createdAt?: DateFilter;
-  anonymizedAt?: DateFilter | boolean;
-  csvId?: InFilter;
-};
+  filter?: {
+    friendlyStatus?: InFilter<FriendlyStatus>;
+    billingId?: InFilter;
+    format?: InFilter<Format>;
+    // finish?: InFilter<Finish>;
+    isBillable?: boolean;
+    createdAt?: DateFilter;
+    anonymizedAt?: DateFilter | boolean;
+    csvId?: InFilter;
+  };
 };
 
 export class PrintOne {
@@ -280,10 +279,10 @@ export class PrintOne {
     formData.append(
       "orderData",
       JSON.stringify({
-      sender: data.sender,
-      templateId,
-      finish: data.finish,
-      billingId: data.billingId,
+        sender: data.sender,
+        templateId,
+        finish: data.finish,
+        billingId: data.billingId,
       }),
     );
 
@@ -291,7 +290,7 @@ export class PrintOne {
       "orders/csv",
       formData,
       {
-      headers: {
+        headers: {
           "Content-Type": "multipart/form-data",
         },
       },
@@ -341,7 +340,7 @@ export class PrintOne {
         ...params,
         "filter.isBillable": `$eq:${options.filter.isBillable}`,
       };
-    };
+    }
 
     if (typeof options.filter?.anonymizedAt === "boolean") {
       params = {
