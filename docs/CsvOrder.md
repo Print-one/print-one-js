@@ -1,0 +1,98 @@
+Contains all information about a given CsvOrder
+
+# Fields
+
+| Name                  | Type                                 | Description                                                                                                                                                             |
+| --------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                  | `string`                             | The ID of the order.                                                                                                                                                    |
+| `templateId`          | `string`                             | The ID of the template the order is based on.                                                                                                                           |
+| `finish`              | `string`                             | The finish of the order. Can be `GLOSSY` or `MATT`.                                                                                                                     |
+| `format`              | `string`                             | The format of the order. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15`.                                                                   |
+| `mergeVariableMapping`      | `object`                       | The merge variables of the order. Keys are the merge variable names.                                                                                                    |
+| `sender`              | [`Address`](#Address) \| `undefined` | The sender of the order.                                                                                                                                                |
+| `recipientMapping`    | [`Address`](#Address)                | The mapping of the recipient.                                                                                                                                             |
+| `definitiveCountryId` | `string`                             | The ID of the definitive country of the order.                                                                                                                          |
+| `billingId`           | `string` \| `undefined`              | The ID assigned to the csv order by the customer.                                                                                                                           |
+| `isBillable`          | `boolean`                            | Whether the csv order is billable. True when an live API key is used, false when a test API key is used.                                                                    |
+| `status`              | `string`                             | The status of the csv order. Can be `order_created` or `order_processed` |
+| `friendlyStatus`      | `string`                             | The friendly status of the csv order. Can be `Processing` or `Success`                                                      |
+| `estimatedOrderCount` | `number`                             | The amount of initial orders in the CSV
+| `failedOrderCount`    | `number`                             | The amount of orders which have failed to be processed
+| `processedOrderCount` | `number`                             | The amount of orders which have successfully been processed
+| `totalOrderCount`     | `number`                             | The total amount of orders failed or processed
+| `sendDate`            | `Date`                               | The date the order will be sent on.                                                                                                                                     |
+| `createdAt`           | `Date`                               | The date and time the order was created.                                                                                                                                |
+| `updatedAt`           | `Date`                               | The date and time the order was last updated.                                                                                                                           |
+
+# Methods
+
+## `.getTemplate()`
+
+Get the template the order is based on. Uses [`PrintOne.getTemplate()`](./PrintOne#gettemplateid).
+
+**Returns: [`Promise<Template>`](./Template)**
+
+**Example**
+
+```js
+const order = await client.getOrder("example-order-id");
+const template = await order.getTemplate();
+```
+
+---
+
+## `.refresh()`
+
+Refresh the CsvOrder data to get the latest information
+
+**Returns: `Promise<void>`**
+
+**Example**
+
+```js
+const csvOrder: CsvOrder;
+await csvOrder.refresh();
+```
+
+---
+
+## [`CsvOrder.getOrders([options])`](./PrintOne#getordersoptions)
+
+Get all orders generated by the CSV.
+
+**Parameters**
+
+| Name                            | Type                          | Default          | Description                                                                                                                        |
+| ------------------------------- | ----------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `options.limit`                 | `number`                      | `10`             | The maximum number of orders to return.                                                                                            |
+| `options.page`                  | `number`                      | `1`              | The page of orders to return.                                                                                                      |
+| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the orders by. Can be `createdAt`, `anonymizedAt`, `updatedAt`, `friendlyStatus` or `sendDate`                |
+| `options.filter.friendlyStatus` | `string` \| `string[]`        | `undefined`      | The friendly status(es) of the order(s) to filter by. Can be `Processing`, `Success`, `Sent`, `Scheduled`, `Cancelled` or `Failed` |
+| `options.filter.billingId`      | `string` \| `string[]`        | `undefined`      | The billing ID(s) of the order(s) to filter by.                                                                                    |
+| `options.filter.format`         | `string` \| `string[]`        | `undefined`      | The format(s) of the order(s) to filter by. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15`            |
+| `options.filter.finish`         | `string` \| `string[]`        | `undefined`      | The finish(es) of the order(s) to filter by. Can be `GLOSSY` or `MATTE`                                                            |
+| `options.filter.isBillable`     | `boolean`                     | `undefined`      | Whether the order(s) are live order or test orders.                                                                                |
+| `options.filter.createdAt`      | [`date`](./Filtering#Date)    | `undefined`      | The date(s) the order(s) were created on.                                                                                          |
+
+**Returns: [`Promise<PaginatedResponse<Order>>`](./Order)**
+
+**Example**
+
+```js
+const orders = await csvOrder.getOrders({
+  limit: 20,
+  page: 1,
+  sortBy: "createdAt:ASC",
+  filter: {
+    friendlyStatus: "Success",
+    billingId: "example-billing-id",
+    format: Format.POSTCARD_A5,
+    finish: Finish.GLOSSY,
+    isBillable: true,
+    createdAt: {
+      from: "2020-01-01",
+      to: "2020-01-31",
+    },
+  },
+});
+```
