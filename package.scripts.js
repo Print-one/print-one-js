@@ -17,6 +17,7 @@ module.exports = {
     },
     test: {
       $env: "file:.env",
+      _ci: "jest --runInBand",
       _default: "jest",
       coverage: "bsm ~ -- --coverage",
     },
