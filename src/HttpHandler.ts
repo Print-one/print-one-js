@@ -34,10 +34,23 @@ export abstract class HttpHandler<RequestOptions, Response> {
 
   /**
    * Performs a POST request.
+   * @param url The url to perform the request to
    * @param data The data to send with the request
    * @param options The options for the request
    */
   public abstract POST<T>(
+    url: string,
+    data: unknown,
+    options?: RequestOptions,
+  ): Promise<T>;
+
+  /**
+   * Performs a PATCH request.
+   * @param url The url to perform the request to
+   * @param data The data to send with the request
+   * @param options The options for the request
+   */
+  public abstract PATCH<T>(
     url: string,
     data: unknown,
     options?: RequestOptions,

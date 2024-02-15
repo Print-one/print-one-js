@@ -252,8 +252,8 @@ Create a new csv order.
 
 **Parameters**
 
-| Name   | Type     | Description                                                                              |
-| ------ | -------- | ---------------------------------------------------------------------------------------- |
+| Name   | Type     | Description                                                                                       |
+| ------ | -------- | ------------------------------------------------------------------------------------------------- |
 | `data` | `object` | The data to create the order with. See [`CsvOrder`](./CsvOrder#createcsvorderdata) for more info. |
 
 **Returns: [`Promise<CsvOrder>`](./CsvOrder)**
@@ -262,20 +262,121 @@ Create a new csv order.
 
 ```js
 const order = await client.createCsvOrder({
-   mapping: {
-      recipient: {
-        city: "{{City}}",
-        name: "{{FirstName}} {{LastName}}",
-        address: "{{Street}} {{HouseNr}}",
-        country: "{{Country}}",
-        postalCode: "{{ZIP}}",
-      },
-      mergeVariables: {
-        name: "{{FirstName}}",
-        coupon: "{{Coupon}}",
-      },
+  mapping: {
+    recipient: {
+      city: "{{City}}",
+      name: "{{FirstName}} {{LastName}}",
+      address: "{{Street}} {{HouseNr}}",
+      country: "{{Country}}",
+      postalCode: "{{ZIP}}",
     },
-    template: template,
-    file: file,
+    mergeVariables: {
+      name: "{{FirstName}}",
+      coupon: "{{Coupon}}",
+    },
+  },
+  template: template,
+  file: file,
+});
+```
+
+---
+
+## `.createBatch(data)`
+
+Create a new batch.
+
+**Parameters**
+
+| Name             | Type                                 | Description                                          |
+| ---------------- | ------------------------------------ | ---------------------------------------------------- |
+| `data.name`      | `string`                             | The name of the batch.                               |
+| `data.billingId` | `string` \| `undefined`              | The billing ID of the batch.                         |
+| `data.template`  | `string` \| [`Template`](./Template) | The template of the batch.                           |
+| `data.finish`    | `string`                             | The finish of the batch. Can be `GLOSSY` or `MATTE`. |
+| `data.ready'     | `boolean` \| `Date`                  | The date the batch is ready.                         |
+
+**Returns: [`Promise<Batch>`](./Batch)**
+
+**Example**
+
+```js
+const batch = await client.createBatch({
+  name: "Example Batch",
+  billingId: "example-billing-id",
+  template: "example-template-id",
+  finish: Finish.GLOSSY,
+  ready: true,
+});
+```
+
+---
+
+## `.getBatch(id)`
+
+Get a batch by its ID.
+
+**Parameters**
+
+| Name | Type     | Description                 |
+| ---- | -------- | --------------------------- |
+| `id` | `string` | The ID of the batch to get. |
+
+**Returns: [`Promise<Batch>`](./Batch)**
+
+**Example**
+
+```js
+const batch = await client.getBatch("example-batch-id");
+```
+
+---
+
+## `.getBatches([options])`
+
+Get all batches.
+
+**Parameters**
+
+| Name                       | Type                                                                            | Default          | Description                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `options.limit`            | `number`                                                                        | `10`             | The maximum number of batches to return.                                                                |
+| `options.page`             | `number`                                                                        | `1`              | The page of batches to return.                                                                          |
+| `options.sortBy`           | [`sort`](./Filtering#Sorting)                                                   | `createdAt:DESC` | The field(s) to sort the batches by. Can be `createdAt`, `updatedAt`, `billingId`, `sendDate` or `name` |
+| `options.filter.billingId` | `string` \| `string[]`                                                          | `undefined`      | The billing ID(s) of the batch(es) to filter by.                                                        |
+| `options.filter.name`      | `string` \| `string[]`                                                          | `undefined`      | The name(s) of the batch(es) to filter by.                                                              |
+| `options.filter.createdAt` | [`date`](./Filtering#Date)                                                      | `undefined`      | The date(s) the batch(es) were created on.                                                              |
+| `options.filter.updatedAt` | [`date`](./Filtering#Date)                                                      | `undefined`      | The date(s) the batch(es) were updated on.                                                              |
+| `options.filter.sendDate`  | [`date`](./Filtering#Date)                                                      | `undefined`      | The date(s) the batch(es) were sent on.                                                                 |
+| `options.filter.finish`    | `string` \| `string[]`                                                          | `undefined`      | The finish(es) of the batch(es) to filter by. Can be `GLOSSY` or `MATTE`                                |
+| `options.filter.templates` | `string` \| `string[]` \| [`Template`](./Template)\| [`Template[]`](./Template) | `undefined`      | The template(s) of the batch(es) to filter by.                                                          |
+
+**Returns: [`Promise<PaginatedResponse<Batch>>`](./Batch)**
+
+**Example**
+
+```js
+const batches = await client.getBatches({
+  limit: 20,
+  page: 1,
+  sortBy: "createdAt:ASC",
+  filter: {
+    billingId: "example-billing-id",
+    name: "Example Batch",
+    createdAt: {
+      from: "2020-01-01",
+      to: "2020-01-31",
+    },
+    updatedAt: {
+      from: "2020-01-01",
+      to: "2020-01-31",
+    },
+    sendDate: {
+      from: "2020-01-01",
+      to: "2020-01-31",
+    },
+    finish: Finish.GLOSSY,
+    templates: "example-template-id",
+  },
 });
 ```

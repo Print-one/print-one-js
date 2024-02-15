@@ -119,7 +119,7 @@ export class CsvOrder {
   public async getOrders(
     args: Omit<OrderPaginatedQuery, "filter"> & {
       filter?: Omit<OrderPaginatedQuery["filter"], "csvId">;
-    },
+    } = {},
   ): Promise<PaginatedResponse<Order>> {
     return this._protected.printOne.getOrders({
       ...args,
