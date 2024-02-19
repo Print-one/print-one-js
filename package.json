@@ -25,6 +25,7 @@
   },
   "types": "lib/index.d.ts",
   "dependencies": {
+    "@jest/test-sequencer": "^29.7.0",
     "axios": "^1.6.6",
     "debug": "^4.3.4"
   },
