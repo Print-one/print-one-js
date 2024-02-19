@@ -311,11 +311,11 @@ export class PrintOne {
   /**
    * Get an order by its id.
    * @param { string } id The id of the order.
-   * @param url The url to use for this request
+   * @param basePath The basePath to use for this request
    * @throws { PrintOneError } If the order could not be found.
    */
-  public async getOrder(id: string, url = "orders"): Promise<Order> {
-    const data = await this.client.GET<IOrder>(`${url}/${id}`);
+  public async getOrder(id: string, basePath = "orders"): Promise<Order> {
+    const data = await this.client.GET<IOrder>(`${basePath}/${id}`);
 
     return new Order(this.protected, data);
   }
@@ -327,12 +327,12 @@ export class PrintOne {
    * @param options.page The page to return.
    * @param options.sortBy The fields to sort by, can be "createdAt", "anonymizedAt", "updatedAt", "friendlyStatus", "sendDate".
    * @param options.filter The filters to apply.
-   * @param url The url to use for this request
+   * @param basePath The basePath to use for this request
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getOrders(
     options: OrderPaginatedQuery = {},
-    url = "orders",
+    basePath = "orders",
   ): Promise<PaginatedResponse<Order>> {
     let params = {
       ...sortToQuery(options),
@@ -369,7 +369,7 @@ export class PrintOne {
       };
     }
 
-    const data = await this.client.GET<IPaginatedResponse<IOrder>>(url, {
+    const data = await this.client.GET<IPaginatedResponse<IOrder>>(basePath, {
       params,
     });
 

@@ -77,12 +77,7 @@ export class Batch {
     failed: number;
     cancelled: number;
   } {
-    return {
-      processing: this._data.orders.processing,
-      success: this._data.orders.success,
-      failed: this._data.orders.failed,
-      cancelled: this._data.orders.cancelled,
-    };
+    return this._data.orders;
   }
 
   public get createdAt(): Date {
