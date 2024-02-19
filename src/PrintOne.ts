@@ -7,6 +7,8 @@ import {
   containsFilterToQuery,
   DateFilter,
   dateFilterToQuery,
+  EqualsFilter,
+  equalsFilterToQuery,
   InFilter,
   inFilterToQuery,
   invertedFilterToQuery,
@@ -26,6 +28,8 @@ import { Format } from "./enums/Format";
 import { AxiosHTTPHandler } from "./AxiosHttpHandler";
 import { CreateCsvOrder, CsvOrder } from "./models/CsvOrder";
 import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
+import { Batch, CreateBatch } from "./models/Batch";
+import { IBatch } from "./models/_interfaces/IBatch";
 
 export type RequestHandler = new (
   token: string,
@@ -65,6 +69,7 @@ export type OrderPaginatedQuery = PaginationOptions<
     createdAt?: DateFilter;
     anonymizedAt?: DateFilter | boolean;
     csvId?: InFilter;
+    batchId?: EqualsFilter;
   };
 };
 
@@ -243,6 +248,7 @@ export class PrintOne {
 
   /**
    * Create an order
+   * @param data The order data
    */
   public async createOrder(data: CreateOrder): Promise<Order> {
     const templateId =
@@ -305,10 +311,11 @@ export class PrintOne {
   /**
    * Get an order by its id.
    * @param { string } id The id of the order.
+   * @param basePath The basePath to use for this request
    * @throws { PrintOneError } If the order could not be found.
    */
-  public async getOrder(id: string): Promise<Order> {
-    const data = await this.client.GET<IOrder>(`orders/${id}`);
+  public async getOrder(id: string, basePath = "orders"): Promise<Order> {
+    const data = await this.client.GET<IOrder>(`${basePath}/${id}`);
 
     return new Order(this.protected, data);
   }
@@ -320,10 +327,12 @@ export class PrintOne {
    * @param options.page The page to return.
    * @param options.sortBy The fields to sort by, can be "createdAt", "anonymizedAt", "updatedAt", "friendlyStatus", "sendDate".
    * @param options.filter The filters to apply.
+   * @param basePath The basePath to use for this request
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getOrders(
     options: OrderPaginatedQuery = {},
+    basePath = "orders",
   ): Promise<PaginatedResponse<Order>> {
     let params = {
       ...sortToQuery(options),
@@ -333,6 +342,7 @@ export class PrintOne {
       // ...inFilterToQuery("finish", options.filter?.finish),
       ...dateFilterToQuery("createdAt", options.filter?.createdAt),
       ...inFilterToQuery("csvOrderId", options.filter?.csvId),
+      ...equalsFilterToQuery("batchId", options.filter?.batchId),
     };
 
     if (typeof options.filter?.isBillable === "boolean") {
@@ -359,7 +369,7 @@ export class PrintOne {
       };
     }
 
-    const data = await this.client.GET<IPaginatedResponse<IOrder>>("orders", {
+    const data = await this.client.GET<IPaginatedResponse<IOrder>>(basePath, {
       params,
     });
 
@@ -367,6 +377,116 @@ export class PrintOne {
       this.protected,
       data,
       (data) => new Order(this.protected, data),
+    );
+  }
+
+  /**
+   * Create a batch
+   * @param data The batch data
+   */
+  public async createBatch(data: CreateBatch): Promise<Batch> {
+    const ready =
+      data.ready instanceof Date ? data.ready.toISOString() : data.ready;
+    const templateId =
+      typeof data.template === "string" ? data.template : data.template.id;
+
+    const response = await this.client.POST<IBatch>("batches", {
+      name: data.name,
+      billingId: data.billingId,
+      templateId: templateId,
+      finish: data.finish,
+      ready: ready ? ready : null,
+    });
+
+    return new Batch(this.protected, response);
+  }
+
+  /**
+   * Get a batch by its id.
+   * @param { string } id The id of the batch.
+   * @throws { PrintOneError } If the batch could not be found.
+   */
+  public async getBatch(id: string): Promise<Batch> {
+    const data = await this.client.GET<IBatch>(`batches/${id}`);
+
+    return new Batch(this.protected, data);
+  }
+
+  /**
+   * Get all batches.
+   * @param { PaginationOptions } options The options to use for pagination
+   * @param options.limit The maximum amount of batches to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, can be "createdAt", "updatedAt".
+   * @param options.filter The filters to apply.
+   * @throws { PrintOneError } If the batch could not be found.
+   */
+  public async getBatches(
+    options: PaginationOptions<
+      "createdAt" | "updatedAt" | "billingId" | "sendDate" | "name"
+    > & {
+      filter?: {
+        billingId?: InFilter;
+        name?: InFilter;
+        createdAt?: DateFilter;
+        updatedAt?: DateFilter;
+        sendDate?: DateFilter | boolean;
+        finish?: InFilter;
+        templates?: InFilter<string | Template>;
+        //TODO format, status, isBillable
+      };
+    } = {},
+  ): Promise<PaginatedResponse<Batch>> {
+    let params = {
+      ...sortToQuery(options),
+      ...inFilterToQuery("billingId", options.filter?.billingId),
+      ...inFilterToQuery("name", options.filter?.name),
+      ...dateFilterToQuery("createdAt", options.filter?.createdAt),
+      ...dateFilterToQuery("updatedAt", options.filter?.updatedAt),
+      ...inFilterToQuery("finish", options.filter?.finish),
+    };
+
+    if (options.filter?.templates) {
+      if (!Array.isArray(options.filter.templates)) {
+        options.filter.templates = [options.filter.templates];
+      }
+
+      params = {
+        ...params,
+        ...inFilterToQuery(
+          "templateId",
+          options.filter.templates.map((template) =>
+            typeof template === "string" ? template : template.id,
+          ),
+        ),
+      };
+    }
+
+    if (typeof options.filter?.sendDate === "boolean") {
+      params = {
+        ...params,
+        ...invertedFilterToQuery(
+          "sendDate",
+          options.filter.sendDate,
+          "$null",
+          true,
+        ),
+      };
+    } else {
+      params = {
+        ...params,
+        ...dateFilterToQuery("sendDate", options.filter?.sendDate),
+      };
+    }
+
+    const data = await this.client.GET<IPaginatedResponse<IBatch>>("batches", {
+      params: params,
+    });
+
+    return PaginatedResponse.safe(
+      this.protected,
+      data,
+      (data) => new Batch(this.protected, data),
     );
   }
 }

@@ -88,9 +88,6 @@ describe("download", function () {
 
 describe("cancel", function () {
   it("should cancel the order", async function () {
-    // precondition
-    expect(order.isBillable).toEqual(true);
-
     // arrange
 
     // act

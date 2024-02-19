@@ -1,5 +1,6 @@
-import PrintOne, { CustomFile, Preview, Protected } from "../src";
+import PrintOne, { Batch, CustomFile, Preview, Protected } from "../src";
 import { HttpHandler } from "../src/HttpHandler";
+import { IBatch } from "../src/models/_interfaces/IBatch";
 
 class CustomHttpHandler extends HttpHandler<unknown, unknown> {
   public override GET<T>(): Promise<T> {
@@ -7,6 +8,9 @@ class CustomHttpHandler extends HttpHandler<unknown, unknown> {
   }
   public override GETBuffer(): Promise<Uint8Array> {
     return Promise.reject(new Error("Custom GETBuffer request handler"));
+  }
+  public override PATCH<T>(): Promise<T> {
+    return Promise.reject(new Error("Custom PATCH request handler"));
   }
   public override POST<T>(): Promise<T> {
     return Promise.reject(new Error("Custom POST request handler"));
@@ -69,5 +73,14 @@ describe("custom HttpHandler is used when provided to PrintOne instance", () => 
     await expect(customFile.delete()).rejects.toThrow(
       "Custom DELETE request handler",
     );
+  });
+
+  it("custom PATCH method should be called", async () => {
+    const batch = new Batch(printOne.protected, {} as unknown as IBatch);
+    await expect(
+      batch.update({
+        ready: true,
+      }),
+    ).rejects.toThrow("Custom PATCH request handler");
   });
 });

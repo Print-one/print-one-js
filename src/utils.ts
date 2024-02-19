@@ -148,3 +148,18 @@ export function dateFilterToQuery(
 
   return query;
 }
+
+export type EqualsFilter<T = string> = T | null;
+
+export function equalsFilterToQuery(
+  field: string,
+  value: undefined | EqualsFilter,
+): Record<string, unknown> {
+  if (value === undefined) {
+    return {};
+  }
+
+  return {
+    [`filter.${field}`]: value === null ? "$null" : `$eq:${value}`,
+  };
+}
