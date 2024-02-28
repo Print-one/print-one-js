@@ -30,6 +30,7 @@ import { CreateCsvOrder, CsvOrder } from "./models/CsvOrder";
 import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
 import { Batch, CreateBatch } from "./models/Batch";
 import { IBatch } from "./models/_interfaces/IBatch";
+import { BatchStatus } from "./enums/BatchStatus";
 
 export type RequestHandler = new (
   token: string,
@@ -433,7 +434,9 @@ export class PrintOne {
         sendDate?: DateFilter | boolean;
         finish?: InFilter;
         templates?: InFilter<string | Template>;
-        //TODO format, status, isBillable
+        format?: InFilter;
+        status?: InFilter<BatchStatus>;
+        isBillable?: InFilter;
       };
     } = {},
   ): Promise<PaginatedResponse<Batch>> {
@@ -444,7 +447,16 @@ export class PrintOne {
       ...dateFilterToQuery("createdAt", options.filter?.createdAt),
       ...dateFilterToQuery("updatedAt", options.filter?.updatedAt),
       ...inFilterToQuery("finish", options.filter?.finish),
+      ...inFilterToQuery("format", options.filter?.format),
+      ...inFilterToQuery("status", options.filter?.status),
     };
+
+    if (typeof options.filter?.isBillable === "boolean") {
+      params = {
+        ...params,
+        "filter.isBillable": `$eq:${options.filter.isBillable}`,
+      };
+    }
 
     if (options.filter?.templates) {
       if (!Array.isArray(options.filter.templates)) {
