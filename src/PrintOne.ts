@@ -436,7 +436,7 @@ export class PrintOne {
         templates?: InFilter<string | Template>;
         format?: InFilter;
         status?: InFilter<BatchStatus>;
-        isBillable?: InFilter;
+        isBillable?: boolean;
       };
     } = {},
   ): Promise<PaginatedResponse<Batch>> {

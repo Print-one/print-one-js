@@ -1562,6 +1562,28 @@ describe("getBatches", function () {
     expect(batch.billingId).toEqual("test");
   });
 
+  it("should apply the isBillable filter", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        isBillable: true,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No orders found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.isBillable).toEqual(true);
+  });
+
   it("should apply the name filter", async function () {
     // arrange
     const batchName = (await client.getBatches()).data[1]?.name ?? "test";
