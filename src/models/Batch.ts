@@ -7,6 +7,7 @@ import { PaginatedResponse } from "./PaginatedResponse";
 import { Order } from "./Order";
 import { Address } from "./Address";
 import { IOrder } from "./_interfaces/IOrder";
+import { Format } from "src/enums/Format";
 
 export type CreateBatch = {
   name: string;
@@ -49,6 +50,10 @@ export class Batch {
 
   public get finish(): Finish {
     return this._data.finish as Finish;
+  }
+
+  public get format(): Format {
+    return this._data.format as Format;
   }
 
   public get isBillable(): boolean {
