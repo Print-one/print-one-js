@@ -7,6 +7,8 @@ import { PaginatedResponse } from "./PaginatedResponse";
 import { Order } from "./Order";
 import { Address } from "./Address";
 import { IOrder } from "./_interfaces/IOrder";
+import { CreateBatchCsvOrder, CsvOrder } from "./CsvOrder";
+import { ICsvOrder } from "./_interfaces/ICsvOrder";
 
 export type CreateBatch = {
   name: string;
@@ -142,6 +144,33 @@ export class Batch {
     );
 
     return new Order(this._protected, data);
+  }
+
+  public async createCsvOrder(data: CreateBatchCsvOrder): Promise<CsvOrder> {
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new Blob([data.file], { type: "text/csv" }),
+      "upload.csv",
+    );
+    formData.append("mapping", JSON.stringify(data.mapping));
+
+    const response = await this._protected.client.POST<{ id: string }>(
+      `/batches/${this.id}/orders/csv`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    const id = response.id;
+    const csvInfo = await this._protected.client.GET<ICsvOrder>(
+      `batches/${this.id}/orders/csv/${id}`,
+    );
+
+    return new CsvOrder(this._protected, csvInfo);
   }
 
   /**

@@ -20,6 +20,8 @@ export type CreateCsvOrder = {
   sender?: Address;
 };
 
+export type CreateBatchCsvOrder = Pick<CreateCsvOrder, "file" | "mapping">;
+
 export class CsvOrder {
   private _data: ICsvOrder;
 
