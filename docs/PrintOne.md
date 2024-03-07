@@ -279,3 +279,24 @@ const order = await client.createCsvOrder({
     file: file,
 });
 ```
+
+---
+
+## `.getCsvOrder(id)`
+
+Get a csv order by its ID.
+
+**Parameters**
+
+| Name | Type     | Description                     |
+| ---- | -------- | ------------------------------- |
+| `id` | `string` | The ID of the csv order to get. |
+
+**Returns: [`Promise<CsvOrder>`](./CsvOrder)**
+
+**Example**
+
+```js
+const csvOrder = await client.getCsvOrder("example-order-id");
+```
+```
