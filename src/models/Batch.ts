@@ -174,6 +174,16 @@ export class Batch {
   }
 
   /**
+   * Get a csv order by its id.
+   * @param { string } id The id of the csv order.
+   * @param basePath The basePath to use for this request
+   * @throws { PrintOneError } If the order could not be found.
+   */
+  public async getCsvOrder(id: string): Promise<CsvOrder> {
+    return this._protected.printOne.getCsvOrder(id, `batches/${this.id}`);
+  }
+
+  /**
    * Update the batch
    *
    * <i>Note: Only the `ready` field can be updated.</i>
