@@ -282,6 +282,26 @@ const order = await client.createCsvOrder({
 
 ---
 
+## `.getCsvOrder(id)`
+
+Get a csv order by its ID.
+
+**Parameters**
+
+| Name | Type     | Description                     |
+| ---- | -------- | ------------------------------- |
+| `id` | `string` | The ID of the csv order to get. |
+
+**Returns: [`Promise<CsvOrder>`](./CsvOrder)**
+
+**Example**
+
+```js
+const csvOrder = await client.getCsvOrder("example-order-id");
+```
+
+---
+
 ## `.createBatch(data)`
 
 Create a new batch.
