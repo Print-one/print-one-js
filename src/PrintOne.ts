@@ -309,6 +309,18 @@ export class PrintOne {
   }
 
   /**
+   * Get a csv order by its id.
+   * @param { string } id The id of the csv order.
+   * @param basePath The basePath to use for this request
+   * @throws { PrintOneError } If the order could not be found.
+   */
+  public async getCsvOrder(id: string, basePath = "orders"): Promise<CsvOrder> {
+    const data = await this.client.GET<ICsvOrder>(`${basePath}/csv/${id}`);
+
+    return new CsvOrder(this.protected, data);
+  }
+
+  /**
    * Get an order by its id.
    * @param { string } id The id of the order.
    * @param basePath The basePath to use for this request
