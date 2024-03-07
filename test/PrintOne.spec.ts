@@ -809,6 +809,61 @@ describe("createCsvOrder", function () {
   });
 });
 
+describe("getCsvOrder", function () {
+  let csvOrderId: string = null as unknown as string;
+  const mapping: CreateCsvOrder["mapping"] = {
+    recipient: {
+      city: "{{City}}",
+      name: "{{FirstName}} {{LastName}}",
+      address: "{{Street}} {{HouseNr}}",
+      country: "{{Country}}",
+      postalCode: "{{ZIP}}",
+    },
+  };
+
+  beforeAll(async () => {
+    const file = fs.readFileSync(path.join(__dirname, "assets/test.csv"));
+
+    const csvOrder = await client.createCsvOrder({
+      mapping: mapping,
+      template: template,
+      finish: Finish.GLOSSY,
+      file: file,
+    });
+
+    csvOrderId = csvOrder.id;
+  });
+
+  it("should get a csv order with all fields", async function () {
+    // arrange
+
+    // act
+    const csvOrder = await client.getCsvOrder(csvOrderId);
+
+    // assert
+    expect(csvOrder).toBeDefined();
+    expect(csvOrder.id).toEqual(expect.any(String));
+    expect(csvOrder.status).toEqual(expect.any(String));
+    expect(csvOrder.createdAt).toEqual(expect.any(Date));
+    expect(csvOrder.updatedAt).toEqual(expect.any(Date));
+    // if sendDate is undefined, it should be today
+    expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
+    expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
+    expect(csvOrder.sender).toEqual(undefined);
+    expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
+    expect(csvOrder.templateId).toEqual(template.id);
+    expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
+    expect(csvOrder.billingId).toEqual(undefined);
+    expect(csvOrder.finish).toEqual(expect.any(String));
+    expect(csvOrder.format).toEqual(expect.any(String));
+    expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
+    expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
+    expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
+    expect(csvOrder.processedOrderCount).toEqual(expect.any(Number));
+    expect(csvOrder.totalOrderCount).toEqual(expect.any(Number));
+  });
+})
+
 describe("getOrder", function () {
   let orderId: string = null as unknown as string;
 
