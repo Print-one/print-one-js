@@ -7,6 +7,7 @@ export * from "./PrintOne";
 // Models
 export * from "./models/Address";
 export * from "./models/Company";
+export * from "./models/CsvOrder";
 export * from "./models/CustomFile";
 export * from "./models/Order";
 export * from "./models/PaginatedResponse";
@@ -15,6 +16,7 @@ export * from "./models/PreviewDetails";
 export * from "./models/Template";
 
 // Enums
+export * from "./enums/CsvStatus";
 export * from "./enums/Finish";
 export * from "./enums/Format";
 export * from "./enums/Status";

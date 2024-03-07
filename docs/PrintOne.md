@@ -243,3 +243,60 @@ const orders = await client.getOrders({
   },
 });
 ```
+
+---
+
+## `.createCsvOrder(data)`
+
+Create a new csv order.
+
+**Parameters**
+
+| Name   | Type     | Description                                                                              |
+| ------ | -------- | ---------------------------------------------------------------------------------------- |
+| `data` | `object` | The data to create the order with. See [`CsvOrder`](./CsvOrder#createcsvorderdata) for more info. |
+
+**Returns: [`Promise<CsvOrder>`](./CsvOrder)**
+
+**Example**
+
+```js
+const order = await client.createCsvOrder({
+   mapping: {
+      recipient: {
+        city: "{{City}}",
+        name: "{{FirstName}} {{LastName}}",
+        address: "{{Street}} {{HouseNr}}",
+        country: "{{Country}}",
+        postalCode: "{{ZIP}}",
+      },
+      mergeVariables: {
+        name: "{{FirstName}}",
+        coupon: "{{Coupon}}",
+      },
+    },
+    template: template,
+    file: file,
+});
+```
+
+---
+
+## `.getCsvOrder(id)`
+
+Get a csv order by its ID.
+
+**Parameters**
+
+| Name | Type     | Description                     |
+| ---- | -------- | ------------------------------- |
+| `id` | `string` | The ID of the csv order to get. |
+
+**Returns: [`Promise<CsvOrder>`](./CsvOrder)**
+
+**Example**
+
+```js
+const csvOrder = await client.getCsvOrder("example-order-id");
+```
+```
