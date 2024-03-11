@@ -90,11 +90,12 @@ describe("createCsvOrder", function () {
 
   const mapping: CreateBatchCsvOrder["mapping"] = {
     recipient: {
-      city: "{{City}}",
       name: "{{FirstName}} {{LastName}}",
+      addressLine2: "Financial Dpt.",
       address: "{{Street}} {{HouseNr}}",
-      country: "{{Country}}",
       postalCode: "{{ZIP}}",
+      city: "{{City}}",
+      country: "{{Country}}",
     },
   };
 
@@ -143,11 +144,11 @@ describe("getCsvOrder", function () {
   let csvOrderId: string = null as unknown as string;
   const mapping: CreateBatchCsvOrder["mapping"] = {
     recipient: {
-      city: "{{City}}",
       name: "{{FirstName}} {{LastName}}",
       address: "{{Street}} {{HouseNr}}",
-      country: "{{Country}}",
       postalCode: "{{ZIP}}",
+      city: "{{City}}",
+      country: "{{Country}}",
     },
   };
 
