@@ -316,6 +316,7 @@ describe("getOrder", function () {
     expect(result).toBeDefined();
     expect(result).toBeInstanceOf(Order);
     expect(result.id).toEqual(order.id);
+    expect(result.batchId).toEqual(batch.id);
   });
 
   it("should not return an non batch order", async function () {

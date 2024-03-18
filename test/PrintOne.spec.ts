@@ -905,6 +905,12 @@ describe("getOrder", function () {
     expect(order.isBillable).toEqual(expect.any(Boolean));
     expect(order.errors).toEqual(expect.any(Array));
     expect(order.definitiveCountryId).toEqual(expect.any(String));
+    expect(order.csvOrderId).toEqual(
+      expect.toBeOneOf([expect.any(String), null]),
+    );
+    expect(order.batchId).toEqual(
+      expect.toBeOneOf([expect.any(String), undefined]),
+    );
   });
 
   it("should throw an error when the order does not exist", async function () {
