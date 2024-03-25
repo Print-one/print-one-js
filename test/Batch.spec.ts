@@ -12,6 +12,7 @@ import { client } from "./client";
 import { BatchStatus } from "../src/enums/BatchStatus";
 import * as fs from "fs";
 import * as path from "path";
+import { sleep } from "../src/utils";
 
 let batch: Batch = null as unknown as Batch;
 let template: Template = null as unknown as Template;
@@ -124,6 +125,7 @@ describe("createCsvOrder", function () {
     expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
     expect(csvOrder.sender).toEqual(undefined);
+    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
     expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toStrictEqual({});
@@ -167,7 +169,7 @@ describe("getCsvOrder", function () {
     // arrange
 
     // act
-    const csvOrder = await client.getCsvOrder(csvOrderId);
+    const csvOrder = await batch.getCsvOrder(csvOrderId);
 
     // assert
     expect(csvOrder).toBeDefined();
@@ -403,3 +405,46 @@ describe("getOrders", function () {
     expect(result.data).toBeArrayOfSize(1);
   });
 });
+
+describe('BatchOrder', function () {
+  it('should be able to cancel Order', async function() {
+    // arrange
+    const order = await batch.createOrder({
+      recipient: {
+        name: "John Doe",
+        address: "123 Main Street",
+        postalCode: "1234 AB",
+        city: "Anytown",
+        country: "Nederland",
+      },
+    });
+
+    // act
+    await order.cancel();
+
+    // assert
+    expect(order.status).toEqual('order_cancelled');
+  })
+
+  it('should be able to refresh Order', async function () {
+    // arrange
+    const order = await batch.createOrder({
+      recipient: {
+        name: "John Doe",
+        address: "123 Main Street",
+        postalCode: "1234 AB",
+        city: "Anytown",
+        country: "Nederland",
+      },
+    });
+
+    // act
+    while (order.status === "order_created") {
+      await order.refresh();
+      await sleep(1000);
+    }
+
+    // assert
+    expect(order.status).not.toEqual("order_created");
+  }, 30000);
+})

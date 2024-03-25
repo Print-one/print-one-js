@@ -1399,6 +1399,7 @@ describe("createBatch", function () {
     expect(batch.createdAt).toEqual(expect.any(Date));
     expect(batch.updatedAt).toEqual(expect.any(Date));
     expect(batch.finish).toEqual(Finish.GLOSSY);
+    expect(batch.format).toEqual(Format.POSTCARD_SQ15);
     expect(batch.templateId).toEqual(template.id);
     expect(batch.isBillable).toEqual(expect.any(Boolean));
     expect(batch.estimatedPrice).toEqual(0);
