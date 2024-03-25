@@ -7,7 +7,9 @@ import { PaginatedResponse } from "./PaginatedResponse";
 import { Order } from "./Order";
 import { Address } from "./Address";
 import { IOrder } from "./_interfaces/IOrder";
-import { Format } from "src/enums/Format";
+import { Format } from "../enums/Format";
+import { CreateBatchCsvOrder, CsvOrder } from "./CsvOrder";
+import { ICsvOrder } from "./_interfaces/ICsvOrder";
 
 export type CreateBatch = {
   name: string;
@@ -147,6 +149,43 @@ export class Batch {
     );
 
     return new Order(this._protected, data);
+  }
+
+  public async createCsvOrder(data: CreateBatchCsvOrder): Promise<CsvOrder> {
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new Blob([data.file], { type: "text/csv" }),
+      "upload.csv",
+    );
+    formData.append("mapping", JSON.stringify(data.mapping));
+
+    const response = await this._protected.client.POST<{ id: string }>(
+      `/batches/${this.id}/orders/csv`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    const id = response.id;
+    const csvInfo = await this._protected.client.GET<ICsvOrder>(
+      `batches/${this.id}/orders/csv/${id}`,
+    );
+
+    return new CsvOrder(this._protected, csvInfo);
+  }
+
+  /**
+   * Get a csv order by its id.
+   * @param { string } id The id of the csv order.
+   * @param basePath The basePath to use for this request
+   * @throws { PrintOneError } If the order could not be found.
+   */
+  public async getCsvOrder(id: string): Promise<CsvOrder> {
+    return this._protected.printOne.getCsvOrder(id, `batches/${this.id}`);
   }
 
   /**
