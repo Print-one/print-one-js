@@ -720,7 +720,7 @@ describe("createCsvOrder", function () {
     expect(csvOrder.sender).toEqual(undefined);
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
     expect(csvOrder.templateId).toEqual(template.id);
-    expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
+    expect(csvOrder.mergeVariableMapping).toStrictEqual({});
     expect(csvOrder.billingId).toBeOneOf([undefined, expect.any(String)]);
     expect(csvOrder.finish).toEqual(expect.any(String));
     expect(csvOrder.format).toEqual(expect.any(String));
@@ -844,7 +844,7 @@ describe("getCsvOrder", function () {
     expect(csvOrder.sender).toEqual(undefined);
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
     expect(csvOrder.templateId).toEqual(template.id);
-    expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
+    expect(csvOrder.mergeVariableMapping).toStrictEqual({});
     expect(csvOrder.billingId).toBeOneOf([undefined, expect.any(String)]);
     expect(csvOrder.finish).toEqual(expect.any(String));
     expect(csvOrder.format).toEqual(expect.any(String));
