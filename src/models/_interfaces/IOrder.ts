@@ -20,4 +20,6 @@ export type IOrder = {
   createdAt: string;
   updatedAt: string;
   anonymizedAt: string | null;
+  csvOrderId: string | null;
+  batchId?: string;
 };

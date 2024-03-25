@@ -905,6 +905,12 @@ describe("getOrder", function () {
     expect(order.isBillable).toEqual(expect.any(Boolean));
     expect(order.errors).toEqual(expect.any(Array));
     expect(order.definitiveCountryId).toEqual(expect.any(String));
+    expect(order.csvOrderId).toEqual(
+      expect.toBeOneOf([expect.any(String), null]),
+    );
+    expect(order.batchId).toEqual(
+      expect.toBeOneOf([expect.any(String), undefined]),
+    );
   });
 
   it("should throw an error when the order does not exist", async function () {
@@ -1393,6 +1399,7 @@ describe("createBatch", function () {
     expect(batch.createdAt).toEqual(expect.any(Date));
     expect(batch.updatedAt).toEqual(expect.any(Date));
     expect(batch.finish).toEqual(Finish.GLOSSY);
+    expect(batch.format).toEqual(Format.POSTCARD_SQ15);
     expect(batch.templateId).toEqual(template.id);
     expect(batch.isBillable).toEqual(expect.any(Boolean));
     expect(batch.estimatedPrice).toEqual(0);

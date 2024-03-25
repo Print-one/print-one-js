@@ -112,6 +112,14 @@ export class Order {
       : undefined;
   }
 
+  public get csvOrderId(): string | null {
+    return this._data.csvOrderId;
+  }
+
+  public get batchId(): string | undefined {
+    return this._data.batchId;
+  }
+
   /**
    * Get the template of the order
    * @throws { PrintOneError } If the template could not be fetched.
@@ -125,7 +133,9 @@ export class Order {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<IOrder>(`orders/${this.id}`);
+    this._data = await this._protected.client.GET<IOrder>(
+      `${this.urlPrefix}orders/${this.id}`,
+    );
   }
 
   /**
@@ -169,8 +179,12 @@ export class Order {
     }
 
     this._data = await this._protected.client.POST<IOrder>(
-      `orders/${this.id}/cancel`,
+      `${this.urlPrefix}orders/${this.id}/cancel`,
       {},
     );
+  }
+
+  protected get urlPrefix(): string {
+    return this.batchId ? `batches/${this.batchId}/` : "";;
   }
 }
