@@ -133,9 +133,8 @@ export class Order {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    const urlPrefix = this.batchId ? `batches/${this.batchId}/` : "";
     this._data = await this._protected.client.GET<IOrder>(
-      `${urlPrefix}orders/${this.id}`,
+      `${this.urlPrefix}orders/${this.id}`,
     );
   }
 
@@ -179,10 +178,13 @@ export class Order {
       time++;
     }
 
-    const urlPrefix = this.batchId ? `batches/${this.batchId}/` : "";
     this._data = await this._protected.client.POST<IOrder>(
-      `${urlPrefix}orders/${this.id}/cancel`,
+      `${this.urlPrefix}orders/${this.id}/cancel`,
       {},
     );
+  }
+
+  protected get urlPrefix(): string {
+    return this.batchId ? `batches/${this.batchId}/` : "";;
   }
 }
