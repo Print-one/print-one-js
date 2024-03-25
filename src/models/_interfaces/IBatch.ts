@@ -4,6 +4,7 @@ export type IBatch = {
   name: string;
   billingId: string;
   finish: string;
+  format: string;
   isBillable: boolean;
   templateId: string;
   estimatedPrice: number;
