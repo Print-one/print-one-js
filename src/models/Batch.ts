@@ -7,6 +7,7 @@ import { PaginatedResponse } from "./PaginatedResponse";
 import { Order } from "./Order";
 import { Address } from "./Address";
 import { IOrder } from "./_interfaces/IOrder";
+import { Format } from "../enums/Format";
 import { CreateBatchCsvOrder, CsvOrder } from "./CsvOrder";
 import { ICsvOrder } from "./_interfaces/ICsvOrder";
 
@@ -51,6 +52,10 @@ export class Batch {
 
   public get finish(): Finish {
     return this._data.finish as Finish;
+  }
+
+  public get format(): Format {
+    return this._data.format as Format;
   }
 
   public get isBillable(): boolean {
