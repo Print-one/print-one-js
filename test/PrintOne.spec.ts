@@ -684,6 +684,7 @@ describe("createCsvOrder", function () {
       country: "{{Country}}",
       postalCode: "{{ZIP}}",
     },
+    mergeVariables: {},
   };
 
   beforeAll(() => {
@@ -819,6 +820,7 @@ describe("getCsvOrder", function () {
       country: "{{Country}}",
       postalCode: "{{ZIP}}",
     },
+    mergeVariables: {},
   };
 
   beforeAll(async () => {
@@ -862,7 +864,7 @@ describe("getCsvOrder", function () {
     expect(csvOrder.processedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.totalOrderCount).toEqual(expect.any(Number));
   });
-})
+});
 
 describe("getOrder", function () {
   let orderId: string = null as unknown as string;

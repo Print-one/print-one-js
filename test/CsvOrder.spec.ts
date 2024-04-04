@@ -93,6 +93,8 @@ describe("getOrders", function () {
       await sleep(1000);
     }
 
+    await order.refresh();
+
     const totalOrders = order.totalOrderCount;
     const failedOrderCount = order.failedOrderCount;
     const processedOrderCount = order.processedOrderCount;
