@@ -3,9 +3,11 @@ import {
   Company,
   CreateCsvOrder,
   CsvOrder,
+  CsvStatus,
   CustomFile,
   Finish,
   Format,
+  FriendlyCsvStatus,
   FriendlyStatus,
   Order,
   PaginatedResponse,
@@ -667,15 +669,24 @@ describe("createOrder", function () {
 });
 
 describe("createCsvOrder", function () {
+  const exampleAddress: Address = {
+    name: "Test",
+    address: "Test 1",
+    addressLine2: undefined,
+    postalCode: "1234 AB",
+    city: "Test",
+    country: "NL",
+  };
   let file: ArrayBuffer = null as unknown as ArrayBuffer;
   const mapping: CreateCsvOrder["mapping"] = {
     recipient: {
+      city: "{{City}}",
       name: "{{FirstName}} {{LastName}}",
       address: "{{Street}} {{HouseNr}}",
-      postalCode: "{{ZIP}}",
-      city: "{{City}}",
       country: "{{Country}}",
+      postalCode: "{{ZIP}}",
     },
+    mergeVariables: {},
   };
 
   beforeAll(() => {
@@ -720,8 +731,8 @@ describe("createCsvOrder", function () {
     expect(csvOrder.sender).toEqual(undefined);
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
     expect(csvOrder.templateId).toEqual(template.id);
-    expect(csvOrder.mergeVariableMapping).toStrictEqual({});
-    expect(csvOrder.billingId).toBeOneOf([undefined, expect.any(String)]);
+    expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
+    expect(csvOrder.billingId).toEqual(undefined);
     expect(csvOrder.finish).toEqual(expect.any(String));
     expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
@@ -811,6 +822,7 @@ describe("getCsvOrder", function () {
       country: "{{Country}}",
       postalCode: "{{ZIP}}",
     },
+    mergeVariables: {},
   };
 
   beforeAll(async () => {
@@ -844,8 +856,8 @@ describe("getCsvOrder", function () {
     expect(csvOrder.sender).toEqual(undefined);
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
     expect(csvOrder.templateId).toEqual(template.id);
-    expect(csvOrder.mergeVariableMapping).toStrictEqual({});
-    expect(csvOrder.billingId).toBeOneOf([undefined, expect.any(String)]);
+    expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
+    expect(csvOrder.billingId).toEqual(undefined);
     expect(csvOrder.finish).toEqual(expect.any(String));
     expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
@@ -967,15 +979,13 @@ describe("getOrders", function () {
     // assert
     expect(order).toBeDefined();
     expect(order.id).toEqual(expect.any(String));
-    expect(order.status).toEqual(expect.any(String));
+    expect(order.status).toEqual(CsvStatus.order_created);
     expect(order.createdAt).toEqual(expect.any(Date));
     expect(order.updatedAt).toEqual(expect.any(Date));
     // if sendDate is undefined, it should be today
     expect(order.sendDate.getDay()).toEqual(new Date().getDay());
-    expect(order.friendlyStatus).toEqual(expect.any(String));
-    expect(order.sender).toEqual(
-      expect.toBeOneOf([undefined, expect.any(Object)]),
-    );
+    expect(order.friendlyStatus).toEqual(FriendlyCsvStatus.order_created);
+    expect(order.sender).toEqual(undefined);
     expect(order.recipient).toEqual(expect.any(Object));
     expect(order.templateId).toEqual(expect.any(String));
     expect(order.mergeVariables).toEqual(expect.any(Object));

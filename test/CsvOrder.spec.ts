@@ -88,7 +88,7 @@ describe("getOrders", function () {
     // arrange
 
     // act
-    while (await order.getOrders().then((x) => x.data.length === 0)) {
+    while (await order.getOrders({}).then((x) => x.data.length > 0)) {
       await order.refresh();
       await sleep(1000);
     }

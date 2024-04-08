@@ -2,27 +2,27 @@ Contains all information about a given CsvOrder
 
 # Fields
 
-| Name                   | Type                                 | Description                                                                                              |
-| ---------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `id`                   | `string`                             | The ID of the order.                                                                                     |
-| `templateId`           | `string`                             | The ID of the template the order is based on.                                                            |
-| `finish`               | `string`                             | The finish of the order. Can be `GLOSSY` or `MATT`.                                                      |
-| `format`               | `string`                             | The format of the order. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15`.    |
-| `mergeVariableMapping` | `object`                             | The merge variables of the order. Keys are the merge variable names.                                     |
-| `sender`               | [`Address`](#Address) \| `undefined` | The sender of the order.                                                                                 |
-| `recipientMapping`     | [`Address`](#Address)                | The mapping of the recipient.                                                                            |
-| `definitiveCountryId`  | `string`                             | The ID of the definitive country of the order.                                                           |
-| `billingId`            | `string` \| `undefined`              | The ID assigned to the csv order by the customer.                                                        |
-| `isBillable`           | `boolean`                            | Whether the csv order is billable. True when an live API key is used, false when a test API key is used. |
-| `status`               | `string`                             | The status of the csv order. Can be `order_created` or `order_processed`                                 |
-| `friendlyStatus`       | `string`                             | The friendly status of the csv order. Can be `Processing` or `Success`                                   |
-| `estimatedOrderCount`  | `number`                             | The amount of initial orders in the CSV                                                                  |
-| `failedOrderCount`     | `number`                             | The amount of orders which have failed to be processed                                                   |
-| `processedOrderCount`  | `number`                             | The amount of orders which have successfully been processed                                              |
-| `totalOrderCount`      | `number`                             | The total amount of orders failed or processed                                                           |
-| `sendDate`             | `Date`                               | The date the order will be sent on.                                                                      |
-| `createdAt`            | `Date`                               | The date and time the order was created.                                                                 |
-| `updatedAt`            | `Date`                               | The date and time the order was last updated.                                                            |
+| Name                  | Type                                 | Description                                                                                                                                                             |
+| --------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                  | `string`                             | The ID of the order.                                                                                                                                                    |
+| `templateId`          | `string`                             | The ID of the template the order is based on.                                                                                                                           |
+| `finish`              | `string`                             | The finish of the order. Can be `GLOSSY` or `MATT`.                                                                                                                     |
+| `format`              | `string`                             | The format of the order. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14` or `GREETINGCARD_SQ15`.                                                                   |
+| `mergeVariableMapping`      | `object`                       | The merge variables of the order. Keys are the merge variable names.                                                                                                    |
+| `sender`              | [`Address`](#Address) \| `undefined` | The sender of the order.                                                                                                                                                |
+| `recipientMapping`    | [`Address`](#Address)                | The mapping of the recipient.                                                                                                                                             |
+| `definitiveCountryId` | `string`                             | The ID of the definitive country of the order.                                                                                                                          |
+| `billingId`           | `string` \| `undefined`              | The ID assigned to the csv order by the customer.                                                                                                                           |
+| `isBillable`          | `boolean`                            | Whether the csv order is billable. True when an live API key is used, false when a test API key is used.                                                                    |
+| `status`              | `string`                             | The status of the csv order. Can be `order_created` or `order_processed` |
+| `friendlyStatus`      | `string`                             | The friendly status of the csv order. Can be `Processing` or `Success`                                                      |
+| `estimatedOrderCount` | `number`                             | The amount of initial orders in the CSV
+| `failedOrderCount`    | `number`                             | The amount of orders which have failed to be processed
+| `processedOrderCount` | `number`                             | The amount of orders which have successfully been processed
+| `totalOrderCount`     | `number`                             | The total amount of orders failed or processed
+| `sendDate`            | `Date`                               | The date the order will be sent on.                                                                                                                                     |
+| `createdAt`           | `Date`                               | The date and time the order was created.                                                                                                                                |
+| `updatedAt`           | `Date`                               | The date and time the order was last updated.                                                                                                                           |
 
 # Methods
 
