@@ -17,6 +17,7 @@ jobs:
   release:
     name: Update documentation
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: spenserblack/actions-wiki@v0.3.0
