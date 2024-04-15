@@ -10,7 +10,6 @@ import { sleep } from "../utils";
 export type CreateOrder = {
   recipient: Address;
   sender?: Address;
-  template: Template | string;
   /**
    * @default GLOSSY
    */
@@ -18,7 +17,16 @@ export type CreateOrder = {
   mergeVariables?: Record<string, unknown>;
   billingId?: string;
   sendDate?: Date | string;
-};
+} & (
+  | {
+      template: Template | string;
+      templateId?: undefined;
+    }
+  | {
+      template?: undefined;
+      templateId: string;
+    }
+);
 
 export class Order {
   private _data: IOrder;

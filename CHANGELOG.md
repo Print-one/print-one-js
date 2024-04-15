@@ -1,3 +1,12 @@
+## [1.2.1](https://github.com/Print-one/print-one-js/compare/v1.2.0...v1.2.1) (2024-04-15)
+
+
+### Bug Fixes
+
+* :bug: incorrect check in csv order test ([59a73ea](https://github.com/Print-one/print-one-js/commit/59a73ea4d118c20f3627e464dd90a395e30eaaef))
+* :bug: incorrect ts marking for undefined properties ([c09dd93](https://github.com/Print-one/print-one-js/commit/c09dd937e239d6efa9127def0852cdd7ab8d6e0c))
+* :bug: order creation not working with templateId ([8784076](https://github.com/Print-one/print-one-js/commit/878407679d44d4d21e57ac31087f4f00aa1772ad))
+
 # [1.2.0](https://github.com/Print-one/print-one-js/compare/v1.1.0...v1.2.0) (2024-04-04)
 
 
