@@ -20,10 +20,10 @@ export type CreateOrder = {
 } & (
   | {
       template: Template | string;
-      templateId: undefined;
+      templateId?: undefined;
     }
   | {
-      template: undefined;
+      template?: undefined;
       templateId: string;
     }
 );
