@@ -14,11 +14,19 @@ export type CreateCsvOrder = {
     recipient: Address;
     mergeVariables?: Record<string, string>;
   };
-  template: Template | string;
   finish?: Finish;
   billingId?: string;
   sender?: Address;
-};
+} & (
+  | {
+      template: Template | string;
+      templateId: undefined;
+    }
+  | {
+      template: undefined;
+      templateId: string;
+    }
+);
 
 export class CsvOrder {
   private _data: ICsvOrder;

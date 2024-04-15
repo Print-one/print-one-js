@@ -245,13 +245,8 @@ export class PrintOne {
    * Create an order
    */
   public async createOrder(data: CreateOrder): Promise<Order> {
-    let templateId: undefined | string;
-
-    if (data.template instanceof Template) {
-      templateId = data.template.id;
-    } else {
-      templateId = data.template;
-    }
+    const template = data.templateId ?? data.template;
+    const templateId = template instanceof Template ? template.id : template;
 
     const sendDateStr =
       data.sendDate instanceof Date
@@ -272,13 +267,8 @@ export class PrintOne {
   }
 
   public async createCsvOrder(data: CreateCsvOrder): Promise<CsvOrder> {
-    let templateId: undefined | string;
-
-    if (data.template instanceof Template) {
-      templateId = data.template.id;
-    } else {
-      templateId = data.template;
-    }
+    const template = data.templateId ?? data.template;
+    const templateId = template instanceof Template ? template.id : template;
 
     const formData = new FormData();
     formData.append(
