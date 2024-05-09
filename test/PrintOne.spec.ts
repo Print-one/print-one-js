@@ -1899,4 +1899,28 @@ describe("getBatches", function () {
       ]),
     );
   });
+
+  it("should use the status filter (single)", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        status: [BatchStatus.batch_user_ready],
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.status).toEqual(
+      expect.toBeOneOf([BatchStatus.batch_user_ready]),
+    );
+  });
 });
