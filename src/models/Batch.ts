@@ -22,6 +22,7 @@ export type CreateBatch = {
 export type CreateBatchOrder = {
   recipient: Address;
   mergeVariables?: Record<string, string>;
+  autoGenNextBatch?: boolean;
 };
 
 export class Batch {
@@ -145,6 +146,7 @@ export class Batch {
       {
         recipient: order.recipient,
         mergeVariables: order.mergeVariables,
+        autoGenNextBatch: order.autoGenNextBatch,
       },
     );
 
