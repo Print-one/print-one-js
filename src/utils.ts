@@ -43,6 +43,21 @@ export function sortToQuery<T extends string>(
   return query;
 }
 
+export function mapInFilter<T extends string, R extends string>(
+  values: undefined | InFilter<T>,
+  mapper: (value: T) => R,
+): undefined | InFilter<R> {
+  if (values === undefined) {
+    return undefined;
+  }
+
+  if (typeof values === "string") {
+    return mapper(values);
+  } else {
+    return values.map(mapper);
+  }
+}
+
 export type InFilter<T = string> = T | T[];
 
 export function inFilterToQuery(

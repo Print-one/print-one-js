@@ -12,6 +12,7 @@ import {
   InFilter,
   inFilterToQuery,
   invertedFilterToQuery,
+  mapInFilter,
   PaginationOptions,
   sortToQuery,
 } from "./utils";
@@ -31,6 +32,7 @@ import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
 import { Batch, CreateBatch } from "./models/Batch";
 import { IBatch } from "./models/_interfaces/IBatch";
 import { BatchStatus } from "./enums/BatchStatus";
+import { stringify } from "ts-jest";
 
 export type RequestHandler = new (
   token: string,
@@ -461,7 +463,10 @@ export class PrintOne {
       ...dateFilterToQuery("updatedAt", options.filter?.updatedAt),
       ...inFilterToQuery("finish", options.filter?.finish),
       ...inFilterToQuery("format", options.filter?.format),
-      ...inFilterToQuery("status", options.filter?.status),
+      ...inFilterToQuery(
+        "status",
+        mapInFilter(options.filter?.status, (v) => v.toUpperCase()),
+      ),
     };
 
     if (typeof options.filter?.isBillable === "boolean") {

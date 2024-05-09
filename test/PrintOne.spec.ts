@@ -1872,4 +1872,31 @@ describe("getBatches", function () {
     expect(batch).toBeDefined();
     expect(batch.templateId).toEqual(template.id);
   });
+
+  it("should use the status filter", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        status: [BatchStatus.batch_created, BatchStatus.batch_user_ready],
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.status).toEqual(
+      expect.toBeOneOf([
+        BatchStatus.batch_created,
+        BatchStatus.batch_user_ready,
+      ]),
+    );
+  });
 });
