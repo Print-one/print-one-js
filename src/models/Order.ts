@@ -193,6 +193,6 @@ export class Order {
   }
 
   protected get urlPrefix(): string {
-    return this.batchId ? `batches/${this.batchId}/` : "";;
+    return this.batchId ? `batches/${this.batchId}/` : "";
   }
 }

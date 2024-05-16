@@ -32,7 +32,6 @@ import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
 import { Batch, CreateBatch } from "./models/Batch";
 import { IBatch } from "./models/_interfaces/IBatch";
 import { BatchStatus } from "./enums/BatchStatus";
-import { stringify } from "ts-jest";
 
 export type RequestHandler = new (
   token: string,

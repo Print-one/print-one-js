@@ -21,8 +21,8 @@
     "lint": "bsm",
     "prepublishOnly": "bsm build",
     "semantic-release": "semantic-release",
-    "test": "bsm test.coverage",
-    "setup": "bsm build"
+    "setup": "bsm build",
+    "test": "bsm test.coverage"
   },
   "types": "lib/index.d.ts",
   "dependencies": {

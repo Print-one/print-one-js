@@ -252,8 +252,8 @@ Create a new csv order.
 
 **Parameters**
 
-| Name   | Type     | Description                                                                              |
-| ------ | -------- | ---------------------------------------------------------------------------------------- |
+| Name   | Type     | Description                                                                                       |
+| ------ | -------- | ------------------------------------------------------------------------------------------------- |
 | `data` | `object` | The data to create the order with. See [`CsvOrder`](./CsvOrder#createcsvorderdata) for more info. |
 
 **Returns: [`Promise<CsvOrder>`](./CsvOrder)**
@@ -262,21 +262,21 @@ Create a new csv order.
 
 ```js
 const order = await client.createCsvOrder({
-   mapping: {
-      recipient: {
-        city: "{{City}}",
-        name: "{{FirstName}} {{LastName}}",
-        address: "{{Street}} {{HouseNr}}",
-        country: "{{Country}}",
-        postalCode: "{{ZIP}}",
-      },
-      mergeVariables: {
-        name: "{{FirstName}}",
-        coupon: "{{Coupon}}",
-      },
+  mapping: {
+    recipient: {
+      city: "{{City}}",
+      name: "{{FirstName}} {{LastName}}",
+      address: "{{Street}} {{HouseNr}}",
+      country: "{{Country}}",
+      postalCode: "{{ZIP}}",
     },
-    template: template,
-    file: file,
+    mergeVariables: {
+      name: "{{FirstName}}",
+      coupon: "{{Coupon}}",
+    },
+  },
+  template: template,
+  file: file,
 });
 ```
 
@@ -299,4 +299,7 @@ Get a csv order by its ID.
 ```js
 const csvOrder = await client.getCsvOrder("example-order-id");
 ```
+
+```
+
 ```
