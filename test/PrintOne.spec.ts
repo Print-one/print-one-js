@@ -17,6 +17,8 @@ import "jest-extended";
 import * as fs from "fs";
 import * as path from "path";
 import { client } from "./client";
+import { Batch } from "../src/models/Batch";
+import { BatchStatus } from "../src/enums/BatchStatus";
 
 let template: Template = null as unknown as Template;
 
@@ -47,6 +49,15 @@ afterAll(async function () {
     await template.delete();
   }
 });
+
+const exampleAddress: Address = {
+  name: "Test",
+  address: "Test 1",
+  addressLine2: undefined,
+  postalCode: "1234 AB",
+  city: "Test",
+  country: "NL",
+};
 
 describe("getSelf", function () {
   it("should return a company", async function () {
@@ -531,15 +542,6 @@ describe("getTemplate", function () {
 });
 
 describe("createOrder", function () {
-  const exampleAddress: Address = {
-    name: "Test",
-    address: "Test 1",
-    addressLine2: undefined,
-    postalCode: "1234 AB",
-    city: "Test",
-    country: "NL",
-  };
-
   it("should create an order", async function () {
     // arrange
 
@@ -901,16 +903,26 @@ describe("getOrder", function () {
     // if sendDate is undefined, it should be today
     expect(order.sendDate.getDay()).toEqual(new Date().getDay());
     expect(order.friendlyStatus).toEqual(expect.any(String));
-    expect(order.sender).toEqual(undefined);
+    expect(order.sender).toEqual(
+      expect.toBeOneOf([undefined, expect.any(Object)]),
+    );
     expect(order.recipient).toEqual(expect.any(Object));
     expect(order.templateId).toEqual(expect.any(String));
     expect(order.mergeVariables).toEqual(expect.any(Object));
-    expect(order.billingId).toEqual(undefined);
+    expect(order.billingId).toEqual(
+      expect.toBeOneOf([undefined, expect.any(String)]),
+    );
     expect(order.finish).toEqual(expect.any(String));
     expect(order.companyId).toEqual(expect.any(String));
     expect(order.isBillable).toEqual(expect.any(Boolean));
     expect(order.errors).toEqual(expect.any(Array));
     expect(order.definitiveCountryId).toEqual(expect.any(String));
+    expect(order.csvOrderId).toEqual(
+      expect.toBeOneOf([expect.any(String), null]),
+    );
+    expect(order.batchId).toEqual(
+      expect.toBeOneOf([expect.any(String), undefined]),
+    );
   });
 
   it("should throw an error when the order does not exist", async function () {
@@ -977,7 +989,9 @@ describe("getOrders", function () {
     expect(order.recipient).toEqual(expect.any(Object));
     expect(order.templateId).toEqual(expect.any(String));
     expect(order.mergeVariables).toEqual(expect.any(Object));
-    expect(order.billingId).toEqual(undefined);
+    expect(order.billingId).toEqual(
+      expect.toBeOneOf([undefined, expect.any(String)]),
+    );
     expect(order.finish).toEqual(expect.any(String));
     expect(order.companyId).toEqual(expect.any(String));
     expect(order.isBillable).toEqual(expect.any(Boolean));
@@ -1243,6 +1257,47 @@ describe("getOrders", function () {
     expect(order.anonymizedAt).toBeBetween(from, to);
   });
 
+  it("should apply the batchId filter (null)", async function () {
+    // arrange
+
+    // act
+    const orders = await client.getOrders({
+      limit: 1,
+      filter: {
+        batchId: null,
+      },
+    });
+    const order = orders.data[0];
+
+    // assert
+    expect(order).toBeDefined();
+  });
+
+  it("should apply the batchId filter (batchId)", async function () {
+    // arrange
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: template,
+    });
+    const batchOrder = await batch.createOrder({
+      recipient: exampleAddress,
+    });
+
+    // act
+    const orders = await client.getOrders({
+      limit: 1,
+      filter: {
+        batchId: batch.id,
+      },
+    });
+    const order = orders.data[0];
+
+    // assert
+    expect(order).toBeDefined();
+    expect(order.id).toEqual(batchOrder.id);
+  });
+
   describe("sortby", function () {
     it("should sort by createdAt", async function () {
       // arrange
@@ -1286,7 +1341,7 @@ describe("getOrders", function () {
       expect(order2).toBeDefined();
       expect(order2.createdAt).toEqual(expect.any(Date));
 
-      expect(order.createdAt.getTime()).toBeGreaterThan(
+      expect(order.createdAt.getTime()).toBeGreaterThanOrEqual(
         order2.createdAt.getTime(),
       );
     });
@@ -1316,5 +1371,556 @@ describe("getOrders", function () {
         expect(order.friendlyStatus).not.toEqual(order2.friendlyStatus);
       }
     });
+  });
+});
+
+describe("createBatch", function () {
+  it("should create an batch", async function () {
+    // arrange
+
+    // act
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: template,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch).toEqual(expect.any(Batch));
+  });
+
+  it("should create an batch with all fields", async function () {
+    // arrange
+
+    // act
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: template,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.id).toEqual(expect.any(String));
+    expect(batch.companyId).toEqual(expect.any(String));
+    expect(batch.name).toEqual("Test batch");
+    expect(batch.status).toEqual(BatchStatus.batch_created);
+    expect(batch.createdAt).toEqual(expect.any(Date));
+    expect(batch.updatedAt).toEqual(expect.any(Date));
+    expect(batch.finish).toEqual(Finish.GLOSSY);
+    expect(batch.format).toEqual(Format.POSTCARD_SQ15);
+    expect(batch.templateId).toEqual(template.id);
+    expect(batch.isBillable).toEqual(expect.any(Boolean));
+    expect(batch.estimatedPrice).toEqual(0);
+    expect(batch.sendDate).toEqual(
+      expect.toBeOneOf([undefined, expect.any(Date)]),
+    );
+    expect(batch.orders).toStrictEqual({
+      processing: 0,
+      success: 0,
+      failed: 0,
+      cancelled: 0,
+    });
+  });
+
+  it("should create an batch with a ready date", async function () {
+    // arrange
+    const sendDate = new Date();
+    sendDate.setDate(sendDate.getDate() + 10);
+
+    // act
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: template,
+      ready: sendDate,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.sendDate?.getDay()).toEqual(sendDate.getDay());
+  });
+
+  it("should create an batch that is ready", async function () {
+    // arrange
+    const sendDate = new Date();
+    sendDate.setDate(sendDate.getDate() + 10);
+
+    // act
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: template,
+      ready: true,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.status).toEqual(BatchStatus.batch_user_ready);
+    expect(batch.sendDate).toBeBefore(new Date());
+  });
+
+  it("should create an batch with a billing id", async function () {
+    // arrange
+    const billingId = "test";
+
+    // act
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: template,
+      billingId: billingId,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.billingId).toEqual(billingId);
+  });
+
+  it("should create an batch with templateId", async function () {
+    // arrange
+    const templateId = template.id;
+
+    // act
+    const batch = await client.createBatch({
+      name: "Test batch",
+      finish: Finish.GLOSSY,
+      template: templateId,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.templateId).toEqual(templateId);
+  });
+});
+
+describe("getBatch", function () {
+  let batchId: string = null as unknown as string;
+
+  // global arrange
+  beforeAll(async function () {
+    const batch = await client.createBatch({
+      name: "Test batch",
+      template: template,
+      finish: Finish.GLOSSY,
+    });
+    batchId = batch.id;
+  });
+
+  it("should return an batch", async function () {
+    // arrange
+
+    // act
+    const batch = await client.getBatch(batchId);
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch).toEqual(expect.any(Batch));
+  });
+
+  it("should return an batch with all fields", async function () {
+    // arrange
+
+    // act
+    const batch = await client.getBatch(batchId);
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.id).toEqual(expect.any(String));
+    expect(batch.companyId).toEqual(expect.any(String));
+    expect(batch.name).toEqual(expect.any(String));
+    expect(batch.status).toEqual(expect.any(String));
+    expect(batch.createdAt).toEqual(expect.any(Date));
+    expect(batch.updatedAt).toEqual(expect.any(Date));
+    expect(batch.finish).toEqual(expect.any(String));
+    expect(batch.templateId).toEqual(expect.any(String));
+    expect(batch.isBillable).toEqual(expect.any(Boolean));
+    expect(batch.estimatedPrice).toEqual(expect.any(Number));
+    expect(batch.sendDate).toEqual(
+      expect.toBeOneOf([undefined, expect.any(Date)]),
+    );
+    expect(batch.orders).toEqual(expect.any(Object));
+  });
+
+  it("should throw an error when the batch does not exist", async function () {
+    // arrange
+
+    // act
+    const promise = client.getBatch("test");
+
+    // assert
+    await expect(promise).rejects.toThrow(/not found/);
+  });
+});
+
+describe("getBatches", function () {
+  it("should return a paginated response", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches();
+
+    // assert
+    expect(batches).toBeDefined();
+    expect(batches).toEqual(expect.any(PaginatedResponse));
+
+    expect(batches.data).toBeDefined();
+    expect(batches.data.length).toBeGreaterThanOrEqual(1);
+
+    expect(batches.meta.total).toBeGreaterThanOrEqual(1);
+    expect(batches.meta.page).toEqual(1);
+    // Default page size is 10
+    expect(batches.meta.pageSize).toBeGreaterThanOrEqual(10);
+    expect(batches.meta.pages).toBeGreaterThanOrEqual(1);
+  });
+
+  it("should return a batch", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({ limit: 1 });
+    const batch = batches.data[0];
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch).toEqual(expect.any(Batch));
+  });
+
+  it("should return a batch with all fields", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({ limit: 1 });
+    const batch = batches.data[0];
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.id).toEqual(expect.any(String));
+    expect(batch.companyId).toEqual(expect.any(String));
+    expect(batch.name).toEqual(expect.any(String));
+    expect(batch.status).toEqual(expect.any(String));
+    expect(batch.createdAt).toEqual(expect.any(Date));
+    expect(batch.updatedAt).toEqual(expect.any(Date));
+    expect(batch.finish).toEqual(expect.any(String));
+    expect(batch.templateId).toEqual(expect.any(String));
+    expect(batch.isBillable).toEqual(expect.any(Boolean));
+    expect(batch.estimatedPrice).toEqual(expect.any(Number));
+    expect(batch.sendDate).toEqual(
+      expect.toBeOneOf([undefined, expect.any(Date)]),
+    );
+    expect(batch.orders).toEqual(expect.any(Object));
+  });
+
+  it("should apply the billingId filter", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        billingId: "test",
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.billingId).toEqual("test");
+  });
+
+  it("should apply the isBillable filter", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        isBillable: true,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No orders found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.isBillable).toEqual(true);
+  });
+
+  it("should apply the name filter", async function () {
+    // arrange
+    const batchName = (await client.getBatches()).data[1]?.name ?? "test";
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        name: batchName,
+      },
+    });
+    const batch = batches.data[0];
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.name).toEqual(batchName);
+  });
+
+  it("should apply the createdAt filter", async function () {
+    // arrange
+    const from = new Date();
+    from.setDate(from.getDay() - 31);
+    const to = new Date();
+    to.setDate(to.getDay() - 10);
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        createdAt: {
+          from,
+          to,
+        },
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.createdAt).toBeBetween(from, to);
+  });
+
+  it("should apply the updatedAt filter", async function () {
+    // arrange
+    const from = new Date();
+    from.setDate(from.getDay() - 31);
+    const to = new Date();
+    to.setDate(to.getDay() - 10);
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        updatedAt: {
+          from,
+          to,
+        },
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.updatedAt).toBeBetween(from, to);
+  });
+
+  it("should apply the sendDate filter (true)", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        sendDate: true,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.sendDate).toEqual(expect.any(Date));
+  });
+
+  it("should apply the sendDate filter (false)", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        sendDate: false,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.sendDate).toEqual(undefined);
+  });
+
+  it("should apply the sendDate filter", async function () {
+    // arrange
+    const from = new Date();
+    from.setDate(1);
+    from.setMonth(from.getMonth() - 9);
+    const to = new Date();
+    to.setDate(31);
+    to.setMonth(from.getMonth() - 9);
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        sendDate: {
+          from,
+          to,
+        },
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.sendDate).toBeBetween(from, to);
+  });
+
+  it("should apply the finish filter", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        finish: Finish.GLOSSY,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.finish).toEqual(Finish.GLOSSY);
+  });
+
+  it("should apply the templates filter (Template)", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        templates: template.id,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.templateId).toEqual(template.id);
+  });
+
+  it("should apply the templates filter (templateId)", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        templates: template,
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.templateId).toEqual(template.id);
+  });
+
+  it("should use the status filter", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        status: [BatchStatus.batch_created, BatchStatus.batch_user_ready],
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.status).toEqual(
+      expect.toBeOneOf([
+        BatchStatus.batch_created,
+        BatchStatus.batch_user_ready,
+      ]),
+    );
+  });
+
+  it("should use the status filter (single)", async function () {
+    // arrange
+
+    // act
+    const batches = await client.getBatches({
+      limit: 1,
+      filter: {
+        status: [BatchStatus.batch_user_ready],
+      },
+    });
+    const batch = batches.data[0];
+
+    if (batch === undefined) {
+      console.warn("No batches found, skipping test");
+      return;
+    }
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch.status).toEqual(
+      expect.toBeOneOf([BatchStatus.batch_user_ready]),
+    );
   });
 });

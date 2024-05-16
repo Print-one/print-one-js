@@ -14,6 +14,7 @@ export * from "./models/PaginatedResponse";
 export * from "./models/Preview";
 export * from "./models/PreviewDetails";
 export * from "./models/Template";
+export * from "./models/Batch";
 
 // Enums
 export * from "./enums/CsvStatus";

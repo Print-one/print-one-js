@@ -71,6 +71,7 @@ export class AxiosHTTPHandler extends HttpHandler<
 
   /**
    * Performs a POST request.
+   * @param url The url to perform the request to
    * @param data The data to send with the request
    * @param options The options for the request
    */
@@ -87,6 +88,31 @@ export class AxiosHTTPHandler extends HttpHandler<
     });
 
     this.debug(`POST ${response.request.path}`);
+
+    this.handleErrors(response);
+
+    return response.data;
+  }
+
+  /**
+   * Performs a PATCH request.
+   * @param url The url to perform the request to
+   * @param data The data to send with the request
+   * @param options The options for the request
+   */
+  public async PATCH<T>(
+    url: string,
+    data: unknown,
+    options: AxiosRequestConfig = {},
+  ): Promise<T> {
+    const response = await this.client.request<T>({
+      method: "PATCH",
+      url: url,
+      data: data,
+      ...options,
+    });
+
+    this.debug(`PATCH ${response.request.path}`);
 
     this.handleErrors(response);
 

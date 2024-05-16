@@ -31,4 +31,5 @@ module.exports = {
       statements: 100,
     },
   },
+  testSequencer: "./testSequencer.js",
 };

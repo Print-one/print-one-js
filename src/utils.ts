@@ -43,6 +43,21 @@ export function sortToQuery<T extends string>(
   return query;
 }
 
+export function mapInFilter<T extends string, R extends string>(
+  values: undefined | InFilter<T>,
+  mapper: (value: T) => R,
+): undefined | InFilter<R> {
+  if (values === undefined) {
+    return undefined;
+  }
+
+  if (typeof values === "string") {
+    return mapper(values);
+  } else {
+    return values.map(mapper);
+  }
+}
+
 export type InFilter<T = string> = T | T[];
 
 export function inFilterToQuery(
@@ -147,4 +162,19 @@ export function dateFilterToQuery(
   }
 
   return query;
+}
+
+export type EqualsFilter<T = string> = T | null;
+
+export function equalsFilterToQuery(
+  field: string,
+  value: undefined | EqualsFilter,
+): Record<string, unknown> {
+  if (value === undefined) {
+    return {};
+  }
+
+  return {
+    [`filter.${field}`]: value === null ? "$null" : `$eq:${value}`,
+  };
 }
