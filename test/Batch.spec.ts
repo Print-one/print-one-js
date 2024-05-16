@@ -406,8 +406,8 @@ describe("getOrders", function () {
   });
 });
 
-describe('BatchOrder', function () {
-  it('should be able to cancel Order', async function() {
+describe("BatchOrder", function () {
+  it("should be able to cancel Order", async function () {
     // arrange
     const order = await batch.createOrder({
       recipient: {
@@ -423,10 +423,10 @@ describe('BatchOrder', function () {
     await order.cancel();
 
     // assert
-    expect(order.status).toEqual('order_cancelled');
-  })
+    expect(order.status).toEqual("order_cancelled");
+  });
 
-  it('should be able to refresh Order', async function () {
+  it("should be able to refresh Order", async function () {
     // arrange
     const order = await batch.createOrder({
       recipient: {
@@ -447,4 +447,4 @@ describe('BatchOrder', function () {
     // assert
     expect(order.status).not.toEqual("order_created");
   }, 30000);
-})
+});
