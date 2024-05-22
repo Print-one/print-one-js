@@ -1,5 +1,5 @@
-import { Protected } from "../PrintOne";
-import { ICustomFile } from "./_interfaces/ICustomFile";
+import { Protected } from "~/PrintOne";
+import { ICustomFile } from "~/models/_interfaces/ICustomFile";
 
 export class CustomFile {
   constructor(

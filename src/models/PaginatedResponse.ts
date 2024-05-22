@@ -1,5 +1,5 @@
-import { IPaginatedResponse } from "./_interfaces/IPaginatedResponse";
-import { Protected } from "../PrintOne";
+import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
+import { Protected } from "~/PrintOne";
 
 export type Meta = {
   total: number;

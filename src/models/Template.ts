@@ -1,8 +1,8 @@
-import { Protected } from "../PrintOne";
-import { IFullTemplate, ITemplate } from "./_interfaces/ITemplate";
-import { Format } from "../enums/Format";
-import { IPreview } from "./_interfaces/IPreview";
-import { Preview } from "./Preview";
+import { Protected } from "~/PrintOne";
+import { IFullTemplate, ITemplate } from "~/models/_interfaces/ITemplate";
+import { Format } from "~/enums/Format";
+import { IPreview } from "~/models/_interfaces/IPreview";
+import { Preview } from "~/models/Preview";
 
 export type CreateTemplate = {
   name: string;

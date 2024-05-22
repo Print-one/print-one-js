@@ -1,5 +1,5 @@
-import { Protected } from "../PrintOne";
-import { IPreviewDetails } from "./_interfaces/IPreviewDetails";
+import { Protected } from "~/PrintOne";
+import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
 
 export class PreviewDetails {
   private _data: IPreviewDetails;
