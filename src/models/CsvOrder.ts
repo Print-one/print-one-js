@@ -4,7 +4,7 @@ import { Format } from "../enums/Format";
 import { Address } from "./Address";
 import { Template } from "./Template";
 import { ICsvOrder } from "./_interfaces/ICsvOrder";
-import { CsvStatus, FriendlyCsvStatusText } from "src/enums/CsvStatus";
+import { CsvStatus, FriendlyCsvStatusText } from "../enums/CsvStatus";
 import { Order } from "./Order";
 import { PaginatedResponse } from "./PaginatedResponse";
 
