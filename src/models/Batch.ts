@@ -188,7 +188,10 @@ export class Batch {
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getCsvOrder(id: string): Promise<CsvOrder> {
-    return this._protected.printOne.getCsvOrder(id, `batches/${this.id}`);
+    return this._protected.printOne.getCsvOrder(
+      id,
+      `batches/${this.id}/orders`,
+    );
   }
 
   /**

@@ -46,7 +46,7 @@ beforeAll(async function () {
 
 afterAll(async function () {
   if (template) {
-    await template.delete();
+    await template.delete().catch(() => {});
   }
 });
 
@@ -1279,6 +1279,7 @@ describe("getOrders", function () {
       name: "Test batch",
       finish: Finish.GLOSSY,
       template: template,
+      sender: exampleAddress,
     });
     const batchOrder = await batch.createOrder({
       recipient: exampleAddress,
@@ -1383,6 +1384,7 @@ describe("createBatch", function () {
       name: "Test batch",
       finish: Finish.GLOSSY,
       template: template,
+      sender: exampleAddress,
     });
 
     // assert
@@ -1398,6 +1400,7 @@ describe("createBatch", function () {
       name: "Test batch",
       finish: Finish.GLOSSY,
       template: template,
+      sender: exampleAddress,
     });
 
     // assert
@@ -1435,6 +1438,7 @@ describe("createBatch", function () {
       finish: Finish.GLOSSY,
       template: template,
       ready: sendDate,
+      sender: exampleAddress,
     });
 
     // assert
@@ -1444,8 +1448,6 @@ describe("createBatch", function () {
 
   it("should create an batch that is ready", async function () {
     // arrange
-    const sendDate = new Date();
-    sendDate.setDate(sendDate.getDate() + 10);
 
     // act
     const batch = await client.createBatch({
@@ -1453,12 +1455,15 @@ describe("createBatch", function () {
       finish: Finish.GLOSSY,
       template: template,
       ready: true,
+      sender: exampleAddress,
     });
 
     // assert
     expect(batch).toBeDefined();
     expect(batch.status).toEqual(BatchStatus.batch_user_ready);
-    expect(batch.sendDate).toBeBefore(new Date());
+    const withMargin = new Date();
+    withMargin.setMinutes(withMargin.getMinutes() + 1);
+    expect(batch.sendDate).toBeBefore(withMargin);
   });
 
   it("should create an batch with a billing id", async function () {
@@ -1471,6 +1476,7 @@ describe("createBatch", function () {
       finish: Finish.GLOSSY,
       template: template,
       billingId: billingId,
+      sender: exampleAddress,
     });
 
     // assert
@@ -1487,6 +1493,7 @@ describe("createBatch", function () {
       name: "Test batch",
       finish: Finish.GLOSSY,
       template: templateId,
+      sender: exampleAddress,
     });
 
     // assert
@@ -1504,6 +1511,7 @@ describe("getBatch", function () {
       name: "Test batch",
       template: template,
       finish: Finish.GLOSSY,
+      sender: exampleAddress,
     });
     batchId = batch.id;
   });

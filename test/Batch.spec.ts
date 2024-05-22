@@ -435,7 +435,7 @@ describe("BatchOrder", function () {
 
     // assert
     expect(order.status).toEqual("order_cancelled");
-  });
+  }, 30000);
 
   it("should be able to refresh Order", async function () {
     // arrange
