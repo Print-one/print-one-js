@@ -1,12 +1,12 @@
-import { OrderPaginatedQuery, Protected } from "../PrintOne";
-import { Finish } from "../enums/Finish";
-import { Format } from "../enums/Format";
-import { Address } from "./Address";
-import { Template } from "./Template";
-import { ICsvOrder } from "./_interfaces/ICsvOrder";
-import { CsvStatus, FriendlyCsvStatusText } from "../enums/CsvStatus";
-import { Order } from "./Order";
-import { PaginatedResponse } from "./PaginatedResponse";
+import { OrderPaginatedQuery, Protected } from "~/PrintOne";
+import { Finish } from "~/enums/Finish";
+import { Format } from "~/enums/Format";
+import { Address } from "~/models/Address";
+import { Template } from "~/models/Template";
+import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
+import { CsvStatus, FriendlyCsvStatusText } from "~/enums/CsvStatus";
+import { Order } from "~/models/Order";
+import { PaginatedResponse } from "~/models/PaginatedResponse";
 
 export type CreateCsvOrder = {
   file: ArrayBuffer;

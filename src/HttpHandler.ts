@@ -1,6 +1,6 @@
 import debug from "debug";
-import { PrintOneError } from "./errors/PrintOneError";
-import { PrintOneOptions } from "./PrintOne";
+import { PrintOneError } from "~/errors/PrintOneError";
+import { PrintOneOptions } from "~/PrintOne";
 
 export abstract class HttpHandler<RequestOptions, Response> {
   protected readonly debug: debug.Debugger;

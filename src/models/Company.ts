@@ -1,5 +1,5 @@
-import { ICompany } from "./_interfaces/ICompany";
-import { Protected } from "../PrintOne";
+import { ICompany } from "~/models/_interfaces/ICompany";
+import { Protected } from "~/PrintOne";
 
 export class Company {
   constructor(

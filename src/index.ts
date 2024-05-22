@@ -1,4 +1,4 @@
-import { PrintOne } from "./PrintOne";
+import { PrintOne } from "~/PrintOne";
 
 export default PrintOne;
 

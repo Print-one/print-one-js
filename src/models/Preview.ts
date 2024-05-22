@@ -1,10 +1,10 @@
-import { IPreview } from "./_interfaces/IPreview";
-import { Protected } from "../PrintOne";
-import { PrintOneError } from "../errors/PrintOneError";
-import { PreviewDetails } from "./PreviewDetails";
-import { IPreviewDetails } from "./_interfaces/IPreviewDetails";
-import { TimeoutError } from "../errors/TimeoutError";
-import { sleep } from "../utils";
+import { IPreview } from "~/models/_interfaces/IPreview";
+import { Protected } from "~/PrintOne";
+import { PrintOneError } from "~/errors/PrintOneError";
+import { PreviewDetails } from "~/models/PreviewDetails";
+import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
+import { TimeoutError } from "~/errors/TimeoutError";
+import { sleep } from "~/utils";
 
 export class Preview {
   private _data: IPreview;

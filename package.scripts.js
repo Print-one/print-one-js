@@ -15,6 +15,7 @@ module.exports = {
       eslint: "eslint .",
       prettier: "prettier -c .",
     },
+    postinstall: ["ts-patch install"],
     test: {
       $env: "file:.env",
       _ci: "jest --runInBand --forceExit --detectOpenHandles",

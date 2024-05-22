@@ -1,7 +1,7 @@
 import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import debug from "debug";
-import { HttpHandler } from "./HttpHandler";
-import { PrintOneOptions } from "./PrintOne";
+import { HttpHandler } from "~/HttpHandler";
+import { PrintOneOptions } from "~/PrintOne";
 
 export class AxiosHTTPHandler extends HttpHandler<
   AxiosRequestConfig,

@@ -1,15 +1,15 @@
-import { OrderPaginatedQuery, Protected } from "../PrintOne";
-import { IBatch } from "./_interfaces/IBatch";
-import { Finish } from "../enums/Finish";
-import { BatchStatus } from "../enums/BatchStatus";
-import { Template } from "./Template";
-import { PaginatedResponse } from "./PaginatedResponse";
-import { Order } from "./Order";
-import { Address } from "./Address";
-import { IOrder } from "./_interfaces/IOrder";
-import { Format } from "../enums/Format";
-import { CreateBatchCsvOrder, CsvOrder } from "./CsvOrder";
-import { ICsvOrder } from "./_interfaces/ICsvOrder";
+import { OrderPaginatedQuery, Protected } from "~/PrintOne";
+import { IBatch } from "~/models/_interfaces/IBatch";
+import { Finish } from "~/enums/Finish";
+import { BatchStatus } from "~/enums/BatchStatus";
+import { Template } from "~/models/Template";
+import { PaginatedResponse } from "~/models/PaginatedResponse";
+import { Order } from "~/models/Order";
+import { Address } from "~/models/Address";
+import { IOrder } from "~/models/_interfaces/IOrder";
+import { Format } from "~/enums/Format";
+import { CreateBatchCsvOrder, CsvOrder } from "~/models/CsvOrder";
+import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 
 export type CreateBatch = {
   name: string;

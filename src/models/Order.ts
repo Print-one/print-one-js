@@ -1,11 +1,11 @@
-import { IOrder } from "./_interfaces/IOrder";
-import { Protected } from "../PrintOne";
-import { Finish } from "../enums/Finish";
-import { Format } from "../enums/Format";
-import { Address } from "./Address";
-import { Template } from "./Template";
-import { FriendlyStatus, Status } from "../enums/Status";
-import { sleep } from "../utils";
+import { IOrder } from "~/models/_interfaces/IOrder";
+import { Protected } from "~/PrintOne";
+import { Finish } from "~/enums/Finish";
+import { Format } from "~/enums/Format";
+import { Address } from "~/models/Address";
+import { Template } from "~/models/Template";
+import { FriendlyStatus, Status } from "~/enums/Status";
+import { sleep } from "~/utils";
 
 export type CreateOrder = {
   recipient: Address;
