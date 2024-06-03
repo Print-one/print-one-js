@@ -32,6 +32,7 @@ import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 import { Batch, CreateBatch } from "~/models/Batch";
 import { IBatch } from "~/models/_interfaces/IBatch";
 import { BatchStatus } from "~/enums/BatchStatus";
+import * as crypto from "crypto";
 
 export type RequestHandler = new (
   token: string,
@@ -517,5 +518,20 @@ export class PrintOne {
       data,
       (data) => new Batch(this.protected, data),
     );
+  }
+
+  public validatedWebhook(
+    body: string,
+    headers: Record<string, string>,
+    secret: string,
+  ): boolean {
+    const hmacHeader = headers["x-printone-hmac-sha256"];
+
+    const hmac = crypto
+      .createHmac("sha256", secret)
+      .update(body)
+      .digest("base64");
+
+    return hmac === hmacHeader;
   }
 }
