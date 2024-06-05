@@ -1,4 +1,5 @@
 import {
+  Address,
   Batch,
   CreateBatchCsvOrder,
   CsvOrder,
@@ -17,6 +18,14 @@ import { sleep } from "../src/utils";
 let batch: Batch = null as unknown as Batch;
 let template: Template = null as unknown as Template;
 
+const address: Address = {
+  name: "Jane Doe",
+  address: "123 Main Street",
+  postalCode: "1234 AB",
+  city: "Somecity",
+  country: "NL",
+};
+
 beforeAll(async function () {
   template = await client.createTemplate({
     name: `Test Order ${new Date().toISOString().replaceAll(":", "-")}`,
@@ -31,6 +40,7 @@ beforeEach(async function () {
     template: template,
     name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
     finish: Finish.GLOSSY,
+    sender: address,
   });
 });
 
@@ -347,6 +357,7 @@ describe("getOrder", function () {
       template: template,
       name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
       finish: Finish.GLOSSY,
+      sender: address,
     });
     const order = await batch2.createOrder({
       recipient: {
@@ -424,7 +435,7 @@ describe("BatchOrder", function () {
 
     // assert
     expect(order.status).toEqual("order_cancelled");
-  });
+  }, 30000);
 
   it("should be able to refresh Order", async function () {
     // arrange

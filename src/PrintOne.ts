@@ -412,6 +412,7 @@ export class PrintOne {
       templateId: templateId,
       finish: data.finish,
       ready: ready ? ready : null,
+      sender: data.sender,
     });
 
     return new Batch(this.protected, response);
