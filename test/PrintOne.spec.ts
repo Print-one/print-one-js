@@ -11,6 +11,7 @@ import {
   FriendlyStatus,
   Order,
   PaginatedResponse,
+  PreviewDetails,
   Template,
 } from "../src";
 import "jest-extended";
@@ -19,6 +20,12 @@ import * as path from "path";
 import { client } from "./client";
 import { Batch } from "../src/models/Batch";
 import { BatchStatus } from "../src/enums/BatchStatus";
+import { Webhook } from "~/models/Webhook";
+import { WebhookEvent } from "~/enums/WebhookEvent";
+import {
+  OrderStatusUpdateWebhookRequest,
+  TemplatePreviewRenderedWebhookRequest,
+} from "~/models/WebhookRequest";
 
 let template: Template = null as unknown as Template;
 
@@ -1955,7 +1962,7 @@ describe("getBatches", function () {
   });
 });
 
-describe("validateWebhook", function () {
+describe("isValidWebhook", function () {
   const body =
     '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"order_status_update"}';
   const headers = {
@@ -1964,17 +1971,277 @@ describe("validateWebhook", function () {
 
   it("should return false if header does not match", () => {
     expect(
-      client.validatedWebhook(body, headers, "invalid-header-secret"),
+      client.isValidWebhook(body, headers, "invalid-header-secret"),
     ).toBeFalse();
   });
 
   it("should return if signature is valid", () => {
     expect(
-      client.validatedWebhook(
+      client.isValidWebhook(
         body,
         headers,
         "0YFMgi5yzciEJV2HBL9wKWtNDnos8TaMOqtjSNErnDYWfign0JdW81vpmb6T62r4",
       ),
     ).toBeTrue();
+  });
+});
+
+describe("validateWebhook", function () {
+  beforeEach(async function () {
+    //mock isValidWebhook
+    jest.spyOn(client, "isValidWebhook").mockReturnValue(true);
+  });
+
+  afterEach(async function () {
+    jest.restoreAllMocks();
+  });
+
+  it("should return OrderStatusUpdateWebhookRequest if event is order_status_update", async function () {
+    // arrange
+    const body =
+      '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"order_status_update"}';
+    const headers = {
+      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+    };
+
+    // act
+    const webhook = await client.validateWebhook(body, headers, "secret");
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(OrderStatusUpdateWebhookRequest));
+    expect(webhook.event).toEqual(WebhookEvent.order_status_update);
+    expect(webhook.createdAt).toEqual(expect.any(Date));
+    expect(webhook.data).toEqual(expect.any(Order));
+  });
+
+  it("should return TemplatePreviewRenderedWebhookRequest if event is template_preview_rendered", async function () {
+    // arrange
+    const body = JSON.stringify({
+      data: {
+        id: "prev_IhWTbcg0Eopdt1nqvpMOP-2",
+        errors: [],
+        imageUrl:
+          "https://api.development.print.one/v2/storage/template/preview/prev_IhWTbcg0Eopdt1nqvpMOP-2",
+        templateId: "tmpl_FSekvjplsPzvptEBJHhhI",
+      },
+      event: "template_preview_rendered",
+      created_at: "2024-06-25T07:28:17.487Z",
+    });
+    const headers = {
+      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+    };
+
+    // act
+    const webhook = await client.validateWebhook(body, headers, "secret");
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(TemplatePreviewRenderedWebhookRequest));
+    expect(webhook.event).toEqual(WebhookEvent.template_preview_rendered);
+    expect(webhook.createdAt).toEqual(expect.any(Date));
+    expect(webhook.data).toEqual(expect.any(PreviewDetails));
+  });
+
+  it("should throw an error if event is not valid", async function () {
+    // arrange
+    jest.spyOn(client, "isValidWebhook").mockReturnValue(false);
+    const body =
+      '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"test"}';
+    const headers = {
+      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+    };
+
+    // act
+    try {
+      client.validateWebhook(body, headers, "secret");
+      expect.fail("Expected an error");
+    } catch (error) {
+      // assert
+      expect(error).toBeDefined();
+      expect(error).toEqual(expect.any(Error));
+    }
+  });
+
+  it("should throw an error if event is not supported", async function () {
+    // arrange
+    const body =
+      '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"test"}';
+    const headers = {
+      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+    };
+
+    // act
+    try {
+      client.validateWebhook(body, headers, "secret");
+      expect.fail("Expected an error");
+    } catch (error) {
+      // assert
+      expect(error).toBeDefined();
+      expect(error).toEqual(expect.any(Error));
+    }
+  });
+});
+
+describe("createWebhook", function () {
+  it("should create a webhook", async function () {
+    // arrange
+
+    // act
+    const webhook = await client.createWebhook({
+      name: "Test webhook",
+      url: "https://example.com",
+      active: false,
+      events: [WebhookEvent.order_status_update],
+    });
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(Webhook));
+  });
+
+  it("should create a webhook with all fields", async function () {
+    // arrange
+
+    // act
+    const webhook = await client.createWebhook({
+      name: "Test webhook",
+      url: "https://example.com",
+      active: false,
+      events: [WebhookEvent.order_status_update],
+      headers: {
+        test: "test",
+      },
+      secretHeaders: {
+        password: "password",
+      },
+    });
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook.id).toEqual(expect.any(String));
+    expect(webhook.name).toEqual("Test webhook");
+    expect(webhook.url).toEqual("https://example.com");
+    expect(webhook.active).toEqual(false);
+    expect(webhook.events).toEqual([WebhookEvent.order_status_update]);
+    expect(webhook.headers).toEqual({ test: "test" });
+    expect(webhook.secretHeaders).toEqual({ password: expect.any(String) });
+  });
+});
+
+describe("getWebhook", function () {
+  let webhookId: string = null as unknown as string;
+
+  // global arrange
+  beforeAll(async function () {
+    const webhook = await client.createWebhook({
+      name: "Test webhook",
+      url: "https://example.com",
+      active: false,
+      events: [WebhookEvent.order_status_update],
+    });
+    webhookId = webhook.id;
+  });
+
+  it("should return a webhook", async function () {
+    // arrange
+
+    // act
+    const webhook = await client.getWebhook(webhookId);
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(Webhook));
+  });
+
+  it("should return a webhook with all fields", async function () {
+    // arrange
+
+    // act
+    const webhook = await client.getWebhook(webhookId);
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook.id).toEqual(expect.any(String));
+    expect(webhook.name).toEqual(expect.any(String));
+    expect(webhook.url).toEqual(expect.any(String));
+    expect(webhook.active).toEqual(expect.any(Boolean));
+    expect(webhook.events).toEqual(expect.any(Array));
+    expect(webhook.headers).toEqual(expect.any(Object));
+    expect(webhook.secretHeaders).toEqual(expect.any(Object));
+  });
+
+  it("should throw an error when the webhook does not exist", async function () {
+    // arrange
+
+    // act
+    const promise = client.getWebhook("test");
+
+    // assert
+    await expect(promise).rejects.toThrow(/not found/);
+  });
+});
+
+describe("getWebhooks", function () {
+  it("should return a paginated response", async function () {
+    // arrange
+
+    // act
+    const webhooks = await client.getWebhooks();
+
+    // assert
+    expect(webhooks).toBeDefined();
+    expect(webhooks).toEqual(expect.any(PaginatedResponse));
+
+    expect(webhooks.data).toBeDefined();
+    expect(webhooks.data.length).toBeGreaterThanOrEqual(0);
+
+    expect(webhooks.meta.total).toBeGreaterThanOrEqual(0);
+    expect(webhooks.meta.page).toEqual(1);
+    expect(webhooks.meta.pageSize).toBeGreaterThanOrEqual(0);
+    expect(webhooks.meta.pages).toBeGreaterThanOrEqual(1);
+  });
+
+  it("should return a webhook", async function () {
+    // arrange
+
+    // act
+    const webhooks = await client.getWebhooks();
+    const webhook = webhooks.data[0];
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(Webhook));
+  });
+
+  it("should return a webhook with all fields", async function () {
+    // arrange
+
+    // act
+    const webhooks = await client.getWebhooks();
+    const webhook = webhooks.data[0];
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook.id).toEqual(expect.any(String));
+    expect(webhook.name).toEqual(expect.any(String));
+    expect(webhook.url).toEqual(expect.any(String));
+    expect(webhook.active).toEqual(expect.any(Boolean));
+    expect(webhook.events).toEqual(expect.any(Array));
+    expect(webhook.headers).toEqual(expect.any(Object));
+    expect(webhook.secretHeaders).toEqual(expect.any(Object));
+  });
+});
+
+describe("getWebhookSecret", function () {
+  it("should return a secret", async function () {
+    // arrange
+
+    // act
+    const secret = await client.getWebhookSecret();
+
+    // assert
+    expect(secret).toBeDefined();
+    expect(secret).toEqual(expect.any(String));
   });
 });
