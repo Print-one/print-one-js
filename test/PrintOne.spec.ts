@@ -63,7 +63,7 @@ const exampleAddress: Address = {
   addressLine2: undefined,
   postalCode: "1234 AB",
   city: "Test",
-  country: "NL",
+  country: "Netherlands",
 };
 
 describe("getSelf", function () {
