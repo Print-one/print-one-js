@@ -18,7 +18,6 @@
     "build": "bsm",
     "clean": "bsm",
     "format": "bsm",
-    "postinstall": "bsm",
     "lint": "bsm",
     "prepublishOnly": "bsm build",
     "semantic-release": "semantic-release",

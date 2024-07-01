@@ -37,7 +37,7 @@ import * as crypto from "crypto";
 export type RequestHandler = new (
   token: string,
   options: Required<PrintOneOptions>,
-  debug: debug.Debugger,
+  debug: PrintOneDebugger,
 ) => HttpHandler<{ headers: Record<string, string> }, unknown>;
 export type PrintOneOptions = Partial<{
   url: string;
@@ -53,10 +53,12 @@ const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
   client: AxiosHTTPHandler,
 };
 
+export type PrintOneDebugger = (formatter: unknown, ...args: unknown[]) => void;
+
 export type Protected = {
   client: HttpHandler<unknown, unknown>;
   options: Required<PrintOneOptions>;
-  debug: debug.Debugger;
+  debug: PrintOneDebugger;
   printOne: PrintOne;
 };
 
@@ -94,7 +96,7 @@ export class PrintOne {
     return this.protected.client;
   }
 
-  protected get debug(): debug.Debugger {
+  protected get debug(): PrintOneDebugger {
     return this.protected.debug;
   }
 
