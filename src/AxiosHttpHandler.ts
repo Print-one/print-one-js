@@ -1,7 +1,6 @@
 import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios";
-import debug from "debug";
 import { HttpHandler } from "~/HttpHandler";
-import { PrintOneOptions } from "~/PrintOne";
+import { PrintOneDebugger, PrintOneOptions } from "~/PrintOne";
 
 export class AxiosHTTPHandler extends HttpHandler<
   AxiosRequestConfig,
@@ -12,7 +11,7 @@ export class AxiosHTTPHandler extends HttpHandler<
   constructor(
     token: string,
     options: Required<PrintOneOptions>,
-    debug: debug.Debugger,
+    debug: PrintOneDebugger,
   ) {
     super(token, options, debug);
     this.client = axios.create({

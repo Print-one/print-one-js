@@ -2,7 +2,11 @@
 
 module.exports = {
   scripts: {
-    build: ["bsm clean", "tsc --project tsconfig.build.json"],
+    build: [
+      "ts-patch install",
+      "bsm clean",
+      "tsc --project tsconfig.build.json",
+    ],
     clean: "rimraf ./lib",
     format: {
       _default: "bsm ~.*",
@@ -16,7 +20,6 @@ module.exports = {
       prettier: "prettier -c .",
       typescript: "tsc --noEmit",
     },
-    postinstall: ["ts-patch install"],
     test: {
       $env: "file:.env",
       _ci: "jest --runInBand --forceExit --detectOpenHandles",

@@ -1,14 +1,13 @@
-import debug from "debug";
 import { PrintOneError } from "~/errors/PrintOneError";
-import { PrintOneOptions } from "~/PrintOne";
+import { PrintOneDebugger, PrintOneOptions } from "~/PrintOne";
 
 export abstract class HttpHandler<RequestOptions, Response> {
-  protected readonly debug: debug.Debugger;
+  protected readonly debug: PrintOneDebugger;
 
   constructor(
     token: string,
     protected readonly options: Required<PrintOneOptions>,
-    debug: debug.Debugger,
+    debug: PrintOneDebugger,
   ) {
     // We require these, so each extended class has type-safe auto-fill
     token;
