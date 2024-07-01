@@ -1,3 +1,18 @@
+# [1.3.0-next.2](https://github.com/Print-one/print-one-js/compare/v1.3.0-next.1...v1.3.0-next.2) (2024-07-01)
+
+
+### Bug Fixes
+
+* typescript error on install ([8fb29c4](https://github.com/Print-one/print-one-js/commit/8fb29c4f83831d12510e31475fb3a6fdc4ed352f))
+* typescript error on install ([20d3f0f](https://github.com/Print-one/print-one-js/commit/20d3f0fc8abadde35381dda455f1ae1d8775bc94))
+
+
+### Features
+
+* :sparkles: webhook request validation logic ([ae9bd7c](https://github.com/Print-one/print-one-js/commit/ae9bd7c9c67b6516bcd0d47616162bc93c01282b))
+* :sparkles: webhook request validation logic ([ce81792](https://github.com/Print-one/print-one-js/commit/ce81792e9b554ceaf0694857a9402b003bb80392))
+* webhooks ([73a1678](https://github.com/Print-one/print-one-js/commit/73a1678a490618251a0a9b80a77931ad8b31e0f0))
+
 # [1.3.0-next.1](https://github.com/Print-one/print-one-js/compare/v1.2.1...v1.3.0-next.1) (2024-05-22)
 
 
