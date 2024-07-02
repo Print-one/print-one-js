@@ -1,10 +1,12 @@
 import {
+  IBatchStatusUpdateWebhookRequest,
   IOrderStatusUpdateWebhookRequest,
   ITemplatePreviewRenderedWebhookRequest,
   IWebhookRequest,
 } from "~/models/_interfaces/IWebhookRequest";
-import { Protected } from "~/PrintOne";
+import { Batch } from "~/models/Batch";
 import { Order } from "~/models/Order";
+import { Protected } from "~/PrintOne";
 import { PreviewDetails } from "~/models/PreviewDetails";
 
 abstract class AbstractWebhookRequest<T, E extends IWebhookRequest> {
@@ -26,7 +28,8 @@ abstract class AbstractWebhookRequest<T, E extends IWebhookRequest> {
 
 export type WebhookRequest =
   | OrderStatusUpdateWebhookRequest
-  | TemplatePreviewRenderedWebhookRequest;
+  | TemplatePreviewRenderedWebhookRequest
+  | BatchStatusUpdateWebhookRequest;
 
 export function webhookRequestFactory(
   _protected: Protected,
@@ -39,6 +42,8 @@ export function webhookRequestFactory(
       return new OrderStatusUpdateWebhookRequest(_protected, data);
     case "template_preview_rendered":
       return new TemplatePreviewRenderedWebhookRequest(_protected, data);
+    case "batch_status_update":
+      return new BatchStatusUpdateWebhookRequest(_protected, data);
     default:
       throw new Error(`Unknown webhook event: ${event}`);
   }
@@ -59,5 +64,14 @@ export class TemplatePreviewRenderedWebhookRequest extends AbstractWebhookReques
 > {
   get data(): PreviewDetails {
     return new PreviewDetails(this._protected, this._data.data);
+  }
+}
+
+export class BatchStatusUpdateWebhookRequest extends AbstractWebhookRequest<
+  Batch,
+  IBatchStatusUpdateWebhookRequest
+> {
+  get data(): Batch {
+    return new Batch(this._protected, this._data.data);
   }
 }

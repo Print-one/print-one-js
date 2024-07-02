@@ -1,3 +1,5 @@
+import { Address } from "~/models/Address";
+
 export type IBatch = {
   id: string;
   companyId: string;
@@ -8,6 +10,8 @@ export type IBatch = {
   isBillable: boolean;
   templateId: string;
   estimatedPrice: number;
+  estimatedTax: number;
+  sender: Address;
   sendDate: string | null;
   status: string;
   orders: {

@@ -23,6 +23,7 @@ import { BatchStatus } from "../src/enums/BatchStatus";
 import { Webhook } from "~/models/Webhook";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import {
+  BatchStatusUpdateWebhookRequest,
   OrderStatusUpdateWebhookRequest,
   TemplatePreviewRenderedWebhookRequest,
 } from "~/models/WebhookRequest";
@@ -2013,6 +2014,47 @@ describe("validateWebhook", function () {
     expect(webhook.event).toEqual(WebhookEvent.order_status_update);
     expect(webhook.createdAt).toEqual(expect.any(Date));
     expect(webhook.data).toEqual(expect.any(Order));
+  });
+
+  it('should return BatchStatusUpdateWebhookRequest if event is "batch_status_update"', async function () {
+    // arrange
+    const body = JSON.stringify({
+      data: {
+        id: "batch_1",
+        companyId: "2bd4c679-3d59-4a6f-a815-a60424746f8d",
+        name: "Test batch",
+        finish: "GLOSSY",
+        templateId: "tmpl_AyDg3PxvP5ydyGq3kSFfj",
+        status: "batch_created",
+        createdAt: "2024-06-03T13:14:46.501Z",
+        updatedAt: "2024-06-03T13:14:46.501Z",
+        sendDate: null,
+        isBillable: true,
+        estimatedPrice: 0,
+        orders: {
+          processing: 0,
+          success: 0,
+          failed: 0,
+          cancelled: 0,
+        },
+      },
+      event: "batch_status_update",
+      created_at: "2024-06-03T13:14:46.501Z",
+    });
+
+    const headers = {
+      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+    };
+
+    // act
+    const webhook = await client.validateWebhook(body, headers, "secret");
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(BatchStatusUpdateWebhookRequest));
+    expect(webhook.event).toEqual(WebhookEvent.batch_status_update);
+    expect(webhook.createdAt).toEqual(expect.any(Date));
+    expect(webhook.data).toEqual(expect.any(Batch));
   });
 
   it("should return TemplatePreviewRenderedWebhookRequest if event is template_preview_rendered", async function () {
