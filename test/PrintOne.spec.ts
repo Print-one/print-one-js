@@ -1553,6 +1553,8 @@ describe("getBatch", function () {
     expect(batch.templateId).toEqual(expect.any(String));
     expect(batch.isBillable).toEqual(expect.any(Boolean));
     expect(batch.estimatedPrice).toEqual(expect.any(Number));
+    expect(batch.estimatedTax).toEqual(expect.any(Number));
+    expect(batch.sender).toEqual(expect.any(Object));
     expect(batch.sendDate).toEqual(
       expect.toBeOneOf([undefined, expect.any(Date)]),
     );
