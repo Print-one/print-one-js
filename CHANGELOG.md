@@ -1,3 +1,10 @@
+# [1.3.0-next.3](https://github.com/Print-one/print-one-js/compare/v1.3.0-next.2...v1.3.0-next.3) (2024-07-02)
+
+
+### Features
+
+* add batch_status_update webhook support ([696a1dc](https://github.com/Print-one/print-one-js/commit/696a1dc2f0e4dc124ae43e0fcd654574c9c07509))
+
 # [1.3.0-next.2](https://github.com/Print-one/print-one-js/compare/v1.3.0-next.1...v1.3.0-next.2) (2024-07-01)
 
 
