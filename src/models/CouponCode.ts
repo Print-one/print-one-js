@@ -38,7 +38,7 @@ export class CouponCode {
   }
 
   /**
-   * Refrsh the coupon code
+   * Refresh the coupon code
    * @throws { PrintOneError } If the coupon code could not be refreshed.
    */
   public async refresh(): Promise<void> {
