@@ -33,6 +33,8 @@ import { Batch, CreateBatch } from "~/models/Batch";
 import { IBatch } from "~/models/_interfaces/IBatch";
 import { BatchStatus } from "~/enums/BatchStatus";
 import * as crypto from "crypto";
+import { Coupon, CreateCoupon } from "~/models/Coupon";
+import { ICoupon } from "~/models/_interfaces/ICoupon";
 
 export type RequestHandler = new (
   token: string,
@@ -521,6 +523,61 @@ export class PrintOne {
       data,
       (data) => new Batch(this.protected, data),
     );
+  }
+
+  /**
+   * Create a coupon
+   * @param data The coupon data
+   */
+  public async createCoupon(data: CreateCoupon): Promise<Coupon> {
+    const response = await this.client.POST<ICoupon>("coupons", {
+      name: data.name,
+    });
+
+    return new Coupon(this.protected, response);
+  }
+
+  /**
+   * Get all coupons.
+   * @param { PaginationOptions } options The options to use for pagination
+   * @param options.limit The maximum amount of coupons to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, can be "createdAt", "updatedAt".
+   * @param options.filter The filters to apply.
+   */
+  public async getCoupons(
+    options: PaginationOptions<"name"> & {
+      filter?: {
+        name?: InFilter;
+        createdAt?: DateFilter;
+      };
+    } = {},
+  ): Promise<PaginatedResponse<Coupon>> {
+    const params = {
+      ...sortToQuery(options),
+      ...inFilterToQuery("name", options.filter?.name),
+    };
+
+    const data = await this.client.GET<IPaginatedResponse<ICoupon>>("coupons", {
+      params: params,
+    });
+
+    return PaginatedResponse.safe(
+      this.protected,
+      data,
+      (data) => new Coupon(this.protected, data),
+    );
+  }
+
+  /**
+   * Get a coupon by its id.
+   * @param { string } id The id of the coupon.
+   * @throws { PrintOneError } If the coupon could not be found.
+   */
+  public async getCoupon(id: string): Promise<Coupon> {
+    const data = await this.client.GET<ICoupon>(`coupons/${id}`);
+
+    return new Coupon(this.protected, data);
   }
 
   public validatedWebhook(
