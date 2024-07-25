@@ -303,3 +303,77 @@ const csvOrder = await client.getCsvOrder("example-order-id");
 ```
 
 ```
+
+--
+
+## `.createCoupon(data)`
+
+Create a new coupon.
+
+**Parameters**
+
+| Name   | Type     | Description                                                                                 |
+| ------ | -------- | ------------------------------------------------------------------------------------------- |
+| `data` | `object` | The data to create the coupon with. See [`Order`](./Coupon#createcoupondata) for more info. |
+
+**Returns: [`Promise<Coupon>`](./Order)**
+
+**Example**
+
+```js
+const coupon = await client.createCoupon({
+  name: "coupon",
+});
+```
+
+---
+
+## `.getCoupons([options])`
+
+Get all coupons.
+
+**Parameters**
+
+| Name                            | Type                          | Default          | Description                                                                                                                        |
+| ------------------------------- | ----------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `options.limit`                 | `number`                      | `10`             | The maximum number of coupons to return.                                                                                            |
+| `options.page`                  | `number`                      | `1`              | The page of coupons to return.                                                                                                      |
+| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the coupons by. Can be `createdAt` or `name`                |
+| `options.filter.name`           | `string` \| `string[]`        | `undefined`      | The name(s) of the coupon(s) to filter   |
+
+**Returns: [`Promise<PaginatedResponse<Order>>`](./Order)**
+
+**Example**
+
+```js
+const coupons = await client.getCoupons({
+  limit: 20,
+  page: 1,
+  sortBy: "createdAt:ASC",
+  filter: {
+    name: "test",
+  },
+});
+```
+
+---
+
+## `.getCoupon(id)`
+
+Get a coupon by its ID.
+
+**Parameters**
+
+| Name | Type     | Description                  |
+| ---- | -------- | ---------------------------- |
+| `id` | `string` | The ID of the coupon to get. |
+
+**Returns: [`Promise<Coupon>`](./Coupon)**
+
+**Example**
+
+```js
+const coupon = await client.getCoupon("example-coupon-id");
+```
+
+---
