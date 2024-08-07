@@ -13,6 +13,7 @@ import {
   PaginatedResponse,
   PreviewDetails,
   Template,
+  Coupon,
 } from "../src";
 import "jest-extended";
 import * as fs from "fs";
@@ -1962,6 +1963,163 @@ describe("getBatches", function () {
     expect(batch.status).toEqual(
       expect.toBeOneOf([BatchStatus.batch_user_ready]),
     );
+  });
+});
+
+describe("createCoupon", function () {
+  it("should create a coupon", async function () {
+    // arrange
+
+    // act
+    const coupon = await client.createCoupon({
+      name: "Test coupon",
+    });
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon).toEqual(expect.any(Coupon));
+  });
+
+  it("should create a coupon with all fields", async function () {
+    // arrange
+
+    // act
+    const coupon = await client.createCoupon({
+      name: "Test coupon",
+    });
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon.id).toEqual(expect.any(String));
+    expect(coupon.name).toEqual(expect.any(String));
+    expect(coupon.companyId).toEqual(expect.any(String));
+    expect(coupon.stats).toEqual({
+      total: expect.any(Number),
+      used: expect.any(Number),
+      remaining: expect.any(Number),
+    });
+  });
+});
+
+describe("getCoupon", function () {
+  let couponId: string = null as unknown as string;
+
+  // global arrange
+  beforeAll(async function () {
+    const coupon = await client.createCoupon({
+      name: "Test coupon",
+    });
+    couponId = coupon.id;
+  });
+
+  it("should return a coupon", async function () {
+    // arrange
+
+    // act
+    const coupon = await client.getCoupon(couponId);
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon).toEqual(expect.any(Coupon));
+  });
+
+  it("should return a coupon with all fields", async function () {
+    // arrange
+
+    // act
+    const coupon = await client.getCoupon(couponId);
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon.id).toEqual(expect.any(String));
+    expect(coupon.name).toEqual(expect.any(String));
+    expect(coupon.companyId).toEqual(expect.any(String));
+    expect(coupon.stats).toEqual({
+      total: expect.any(Number),
+      used: expect.any(Number),
+      remaining: expect.any(Number),
+    });
+  });
+
+  it("should throw an error when the coupon does not exist", async function () {
+    // arrange
+
+    // act
+    const promise = client.getCoupon("test");
+
+    // assert
+    await expect(promise).rejects.toThrow(/not found/);
+  });
+});
+
+describe("getCoupons", function () {
+  it("should return a paginated response", async function () {
+    // arrange
+
+    // act
+    const coupons = await client.getCoupons();
+
+    // assert
+    expect(coupons).toBeDefined();
+    expect(coupons).toEqual(expect.any(PaginatedResponse));
+
+    expect(coupons.data).toBeDefined();
+    expect(coupons.data.length).toBeGreaterThanOrEqual(1);
+
+    expect(coupons.meta.total).toBeGreaterThanOrEqual(1);
+    expect(coupons.meta.page).toEqual(1);
+    // Default page size is 10
+    expect(coupons.meta.pageSize).toBeGreaterThanOrEqual(10);
+    expect(coupons.meta.pages).toBeGreaterThanOrEqual(1);
+  });
+
+  it("should return a coupon", async function () {
+    // arrange
+
+    // act
+    const coupons = await client.getCoupons({ limit: 1 });
+    const coupon = coupons.data[0];
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon).toEqual(expect.any(Coupon));
+  });
+
+  it("should return a coupon with all fields", async function () {
+    // arrange
+
+    // act
+    const coupons = await client.getCoupons({ limit: 1 });
+    const coupon = coupons.data[0];
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon.id).toEqual(expect.any(String));
+    expect(coupon.name).toEqual(expect.any(String));
+    expect(coupon.companyId).toEqual(expect.any(String));
+    expect(coupon.stats).toEqual({
+      total: expect.any(Number),
+      used: expect.any(Number),
+      remaining: expect.any(Number),
+    });
+  });
+
+  it("should apply the name filter", async function () {
+    // arrange
+    const couponName = (await client.getCoupons()).data[1]?.name ?? "test";
+
+    // act
+    const coupons = await client.getCoupons({
+      limit: 1,
+      filter: {
+        name: couponName,
+      },
+    });
+    const coupon = coupons.data[0];
+
+    // assert
+    expect(coupon).toBeDefined();
+    expect(coupon.name).toEqual(couponName);
   });
 });
 

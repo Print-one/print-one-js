@@ -1,3 +1,27 @@
+# [1.3.0](https://github.com/Print-one/print-one-js/compare/v1.2.1...v1.3.0) (2024-07-01)
+
+
+### Bug Fixes
+
+* batch status filter ([2b0e209](https://github.com/Print-one/print-one-js/commit/2b0e20917d66ad21af372c5ed19f8f80da20ae71))
+* batch status filter ([2db77de](https://github.com/Print-one/print-one-js/commit/2db77de99b2e53f85e459790e82828b91edd58db))
+* import in CsvOrder.ts ([#19](https://github.com/Print-one/print-one-js/issues/19)) ([40986aa](https://github.com/Print-one/print-one-js/commit/40986aac4deb5ff5d9b87358f30c4a9138998a5e))
+* typescript error on install ([8fb29c4](https://github.com/Print-one/print-one-js/commit/8fb29c4f83831d12510e31475fb3a6fdc4ed352f))
+
+
+### Features
+
+* :sparkles: added endpoint to get a CsvOrder by it's ID ([74b0313](https://github.com/Print-one/print-one-js/commit/74b0313fefc98ddb45184c3b27a9615ea39fe7e7))
+* :sparkles: added remaining getBatches filters ([4c2996b](https://github.com/Print-one/print-one-js/commit/4c2996b4ad3cf29bab6daf32830ae419c9641e81))
+* :sparkles: allow for getting CSV order by id ([0560944](https://github.com/Print-one/print-one-js/commit/0560944128abdeea5cf0ff5ec79391201e0598a3))
+* :sparkles: allow for uploading CSVs to a Batch ([a4bd3a6](https://github.com/Print-one/print-one-js/commit/a4bd3a68ecc6f7d360ab751be88b22324249b6f6))
+* :sparkles: support batch order's API urls ([c2ca919](https://github.com/Print-one/print-one-js/commit/c2ca919f5d91f0618f2699d180e6bc8830d560b7))
+* :sparkles: webhook request validation logic ([ce81792](https://github.com/Print-one/print-one-js/commit/ce81792e9b554ceaf0694857a9402b003bb80392))
+* ✨ added CsvOrder model + endpoints ([#7](https://github.com/Print-one/print-one-js/issues/7)) ([9e04141](https://github.com/Print-one/print-one-js/commit/9e041416bdc09a3f34d6f2da72bde6788770e39b))
+* added format to DTO ([64ec3ad](https://github.com/Print-one/print-one-js/commit/64ec3adc8b51dd697d0c1244e663353b087a17c1))
+* batch endpoints added ([#8](https://github.com/Print-one/print-one-js/issues/8)) ([0099217](https://github.com/Print-one/print-one-js/commit/009921704b0c7b75206341ef20b1f540c31e366c))
+* implement PR feedback ([8420046](https://github.com/Print-one/print-one-js/commit/8420046c3655a0a9480f192f3879fcf9524c06f4))
+
 # [1.3.0-next.3](https://github.com/Print-one/print-one-js/compare/v1.3.0-next.2...v1.3.0-next.3) (2024-07-02)
 
 
