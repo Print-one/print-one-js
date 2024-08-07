@@ -300,11 +300,106 @@ Get a csv order by its ID.
 const csvOrder = await client.getCsvOrder("example-order-id");
 ```
 
+## `.createBatch(data)`
+
+Create a new batch.
+
+**Parameters**
+
+| Name   | Type     | Description                        |
+| ------ | -------- | ---------------------------------- |
+| `data` | `object` | The data to create the batch with. |
+
+**Returns: [`Promise<Batch>`](./Batch)**
+
+**Example**
+
+```js
+const batch = await client.createBatch({
+  name: "example",
+  template: "example-template-id",
+  finish: "GLOSSY",
+  ready: true,
+  sender: {
+    name: "John Doe",
+    address: "Example Street 2",
+    city: "Anytown",
+    postalCode: "1234AB",
+    country: "NL",
+  },
+});
 ```
 
+---
+
+## `.getBatch(id)`
+
+Get a batch by its ID.
+
+**Parameters**
+
+| Name | Type     | Description                 |
+| ---- | -------- | --------------------------- |
+| `id` | `string` | The ID of the batch to get. |
+
+**Returns: [`Promise<Batch>`](./Batch)**
+
+**Example**
+
+```js
+const batch = await client.getBatch("example-batch-id");
 ```
 
---
+---
+
+## `.getBatches([options])`
+
+Get all batches.
+
+**Parameters**
+
+| Name                        | Type                                                                             | Default          | Description                                                                                                                                                                                       |
+| --------------------------- | -------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `options.limit`             | `number`                                                                         | `10`             | The maximum number of batches to return.                                                                                                                                                          |
+| `options.page`              | `number`                                                                         | `1`              | The page of batches to return.                                                                                                                                                                    |
+| `options.sortBy`            | [`sort`](./Filtering#Sorting)                                                    | `createdAt:DESC` | The field(s) to sort the batches by. Can be `createdAt`, `updatedAt`, `billingId`, `sendDate` or `name`                                                                                           |
+| `options.filter.billingId`  | `string` \| `string[]`                                                           | `undefined`      | The billing ID(s) of the batch(es) to filter by.                                                                                                                                                  |
+| `options.filter.name`       | `string` \| `string[]`                                                           | `undefined`      | The name(s) of the batch(es) to filter by.                                                                                                                                                        |
+| `options.filter.createdAt`  | [`date`](./Filtering#Date)                                                       | `undefined`      | The date(s) the batch(es) were created on.                                                                                                                                                        |
+| `options.filter.updatedAT`  | [`date`](./Filtering#Date)                                                       | `undefined`      | The date(s) the batch(es) were updated on.                                                                                                                                                        |
+| `options.filter.sendDate`   | [`date`](./Filtering#Date) \| `boolean`                                          | `undefined`      | The date(s) the batch(es) are sent on.                                                                                                                                                            |
+| `options.filter.finish`     | `string` \| `string[]`                                                           | `undefined`      | The finish(es) of the batch(es) to filter by. Can be `GLOSSY` or `MATTE`                                                                                                                          |
+| `options.filter.templates`  | `string` \| `string[]` \| [`Template`](./Template) \| [`Template[]`](./Template) | `undefined`      | Whether the batch(es) are live order or test batches.                                                                                                                                             |
+| `options.filter.format`     | `string` \| `string[]`                                                           | `undefined`      | The format(s) of the batch(es) to filter by. Can be `POSTCARD_A5`, `POSTCARD_A6`, `POSTCARD_SQ14`                                                                                                 |
+| `options.filter.status`     | `string` \| `string[]`                                                           | `undefined`      | The status(es) of the batch(s) to filter by. Can be `batch_created`, `batch_needs_approval`, `batch_user_ready`, `batch_ready_to_schedule`, `batch_scheduling`, `batch_scheduled` or `batch_sent` |
+| `options.filter.isBillable` | `boolean`                                                                        | `undefined`      | Whether the batch(es) are live order or test batches.                                                                                                                                             |
+
+**Returns: [`Promise<PaginatedResponse<Batch>>`](./Batch)**
+
+**Example**
+
+```js
+const batches = await client.getBatches({
+  limit: 20,
+  page: 1,
+  sortBy: "createdAt:ASC",
+  filter: {
+    billingId: "example-billing-id",
+    name: "example-name",
+    sendDate: {
+      from: "2020-01-01",
+      to: "2020-01-31",
+    },
+    finish: Finish.GLOSSY,
+    templates: "example-template-id",
+    format: Format.POSTCARD_A5,
+    status: "batch_sent",
+    isBillable: true,
+  },
+});
+```
+
+---
 
 ## `.createCoupon(data)`
 
@@ -334,12 +429,12 @@ Get all coupons.
 
 **Parameters**
 
-| Name                            | Type                          | Default          | Description                                                                                                                        |
-| ------------------------------- | ----------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `options.limit`                 | `number`                      | `10`             | The maximum number of coupons to return.                                                                                            |
-| `options.page`                  | `number`                      | `1`              | The page of coupons to return.                                                                                                      |
-| `options.sortBy`                | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the coupons by. Can be `createdAt` or `name`                |
-| `options.filter.name`           | `string` \| `string[]`        | `undefined`      | The name(s) of the coupon(s) to filter   |
+| Name                  | Type                          | Default          | Description                                                       |
+| --------------------- | ----------------------------- | ---------------- | ----------------------------------------------------------------- |
+| `options.limit`       | `number`                      | `10`             | The maximum number of coupons to return.                          |
+| `options.page`        | `number`                      | `1`              | The page of coupons to return.                                    |
+| `options.sortBy`      | [`sort`](./Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort the coupons by. Can be `createdAt` or `name` |
+| `options.filter.name` | `string` \| `string[]`        | `undefined`      | The name(s) of the coupon(s) to filter                            |
 
 **Returns: [`Promise<PaginatedResponse<Order>>`](./Order)**
 
