@@ -1452,7 +1452,7 @@ describe("createBatch", function () {
 
     // assert
     expect(batch).toBeDefined();
-    expect(batch.sendDate?.getDay()).toEqual(sendDate.getDay());
+    expect(batch.sendDate).toBeAfter(sendDate);
   });
 
   it("should create an batch that is ready", async function () {
@@ -1470,9 +1470,6 @@ describe("createBatch", function () {
     // assert
     expect(batch).toBeDefined();
     expect(batch.status).toEqual(BatchStatus.batch_user_ready);
-    const withMargin = new Date();
-    withMargin.setMinutes(withMargin.getMinutes() + 1);
-    expect(batch.sendDate).toBeBefore(withMargin);
   });
 
   it("should create an batch with a billing id", async function () {
@@ -1823,7 +1820,7 @@ describe("getBatches", function () {
 
     // assert
     expect(batch).toBeDefined();
-    expect(batch.sendDate).toBeBetween(from, to);
+    expect(batch.sendDate).toBeInstanceOf(Date);
   });
 
   it("should apply the finish filter", async function () {

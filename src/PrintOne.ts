@@ -603,6 +603,21 @@ export class PrintOne {
     body: string,
     headers: Record<string, string>,
     secret: string,
+  ): boolean {
+    const hmacHeader = headers["x-printone-hmac-sha256"];
+
+    const hmac = crypto
+      .createHmac("sha256", secret)
+      .update(body)
+      .digest("base64");
+
+    return hmac === hmacHeader;
+  }
+
+  public validateWebhook(
+    body: string,
+    headers: Record<string, string>,
+    secret: string,
   ): WebhookRequest {
     if (!this.isValidWebhook(body, headers, secret)) {
       throw new Error("Invalid webhook");
@@ -643,9 +658,9 @@ export class PrintOne {
   }
 
   public async getWebhookSecret(): Promise<string> {
-    const data = await this.client.GET<{
+    const data = await this.client.POST<{
       secret: string;
-    }>(`webhooks/secret`);
+    }>(`webhooks/secret`, {});
 
     return data.secret;
   }

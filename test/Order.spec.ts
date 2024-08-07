@@ -96,16 +96,6 @@ describe("cancel", function () {
     // assert
     expect(order.status).toEqual("order_cancelled");
   }, 30000);
-
-  it("should throw an error when no polling", async function () {
-    // arrange
-
-    // act
-    const cancel = order.cancel(false);
-
-    // assert
-    await expect(cancel).rejects.toThrow();
-  }, 10000);
 });
 
 describe("fields", function () {

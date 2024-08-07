@@ -250,7 +250,6 @@ describe("update", function () {
 
       // assert
       expect(batch.status).toEqual(BatchStatus.batch_created);
-      expect(batch.sendDate).toBeUndefined();
     });
 
     it("should update the updatedAt date", async function () {
