@@ -1,3 +1,20 @@
+# [1.4.0-next.1](https://github.com/Print-one/print-one-js/compare/v1.3.0...v1.4.0-next.1) (2024-08-07)
+
+
+### Bug Fixes
+
+* :rotating_light: fix linting issues ([7bf02e4](https://github.com/Print-one/print-one-js/commit/7bf02e458c833554fc3e661497a7233f7a9be0ea))
+* :white_check_mark: skip coupon code usage test, if order is not billable ([4a9ff10](https://github.com/Print-one/print-one-js/commit/4a9ff103fd166af87c7010ab585f5c91af9b79cb))
+* typescript error on install ([20d3f0f](https://github.com/Print-one/print-one-js/commit/20d3f0fc8abadde35381dda455f1ae1d8775bc94))
+
+
+### Features
+
+* :sparkles: Added coupons ([604c374](https://github.com/Print-one/print-one-js/commit/604c3747a6587349f0040fba1838ef4a7a77e19d))
+* :sparkles: webhook request validation logic ([ae9bd7c](https://github.com/Print-one/print-one-js/commit/ae9bd7c9c67b6516bcd0d47616162bc93c01282b))
+* add batch_status_update webhook support ([696a1dc](https://github.com/Print-one/print-one-js/commit/696a1dc2f0e4dc124ae43e0fcd654574c9c07509))
+* webhooks ([73a1678](https://github.com/Print-one/print-one-js/commit/73a1678a490618251a0a9b80a77931ad8b31e0f0))
+
 # [1.3.0](https://github.com/Print-one/print-one-js/compare/v1.2.1...v1.3.0) (2024-07-01)
 
 
