@@ -1,5 +1,6 @@
 import {
   IBatchStatusUpdateWebhookRequest,
+  ICouponCodeUsedWebhookRequest,
   IOrderStatusUpdateWebhookRequest,
   ITemplatePreviewRenderedWebhookRequest,
   IWebhookRequest,
@@ -8,6 +9,7 @@ import { Batch } from "~/models/Batch";
 import { Order } from "~/models/Order";
 import { Protected } from "~/PrintOne";
 import { PreviewDetails } from "~/models/PreviewDetails";
+import { CouponCode } from "~/models/CouponCode";
 
 abstract class AbstractWebhookRequest<T, E extends IWebhookRequest> {
   constructor(
@@ -29,7 +31,8 @@ abstract class AbstractWebhookRequest<T, E extends IWebhookRequest> {
 export type WebhookRequest =
   | OrderStatusUpdateWebhookRequest
   | TemplatePreviewRenderedWebhookRequest
-  | BatchStatusUpdateWebhookRequest;
+  | BatchStatusUpdateWebhookRequest
+  | CouponCodeUsedWebhookRequest;
 
 export function webhookRequestFactory(
   _protected: Protected,
@@ -44,6 +47,8 @@ export function webhookRequestFactory(
       return new TemplatePreviewRenderedWebhookRequest(_protected, data);
     case "batch_status_update":
       return new BatchStatusUpdateWebhookRequest(_protected, data);
+    case "coupon_code_used":
+      return new CouponCodeUsedWebhookRequest(_protected, data);
     default:
       throw new Error(`Unknown webhook event: ${event}`);
   }
@@ -73,5 +78,14 @@ export class BatchStatusUpdateWebhookRequest extends AbstractWebhookRequest<
 > {
   get data(): Batch {
     return new Batch(this._protected, this._data.data);
+  }
+}
+
+export class CouponCodeUsedWebhookRequest extends AbstractWebhookRequest<
+  CouponCode,
+  ICouponCodeUsedWebhookRequest
+> {
+  get data(): CouponCode {
+    return new CouponCode(this._protected, this._data.data);
   }
 }

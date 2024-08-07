@@ -14,6 +14,7 @@ import {
   PreviewDetails,
   Template,
   Coupon,
+  CouponCode,
 } from "../src";
 import "jest-extended";
 import * as fs from "fs";
@@ -27,6 +28,7 @@ import {
   BatchStatusUpdateWebhookRequest,
   OrderStatusUpdateWebhookRequest,
   TemplatePreviewRenderedWebhookRequest,
+  CouponCodeUsedWebhookRequest,
 } from "~/models/WebhookRequest";
 
 let template: Template = null as unknown as Template;
@@ -2240,6 +2242,35 @@ describe("validateWebhook", function () {
     expect(webhook.event).toEqual(WebhookEvent.template_preview_rendered);
     expect(webhook.createdAt).toEqual(expect.any(Date));
     expect(webhook.data).toEqual(expect.any(PreviewDetails));
+  });
+
+  it("should return CouponCodeUsedWebhookRequest if event is coupon_code_used", async function () {
+    // arrange
+    const body = JSON.stringify({
+      data: {
+        id: "cpc_123456789",
+        couponId: "co_123456789",
+        code: "some-coupon-code",
+        used: false,
+        usedAt: null,
+        orderId: null,
+      },
+      event: "coupon_code_used",
+      created_at: "2024-06-25T07:28:17.487Z",
+    });
+    const headers = {
+      "x-printone-hmac-sha256": "71jF20za0eDB/2NSLhlr9W1HCHqwhZuZPz7mOdL0mGg=",
+    };
+
+    // act
+    const webhook = await client.validateWebhook(body, headers, "secret");
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(CouponCodeUsedWebhookRequest));
+    expect(webhook.event).toEqual(WebhookEvent.coupon_code_used);
+    expect(webhook.createdAt).toEqual(expect.any(Date));
+    expect(webhook.data).toEqual(expect.any(CouponCode));
   });
 
   it("should throw an error if event is not valid", async function () {
