@@ -77,7 +77,10 @@ describe("getOrder", function () {
     // arrange
     const preOrder = await useCoupon();
     const orderId = preOrder.id;
-    await couponCode.refresh();
+
+    while (couponCode.orderId === null) {
+      await couponCode.refresh();
+    }
 
     // act
     const order = await couponCode.getOrder();

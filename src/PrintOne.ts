@@ -584,21 +584,6 @@ export class PrintOne {
     return new Coupon(this.protected, data);
   }
 
-  public validatedWebhook(
-    body: string,
-    headers: Record<string, string>,
-    secret: string,
-  ): boolean {
-    const hmacHeader = headers["x-printone-hmac-sha256"];
-
-    const hmac = crypto
-      .createHmac("sha256", secret)
-      .update(body)
-      .digest("base64");
-
-    return hmac === hmacHeader;
-  }
-
   public isValidWebhook(
     body: string,
     headers: Record<string, string>,
