@@ -1,3 +1,11 @@
+# [1.4.0-next.2](https://github.com/Print-one/print-one-js/compare/v1.4.0-next.1...v1.4.0-next.2) (2024-08-27)
+
+
+### Features
+
+* :sparkles: added coupon-code-used webhook event handler ([ba28867](https://github.com/Print-one/print-one-js/commit/ba2886762e6368a5254a8b1081f0965e5f426d50))
+* :sparkles: rename x-printone webhook headers to x-webhook ([4b3b818](https://github.com/Print-one/print-one-js/commit/4b3b8189f1e023279e878d53e6467166edbb80f7))
+
 # [1.4.0-next.1](https://github.com/Print-one/print-one-js/compare/v1.3.0...v1.4.0-next.1) (2024-08-07)
 
 
