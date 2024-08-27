@@ -532,7 +532,7 @@ export class PrintOne {
     headers: Record<string, string>,
     secret: string,
   ): boolean {
-    const hmacHeader = headers["x-printone-hmac-sha256"];
+    const hmacHeader = headers["x-webhook-hmac-sha256"];
 
     const hmac = crypto
       .createHmac("sha256", secret)
