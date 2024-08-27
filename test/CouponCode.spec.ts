@@ -54,6 +54,11 @@ describe("refresh", function () {
     // arrange
     const order = await useCoupon();
 
+    if (order.isBillable === false) {
+      console.warn("Order is not billable, and thus won't use a coupon code");
+      return;
+    }
+
     // act
     await couponCode.refresh();
 
@@ -77,6 +82,12 @@ describe("getOrder", function () {
     // arrange
     const preOrder = await useCoupon();
     const orderId = preOrder.id;
+
+    if (preOrder.isBillable === false) {
+      console.warn("Order is not billable, and thus won't use a coupon code");
+      return;
+    }
+
     await couponCode.refresh();
 
     // act

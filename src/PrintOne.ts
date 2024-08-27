@@ -33,6 +33,10 @@ import { Batch, CreateBatch } from "~/models/Batch";
 import { IBatch } from "~/models/_interfaces/IBatch";
 import { BatchStatus } from "~/enums/BatchStatus";
 import * as crypto from "crypto";
+import { Webhook } from "~/models/Webhook";
+import { CreateWebhook, IWebhook } from "~/models/_interfaces/IWebhook";
+import { WebhookRequest, webhookRequestFactory } from "~/models/WebhookRequest";
+import { IWebhookRequest } from "~/models/_interfaces/IWebhookRequest";
 import { Coupon, CreateCoupon } from "~/models/Coupon";
 import { ICoupon } from "~/models/_interfaces/ICoupon";
 
@@ -580,12 +584,12 @@ export class PrintOne {
     return new Coupon(this.protected, data);
   }
 
-  public validatedWebhook(
+  public isValidWebhook(
     body: string,
     headers: Record<string, string>,
     secret: string,
   ): boolean {
-    const hmacHeader = headers["x-printone-hmac-sha256"];
+    const hmacHeader = headers["x-webhook-hmac-sha256"];
 
     const hmac = crypto
       .createHmac("sha256", secret)
@@ -593,5 +597,56 @@ export class PrintOne {
       .digest("base64");
 
     return hmac === hmacHeader;
+  }
+
+  public validateWebhook(
+    body: string,
+    headers: Record<string, string>,
+    secret: string,
+  ): WebhookRequest {
+    if (!this.isValidWebhook(body, headers, secret)) {
+      throw new Error("Invalid webhook");
+    }
+
+    const webhook = JSON.parse(body) as IWebhookRequest;
+    return webhookRequestFactory(this.protected, webhook);
+  }
+
+  public async getWebhooks(): Promise<PaginatedResponse<Webhook>> {
+    const data =
+      await this.client.GET<IPaginatedResponse<IWebhook>>("webhooks");
+
+    return PaginatedResponse.safe(
+      this.protected,
+      data,
+      (data) => new Webhook(this.protected, data),
+    );
+  }
+
+  public async getWebhook(id: string): Promise<Webhook> {
+    const data = await this.client.GET<IWebhook>(`webhooks/${id}`);
+
+    return new Webhook(this.protected, data);
+  }
+
+  public async createWebhook(data: CreateWebhook): Promise<Webhook> {
+    const response = await this.client.POST<IWebhook>("webhooks", {
+      name: data.name,
+      url: data.url,
+      events: data.events,
+      active: data.active,
+      headers: data.headers,
+      secretHeaders: data.secretHeaders,
+    });
+
+    return new Webhook(this.protected, response);
+  }
+
+  public async getWebhookSecret(): Promise<string> {
+    const data = await this.client.POST<{
+      secret: string;
+    }>(`webhooks/secret`, {});
+
+    return data.secret;
   }
 }

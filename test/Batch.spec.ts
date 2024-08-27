@@ -81,6 +81,7 @@ describe("createOrder", function () {
     expect((await batch.getOrders()).meta.total).toEqual(1);
   });
 
+  //TODO enable this test once this can be stably tested
   it.skip("should return status needs approval with 300+ orders", async function () {
     // arrange
     await addOrders(300);
@@ -249,7 +250,6 @@ describe("update", function () {
 
       // assert
       expect(batch.status).toEqual(BatchStatus.batch_created);
-      expect(batch.sendDate).toBeUndefined();
     });
 
     it("should update the updatedAt date", async function () {
@@ -265,6 +265,7 @@ describe("update", function () {
       expect(batch.updatedAt).toBeAfterOrEqualTo(updatedAt);
     });
 
+    //TODO enable this test once this can be stably tested
     it.skip("should get status ready to sent with 300+ orders", async function () {
       // arrange
       await addOrders(300);

@@ -72,6 +72,14 @@ export class Batch {
     return this._data.estimatedPrice;
   }
 
+  public get estimatedTax(): number {
+    return this._data.estimatedTax;
+  }
+
+  public get sender(): Address {
+    return this._data.sender;
+  }
+
   public get sendDate(): Date | undefined {
     return this._data.sendDate ? new Date(this._data.sendDate) : undefined;
   }

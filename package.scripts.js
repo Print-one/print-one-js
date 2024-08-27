@@ -24,7 +24,10 @@ module.exports = {
       $env: "file:.env",
       _ci: "jest --runInBand --forceExit --detectOpenHandles",
       _default: "jest",
-      coverage: "bsm ~ -- --coverage",
+      coverage: {
+        $alias: "cov",
+        _default: "bsm test -- --coverage",
+      },
     },
   },
 };

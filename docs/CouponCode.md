@@ -2,16 +2,17 @@ Contains all information about a given CsvOrder
 
 # Fields
 
-| Name                   | Type                                 | Description                                                                       |
-| ---------------------- | ------------------------------------ | --------------------------------------------------------------------------------- |
-| `id`                   | `string`                             | The ID of the coupon code.                                                        |
-| `couponId`             | `string`                             | The ID of the parent coupon.                                                      |
-| `code`                 | `string`                             | The actual code saved for the coupon code`.                                       |
-| `used`                 | `boolean`                            | Whether the coupon code has been used.                                            |
-| `usedAt`               | `Date` or `null`                     | The date at which the coupon code was used or `null` if not used yet.             |
-| `orderId`              | `string` or `null`                   | The order ID by which the coupon code was used or `null` if not used yet.         |
+| Name       | Type               | Description                                                               |
+| ---------- | ------------------ | ------------------------------------------------------------------------- |
+| `id`       | `string`           | The ID of the coupon code.                                                |
+| `couponId` | `string`           | The ID of the parent coupon.                                              |
+| `code`     | `string`           | The actual code saved for the coupon code`.                               |
+| `used`     | `boolean`          | Whether the coupon code has been used.                                    |
+| `usedAt`   | `Date` or `null`   | The date at which the coupon code was used or `null` if not used yet.     |
+| `orderId`  | `string` or `null` | The order ID by which the coupon code was used or `null` if not used yet. |
 
 # Methods
+
 ---
 
 ## `.refresh()`
