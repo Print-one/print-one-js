@@ -2126,7 +2126,7 @@ describe("isValidWebhook", function () {
   const body =
     '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"order_status_update"}';
   const headers = {
-    "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+    "x-webhook-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
   };
 
   it("should return false if header does not match", () => {
@@ -2161,7 +2161,7 @@ describe("validateWebhook", function () {
     const body =
       '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"order_status_update"}';
     const headers = {
-      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+      "x-webhook-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
     };
 
     // act
@@ -2202,7 +2202,7 @@ describe("validateWebhook", function () {
     });
 
     const headers = {
-      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+      "x-webhook-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
     };
 
     // act
@@ -2230,7 +2230,7 @@ describe("validateWebhook", function () {
       created_at: "2024-06-25T07:28:17.487Z",
     });
     const headers = {
-      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+      "x-webhook-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
     };
 
     // act
@@ -2279,7 +2279,7 @@ describe("validateWebhook", function () {
     const body =
       '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"test"}';
     const headers = {
-      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+      "x-webhook-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
     };
 
     // act
@@ -2298,7 +2298,7 @@ describe("validateWebhook", function () {
     const body =
       '{"data":{"id":"ord_QXitaPr7MumnHo2BYXuW9","companyId":"2bd4c679-3d59-4a6f-a815-a60424746f8d","templateId":"tmpl_AyDg3PxvP5ydyGq3kSFfj","finish":"GLOSSY","format":"POSTCARD_A5","mergeVariables":{},"recipient":{"name":"Your Name","address":"Street 1","postalCode":"1234 AB","city":"Amsterdam","country":"NL"},"definitiveCountryId":"NL","region":"NETHERLANDS","deliverySpeed":"FAST","isBillable":true,"status":"order_created","friendlyStatus":"Processing","errors":[],"metadata":{},"sendDate":"2024-01-01T00:00:00.000Z","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","anonymizedAt":null,"csvOrderId":null},"created_at":"2024-06-03T13:14:46.501Z","event":"test"}';
     const headers = {
-      "x-printone-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
+      "x-webhook-hmac-sha256": "blmkCA9eG2fajvgpHx/RBirRO8rA4wRGf6gr1/v+V0g=",
     };
 
     // act
