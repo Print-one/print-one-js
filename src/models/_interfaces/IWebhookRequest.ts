@@ -7,7 +7,8 @@ export type IWebhookRequest =
   | IOrderStatusUpdateWebhookRequest
   | ITemplatePreviewRenderedWebhookRequest
   | IBatchStatusUpdateWebhookRequest
-  | ICouponCodeUsedWebhookRequest;
+  | ICouponCodeUsedWebhookRequest
+  | IQrCodeScannedWebhookRequest;
 
 type IWebhookBaseRequest<TEvent extends string, TData> = {
   data: TData;
@@ -30,4 +31,8 @@ export type IBatchStatusUpdateWebhookRequest = IWebhookBaseRequest<
 export type ICouponCodeUsedWebhookRequest = IWebhookBaseRequest<
   "coupon_code_used",
   ICouponCode
+>;
+export type IQrCodeScannedWebhookRequest = IWebhookBaseRequest<
+  "qr_code_scanned",
+  IOrder
 >;

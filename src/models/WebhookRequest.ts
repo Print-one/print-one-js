@@ -2,6 +2,7 @@ import {
   IBatchStatusUpdateWebhookRequest,
   ICouponCodeUsedWebhookRequest,
   IOrderStatusUpdateWebhookRequest,
+  IQrCodeScannedWebhookRequest,
   ITemplatePreviewRenderedWebhookRequest,
   IWebhookRequest,
 } from "~/models/_interfaces/IWebhookRequest";
@@ -32,7 +33,8 @@ export type WebhookRequest =
   | OrderStatusUpdateWebhookRequest
   | TemplatePreviewRenderedWebhookRequest
   | BatchStatusUpdateWebhookRequest
-  | CouponCodeUsedWebhookRequest;
+  | CouponCodeUsedWebhookRequest
+  | QrCodeScannedWebhookRequest;
 
 export function webhookRequestFactory(
   _protected: Protected,
@@ -49,6 +51,8 @@ export function webhookRequestFactory(
       return new BatchStatusUpdateWebhookRequest(_protected, data);
     case "coupon_code_used":
       return new CouponCodeUsedWebhookRequest(_protected, data);
+    case "qr_code_scanned":
+      return new QrCodeScannedWebhookRequest(_protected, data);
     default:
       throw new Error(`Unknown webhook event: ${event}`);
   }
@@ -87,5 +91,14 @@ export class CouponCodeUsedWebhookRequest extends AbstractWebhookRequest<
 > {
   get data(): CouponCode {
     return new CouponCode(this._protected, this._data.data);
+  }
+}
+
+export class QrCodeScannedWebhookRequest extends AbstractWebhookRequest<
+  Order,
+  IQrCodeScannedWebhookRequest
+> {
+  get data(): Order {
+    return new Order(this._protected, this._data.data);
   }
 }
