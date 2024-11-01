@@ -17,7 +17,7 @@ export type CreateBatch = {
   template: string | Template;
   finish: Finish;
   ready?: Date | boolean;
-  sender: Address;
+  sender?: Address;
 };
 
 export type CreateBatchOrder = {
