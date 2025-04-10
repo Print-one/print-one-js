@@ -1,38 +1,22 @@
-import { IBatch } from "~/models/_interfaces/IBatch";
-import { IOrder } from "~/models/_interfaces/IOrder";
-import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
-import { ICouponCode } from "~/models/_interfaces/ICouponCode";
+import { IBatch } from "./IBatch";
+import { IOrder } from "./IOrder";
+import { IPreviewDetails } from "./IPreviewDetails";
+import { ICouponCode } from "./ICouponCode";
 
-export type IWebhookRequest =
-  | IOrderStatusUpdateWebhookRequest
-  | ITemplatePreviewRenderedWebhookRequest
-  | IBatchStatusUpdateWebhookRequest
-  | ICouponCodeUsedWebhookRequest
-  | IQrCodeScannedWebhookRequest;
+export type IWebhookBody = {
+  order_status_update: IOrder;
+  template_preview_rendered: IPreviewDetails;
+  batch_status_update: IBatch;
+  coupon_code_used: ICouponCode;
+  qr_code_scanned: IOrder;
+};
 
-type IWebhookBaseRequest<TEvent extends string, TData> = {
-  data: TData;
+export type IWebhookBaseRequest<TEvent extends keyof IWebhookBody> = {
+  data: IWebhookBody[TEvent];
   event: TEvent;
   createdAt: string;
 };
 
-export type IOrderStatusUpdateWebhookRequest = IWebhookBaseRequest<
-  "order_status_update",
-  IOrder
->;
-export type ITemplatePreviewRenderedWebhookRequest = IWebhookBaseRequest<
-  "template_preview_rendered",
-  IPreviewDetails
->;
-export type IBatchStatusUpdateWebhookRequest = IWebhookBaseRequest<
-  "batch_status_update",
-  IBatch
->;
-export type ICouponCodeUsedWebhookRequest = IWebhookBaseRequest<
-  "coupon_code_used",
-  ICouponCode
->;
-export type IQrCodeScannedWebhookRequest = IWebhookBaseRequest<
-  "qr_code_scanned",
-  IOrder
->;
+export type IWebhookRequest = {
+  [K in keyof IWebhookBody]: IWebhookBaseRequest<K>;
+}[keyof IWebhookBody];

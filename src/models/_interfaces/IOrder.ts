@@ -22,4 +22,5 @@ export type IOrder = {
   anonymizedAt: string | null;
   csvOrderId: string | null;
   batchId?: string;
+  metadata: Record<string, string>;
 };

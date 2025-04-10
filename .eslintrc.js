@@ -14,10 +14,11 @@ module.exports = {
     {
       files: ["src/**/*.ts"],
       rules: {
-        "no-relative-import-paths/no-relative-import-paths": [
-          "warn",
-          { prefix: "~", rootDir: "src" },
-        ],
+        // Not relative is better for the print-one monorepo
+        // "no-relative-import-paths/no-relative-import-paths": [
+        //   "warn",
+        //   { allowSameFolder: true, prefix: "~", rootDir: "src" },
+        // ],
       },
     },
   ],

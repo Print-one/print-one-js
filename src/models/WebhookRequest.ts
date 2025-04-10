@@ -1,10 +1,7 @@
 import {
-  IBatchStatusUpdateWebhookRequest,
-  ICouponCodeUsedWebhookRequest,
-  IOrderStatusUpdateWebhookRequest,
-  IQrCodeScannedWebhookRequest,
-  ITemplatePreviewRenderedWebhookRequest,
   IWebhookRequest,
+  IWebhookBody,
+  IWebhookBaseRequest,
 } from "~/models/_interfaces/IWebhookRequest";
 import { Batch } from "~/models/Batch";
 import { Order } from "~/models/Order";
@@ -12,15 +9,15 @@ import { Protected } from "~/PrintOne";
 import { PreviewDetails } from "~/models/PreviewDetails";
 import { CouponCode } from "~/models/CouponCode";
 
-abstract class AbstractWebhookRequest<T, E extends IWebhookRequest> {
+abstract class AbstractWebhookRequest<T, E extends keyof IWebhookBody> {
   constructor(
     protected readonly _protected: Protected,
-    protected _data: E,
+    protected _data: IWebhookBaseRequest<E>,
   ) {}
 
   abstract data: T;
 
-  get event(): E["event"] {
+  get event(): IWebhookBaseRequest<E>["event"] {
     return this._data.event;
   }
 
@@ -60,7 +57,7 @@ export function webhookRequestFactory(
 
 export class OrderStatusUpdateWebhookRequest extends AbstractWebhookRequest<
   Order,
-  IOrderStatusUpdateWebhookRequest
+  "order_status_update"
 > {
   get data(): Order {
     return new Order(this._protected, this._data.data);
@@ -69,7 +66,7 @@ export class OrderStatusUpdateWebhookRequest extends AbstractWebhookRequest<
 
 export class TemplatePreviewRenderedWebhookRequest extends AbstractWebhookRequest<
   PreviewDetails,
-  ITemplatePreviewRenderedWebhookRequest
+  "template_preview_rendered"
 > {
   get data(): PreviewDetails {
     return new PreviewDetails(this._protected, this._data.data);
@@ -78,7 +75,7 @@ export class TemplatePreviewRenderedWebhookRequest extends AbstractWebhookReques
 
 export class BatchStatusUpdateWebhookRequest extends AbstractWebhookRequest<
   Batch,
-  IBatchStatusUpdateWebhookRequest
+  "batch_status_update"
 > {
   get data(): Batch {
     return new Batch(this._protected, this._data.data);
@@ -87,7 +84,7 @@ export class BatchStatusUpdateWebhookRequest extends AbstractWebhookRequest<
 
 export class CouponCodeUsedWebhookRequest extends AbstractWebhookRequest<
   CouponCode,
-  ICouponCodeUsedWebhookRequest
+  "coupon_code_used"
 > {
   get data(): CouponCode {
     return new CouponCode(this._protected, this._data.data);
@@ -96,7 +93,7 @@ export class CouponCodeUsedWebhookRequest extends AbstractWebhookRequest<
 
 export class QrCodeScannedWebhookRequest extends AbstractWebhookRequest<
   Order,
-  IQrCodeScannedWebhookRequest
+  "qr_code_scanned"
 > {
   get data(): Order {
     return new Order(this._protected, this._data.data);

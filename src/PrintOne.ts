@@ -1,7 +1,7 @@
-import { Company } from "~/models/Company";
+import { Company } from "./models/Company";
 import debug from "debug";
-import { HttpHandler } from "~/HttpHandler";
-import { ICompany } from "~/models/_interfaces/ICompany";
+import { HttpHandler } from "./HttpHandler";
+import { ICompany } from "./models/_interfaces/ICompany";
 import {
   ContainsFilter,
   containsFilterToQuery,
@@ -15,30 +15,30 @@ import {
   mapInFilter,
   PaginationOptions,
   sortToQuery,
-} from "~/utils";
-import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
-import { ICustomFile } from "~/models/_interfaces/ICustomFile";
-import { PaginatedResponse } from "~/models/PaginatedResponse";
-import { CustomFile } from "~/models/CustomFile";
-import { ITemplate } from "~/models/_interfaces/ITemplate";
-import { CreateTemplate, Template } from "~/models/Template";
-import { CreateOrder, Order } from "~/models/Order";
-import { IOrder } from "~/models/_interfaces/IOrder";
-import { FriendlyStatus } from "~/enums/Status";
-import { Format } from "~/enums/Format";
-import { AxiosHTTPHandler } from "~/AxiosHttpHandler";
-import { CreateCsvOrder, CsvOrder } from "~/models/CsvOrder";
-import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
-import { Batch, CreateBatch } from "~/models/Batch";
-import { IBatch } from "~/models/_interfaces/IBatch";
-import { BatchStatus } from "~/enums/BatchStatus";
+} from "./utils";
+import { IPaginatedResponse } from "./models/_interfaces/IPaginatedResponse";
+import { ICustomFile } from "./models/_interfaces/ICustomFile";
+import { PaginatedResponse } from "./models/PaginatedResponse";
+import { CustomFile } from "./models/CustomFile";
+import { ITemplate } from "./models/_interfaces/ITemplate";
+import { CreateTemplate, Template } from "./models/Template";
+import { CreateOrder, Order } from "./models/Order";
+import { IOrder } from "./models/_interfaces/IOrder";
+import { FriendlyStatus } from "./enums/Status";
+import { Format } from "./enums/Format";
+import { AxiosHTTPHandler } from "./AxiosHttpHandler";
+import { CreateCsvOrder, CsvOrder } from "./models/CsvOrder";
+import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
+import { Batch, CreateBatch } from "./models/Batch";
+import { IBatch } from "./models/_interfaces/IBatch";
+import { BatchStatus } from "./enums/BatchStatus";
 import * as crypto from "crypto";
-import { Webhook } from "~/models/Webhook";
-import { CreateWebhook, IWebhook } from "~/models/_interfaces/IWebhook";
-import { WebhookRequest, webhookRequestFactory } from "~/models/WebhookRequest";
-import { IWebhookRequest } from "~/models/_interfaces/IWebhookRequest";
-import { Coupon, CreateCoupon } from "~/models/Coupon";
-import { ICoupon } from "~/models/_interfaces/ICoupon";
+import { Webhook } from "./models/Webhook";
+import { CreateWebhook, IWebhook } from "./models/_interfaces/IWebhook";
+import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
+import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
+import { Coupon, CreateCoupon } from "./models/Coupon";
+import { ICoupon } from "./models/_interfaces/ICoupon";
 
 export type RequestHandler = new (
   token: string,
@@ -278,6 +278,7 @@ export class PrintOne {
       mergeVariables: data.mergeVariables,
       billingId: data.billingId,
       sendDate: sendDateStr,
+      metadata: data.metadata,
     });
 
     return new Order(this.protected, response);
