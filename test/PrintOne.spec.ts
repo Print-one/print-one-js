@@ -575,6 +575,7 @@ describe("createOrder", function () {
     const order = await client.createOrder({
       template: template,
       recipient: recipient,
+      sendDateOffset: -2,
     });
 
     // assert

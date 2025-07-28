@@ -17,6 +17,7 @@ export type IOrder = {
   friendlyStatus: string;
   errors: string[];
   sendDate: string;
+  sendDateOffset?: string;
   createdAt: string;
   updatedAt: string;
   anonymizedAt: string | null;

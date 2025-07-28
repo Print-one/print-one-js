@@ -13,6 +13,8 @@ export type CreateCsvOrder = {
   mapping: {
     recipient: Address;
     mergeVariables?: Record<string, string>;
+    sendDate?: string;
+    sendDateOffset?: string;
   };
   finish?: Finish;
   billingId?: string;
