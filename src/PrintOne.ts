@@ -278,6 +278,7 @@ export class PrintOne {
       mergeVariables: data.mergeVariables,
       billingId: data.billingId,
       sendDate: sendDateStr,
+      sendDateOffset: data.sendDateOffset?.toString(),
     });
 
     return new Order(this.protected, response);

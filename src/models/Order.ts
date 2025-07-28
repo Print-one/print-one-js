@@ -17,6 +17,7 @@ export type CreateOrder = {
   mergeVariables?: Record<string, unknown>;
   billingId?: string;
   sendDate?: Date | string;
+  sendDateOffset?: number;
 } & (
   | {
       template: Template | string;
@@ -104,6 +105,12 @@ export class Order {
 
   public get sendDate(): Date {
     return new Date(this._data.sendDate);
+  }
+
+  public get sendDateOffset(): number | undefined {
+    return this._data.sendDateOffset
+      ? Number(this._data.sendDateOffset)
+      : undefined;
   }
 
   public get createdAt(): Date {
