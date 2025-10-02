@@ -1,4 +1,4 @@
-import { OrderPaginatedQuery, Protected } from "~/PrintOne";
+import { OrderPaginatedQuery } from "~/PrintOne";
 import { Finish } from "~/enums/Finish";
 import { Format } from "~/enums/Format";
 import { Address } from "~/models/Address";
@@ -7,6 +7,7 @@ import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 import { CsvStatus, FriendlyCsvStatusText } from "~/enums/CsvStatus";
 import { Order } from "~/models/Order";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
+import { Model } from "../Model";
 
 export type CreateCsvOrder = {
   file: ArrayBuffer;
@@ -30,16 +31,7 @@ export type CreateCsvOrder = {
 
 export type CreateBatchCsvOrder = Pick<CreateCsvOrder, "file" | "mapping">;
 
-export class CsvOrder {
-  private _data: ICsvOrder;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: ICsvOrder,
-  ) {
-    this._data = _data;
-  }
-
+export class CsvOrder extends Model<ICsvOrder> {
   public get id(): string {
     return this._data.id;
   }

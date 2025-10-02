@@ -1,12 +1,7 @@
-import { Protected } from "~/PrintOne";
 import { ICustomFile } from "~/models/_interfaces/ICustomFile";
+import { Model } from "../Model";
 
-export class CustomFile {
-  constructor(
-    private readonly _protected: Protected,
-    private readonly _data: ICustomFile,
-  ) {}
-
+export class CustomFile extends Model<ICustomFile> {
   public get id(): string {
     return this._data.id;
   }

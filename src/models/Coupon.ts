@@ -1,24 +1,15 @@
 import { ICoupon } from "~/models/_interfaces/ICoupon";
-import { Protected } from "~/PrintOne";
 import { CouponCode } from "~/models/CouponCode";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
+import { Model } from "../Model";
 
 export type CreateCoupon = {
   name: string;
 };
 
-export class Coupon {
-  private _data: ICoupon;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: ICoupon,
-  ) {
-    this._data = _data;
-  }
-
+export class Coupon extends Model<ICoupon> {
   public get id(): string {
     return this._data.id;
   }

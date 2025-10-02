@@ -1,11 +1,11 @@
 import { IOrder } from "~/models/_interfaces/IOrder";
-import { Protected } from "~/PrintOne";
 import { Finish } from "~/enums/Finish";
 import { Format } from "~/enums/Format";
 import { Address } from "~/models/Address";
 import { Template } from "~/models/Template";
 import { FriendlyStatus, Status } from "~/enums/Status";
 import { sleep } from "~/utils";
+import { Model } from "../Model";
 
 export type CreateOrder = {
   recipient: Address;
@@ -29,16 +29,7 @@ export type CreateOrder = {
     }
 );
 
-export class Order {
-  private _data: IOrder;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IOrder,
-  ) {
-    this._data = _data;
-  }
-
+export class Order extends Model<IOrder> {
   public get id(): string {
     return this._data.id;
   }

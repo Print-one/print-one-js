@@ -1,21 +1,12 @@
 import { IPreview } from "~/models/_interfaces/IPreview";
-import { Protected } from "~/PrintOne";
 import { PrintOneError } from "~/errors/PrintOneError";
 import { PreviewDetails } from "~/models/PreviewDetails";
 import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
 import { TimeoutError } from "~/errors/TimeoutError";
 import { sleep } from "~/utils";
+import { Model } from "../Model";
 
-export class Preview {
-  private _data: IPreview;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IPreview,
-  ) {
-    this._data = _data;
-  }
-
+export class Preview extends Model<IPreview> {
   public get detailsUrl(): string {
     return this._data.detailsUrl;
   }

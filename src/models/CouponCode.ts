@@ -1,18 +1,9 @@
-import { Protected } from "~/PrintOne";
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
 import { Order } from "~/models/Order";
 import { IOrder } from "~/models/_interfaces/IOrder";
+import { Model } from "../Model";
 
-export class CouponCode {
-  private _data: ICouponCode;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: ICouponCode,
-  ) {
-    this._data = _data;
-  }
-
+export class CouponCode extends Model<ICouponCode> {
   public get id(): string {
     return this._data.id;
   }

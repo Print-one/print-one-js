@@ -8,13 +8,12 @@ import { Order } from "~/models/Order";
 import { Protected } from "~/PrintOne";
 import { PreviewDetails } from "~/models/PreviewDetails";
 import { CouponCode } from "~/models/CouponCode";
+import { Model } from "../Model";
 
-abstract class AbstractWebhookRequest<T, E extends keyof IWebhookBody> {
-  constructor(
-    protected readonly _protected: Protected,
-    protected _data: IWebhookBaseRequest<E>,
-  ) {}
-
+abstract class AbstractWebhookRequest<
+  T,
+  E extends keyof IWebhookBody,
+> extends Model<IWebhookBaseRequest<E>> {
   abstract data: T;
 
   get event(): IWebhookBaseRequest<E>["event"] {

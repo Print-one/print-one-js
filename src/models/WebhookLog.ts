@@ -1,17 +1,12 @@
-import { Protected } from "~/PrintOne";
 import {
   IWebhookLog,
   IWebhookLogResponse,
 } from "~/models/_interfaces/IWebhookLog";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import { WebhookRequest, webhookRequestFactory } from "~/models/WebhookRequest";
+import { Model } from "../Model";
 
-export class WebhookLog {
-  constructor(
-    private readonly _protected: Protected,
-    private _data: IWebhookLog,
-  ) {}
-
+export class WebhookLog extends Model<IWebhookLog> {
   public get id(): string {
     return this._data.id;
   }

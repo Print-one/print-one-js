@@ -1,16 +1,7 @@
-import { Protected } from "~/PrintOne";
 import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
+import { Model } from "../Model";
 
-export class PreviewDetails {
-  private _data: IPreviewDetails;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IPreviewDetails,
-  ) {
-    this._data = _data;
-  }
-
+export class PreviewDetails extends Model<IPreviewDetails> {
   public get id(): string {
     return this._data.id;
   }

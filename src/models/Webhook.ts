@@ -1,21 +1,12 @@
-import { Protected } from "~/PrintOne";
 import { IWebhook } from "~/models/_interfaces/IWebhook";
 import { WebhookLog } from "~/models/WebhookLog";
 import { IWebhookLog } from "~/models/_interfaces/IWebhookLog";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
+import { Model } from "../Model";
 
-export class Webhook {
-  private _data: IWebhook;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IWebhook,
-  ) {
-    this._data = _data;
-  }
-
+export class Webhook extends Model<IWebhook> {
   public get id(): string {
     return this._data.id;
   }

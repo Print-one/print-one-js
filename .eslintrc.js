@@ -14,6 +14,7 @@ module.exports = {
     {
       files: ["src/**/*.ts"],
       rules: {
+        "unused-imports/no-unused-imports": "error",
         // Not relative is better for the print-one monorepo
         // "no-relative-import-paths/no-relative-import-paths": [
         //   "warn",

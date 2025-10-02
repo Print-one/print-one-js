@@ -3,6 +3,7 @@ import { IFullTemplate, ITemplate } from "~/models/_interfaces/ITemplate";
 import { Format } from "~/enums/Format";
 import { IPreview } from "~/models/_interfaces/IPreview";
 import { Preview } from "~/models/Preview";
+import { Model } from "../Model";
 
 export type CreateTemplate = {
   name: string;
@@ -11,15 +12,11 @@ export type CreateTemplate = {
   pages: string[];
 };
 
-export class Template {
-  private _data: IFullTemplate | ITemplate;
+export class Template extends Model<IFullTemplate | ITemplate> {
   private _loaded?: IFullTemplate;
 
-  constructor(
-    private readonly _protected: Protected,
-    _data: ITemplate | IFullTemplate,
-  ) {
-    this._data = _data;
+  constructor(_protected: Protected, _data: ITemplate | IFullTemplate) {
+    super(_protected, _data);
     if (_data.pages) this._loaded = _data as IFullTemplate;
   }
 

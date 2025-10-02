@@ -1,4 +1,4 @@
-import { OrderPaginatedQuery, Protected } from "~/PrintOne";
+import { OrderPaginatedQuery } from "~/PrintOne";
 import { IBatch } from "~/models/_interfaces/IBatch";
 import { Finish } from "~/enums/Finish";
 import { BatchStatus } from "~/enums/BatchStatus";
@@ -10,6 +10,7 @@ import { IOrder } from "~/models/_interfaces/IOrder";
 import { Format } from "~/enums/Format";
 import { CreateBatchCsvOrder, CsvOrder } from "~/models/CsvOrder";
 import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
+import { Model } from "../Model";
 
 export type CreateBatch = {
   name: string;
@@ -27,16 +28,7 @@ export type CreateBatchOrder = {
   metadata?: Record<string, string | undefined>;
 };
 
-export class Batch {
-  private _data: IBatch;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IBatch,
-  ) {
-    this._data = _data;
-  }
-
+export class Batch extends Model<IBatch> {
   public get id(): string {
     return this._data.id;
   }
