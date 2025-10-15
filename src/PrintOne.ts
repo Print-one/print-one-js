@@ -278,6 +278,7 @@ export class PrintOne {
       mergeVariables: data.mergeVariables,
       billingId: data.billingId,
       sendDate: sendDateStr,
+      sendDateOffset: data.sendDateOffset,
       metadata: data.metadata,
     });
 

@@ -17,6 +17,7 @@ export type CreateOrder = {
   mergeVariables?: Record<string, unknown>;
   billingId?: string;
   sendDate?: Date | string;
+  sendDateOffset?: number;
   metadata?: Record<string, string | undefined>;
 } & (
   | {
