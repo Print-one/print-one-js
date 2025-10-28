@@ -15,7 +15,7 @@ beforeEach(async function () {
 afterEach(async function () {
   try {
     await file.delete();
-  } catch (ignore) {
+  } catch {
     // ignore
   }
 });

@@ -10,7 +10,7 @@ export abstract class HttpHandler<RequestOptions, Response> {
     debug: PrintOneDebugger,
   ) {
     // We require these, so each extended class has type-safe auto-fill
-    token;
+    // token;
 
     this.debug = debug;
   }
