@@ -19,10 +19,12 @@ export * from "./models/PreviewDetails";
 export * from "./models/Template";
 
 // Enums
+export * from "./enums/BatchStatus";
 export * from "./enums/CsvStatus";
 export * from "./enums/Finish";
 export * from "./enums/Format";
 export * from "./enums/Status";
+export * from "./enums/WebhookEvent";
 
 // Errors
 export { PrintOneError } from "./errors/PrintOneError";

@@ -39,6 +39,7 @@ import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
 import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
 import { Coupon, CreateCoupon } from "./models/Coupon";
 import { ICoupon } from "./models/_interfaces/ICoupon";
+import { PrintOneError } from "./errors/PrintOneError";
 
 export type RequestHandler = new (
   token: string,
@@ -47,7 +48,7 @@ export type RequestHandler = new (
 ) => HttpHandler<{ headers: Record<string, string> }, unknown>;
 export type PrintOneOptions = Partial<{
   url: string;
-  version: "v2";
+  version: "v2" | "v3";
 
   /** Overwrite the default client */
   client?: RequestHandler;
@@ -98,7 +99,7 @@ export class PrintOne {
     return this.protected.options;
   }
 
-  protected get client(): HttpHandler<unknown, unknown> {
+  private get client(): HttpHandler<unknown, unknown> {
     return this.protected.client;
   }
 
@@ -127,9 +128,29 @@ export class PrintOne {
    * @returns { Promise<Company> } Your company.
    */
   public async getSelf(): Promise<Company> {
-    const data = await this.client.GET<ICompany>("companies/me");
+    const data = await this.v2Client.GET<ICompany>("companies/me");
 
     return new Company(this.protected, data);
+  }
+
+  public get v2Client(): HttpHandler<unknown, unknown> {
+    if (this.options.version === "v2") {
+      return this.client;
+    }
+
+    throw new PrintOneError(400, [
+      "Initialize PrintOne with version 'v2' to use v2 endpoints.",
+    ]);
+  }
+
+  public get v3Client(): HttpHandler<unknown, unknown> {
+    if (this.options.version === "v3") {
+      return this.client;
+    }
+
+    throw new PrintOneError(400, [
+      "Initialize PrintOne with version 'v3' to use v3 endpoints.",
+    ]);
   }
 
   /**
@@ -146,7 +167,7 @@ export class PrintOne {
       "createdAt" | "fileName" | "size" | "id" | "fileExtension"
     > = {},
   ): Promise<PaginatedResponse<CustomFile>> {
-    const data = await this.client.GET<IPaginatedResponse<ICustomFile>>(
+    const data = await this.v2Client.GET<IPaginatedResponse<ICustomFile>>(
       "customfiles",
       {
         params: sortToQuery(options),
@@ -174,11 +195,15 @@ export class PrintOne {
     const formData = new FormData();
     formData.append("file", new Blob([file]), fileName);
 
-    const data = await this.client.POST<ICustomFile>("customfiles", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const data = await this.v2Client.POST<ICustomFile>(
+      "customfiles",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+    );
 
     return new CustomFile(this.protected, data);
   }
@@ -187,7 +212,7 @@ export class PrintOne {
    * Create an template.
    */
   public async createTemplate(data: CreateTemplate): Promise<Template> {
-    const response = await this.client.POST<ITemplate>("templates", {
+    const response = await this.v2Client.POST<ITemplate>("templates", {
       name: data.name,
       format: data.format,
       labels: data.labels ?? [],
@@ -219,7 +244,7 @@ export class PrintOne {
       };
     } = {},
   ): Promise<PaginatedResponse<Template>> {
-    const data = await this.client.GET<IPaginatedResponse<ITemplate>>(
+    const data = await this.v2Client.GET<IPaginatedResponse<ITemplate>>(
       "templates",
       {
         params: {
@@ -250,7 +275,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the template could not be found.
    */
   public async getTemplate(id: string): Promise<Template> {
-    const data = await this.client.GET<ITemplate>("templates/" + id);
+    const data = await this.v2Client.GET<ITemplate>("templates/" + id);
 
     return new Template(this.protected, data);
   }
@@ -270,7 +295,7 @@ export class PrintOne {
         ? data.sendDate.toISOString()
         : data.sendDate;
 
-    const response = await this.client.POST<IOrder>("orders", {
+    const response = await this.v2Client.POST<IOrder>("orders", {
       sender: data.sender,
       recipient: data.recipient,
       templateId: templateId,
@@ -306,7 +331,7 @@ export class PrintOne {
       }),
     );
 
-    const response = await this.client.POST<{ id: string }>(
+    const response = await this.v2Client.POST<{ id: string }>(
       "orders/csv",
       formData,
       {
@@ -317,7 +342,7 @@ export class PrintOne {
     );
 
     const id = response.id;
-    const csvInfo = await this.client.GET<ICsvOrder>(`orders/csv/${id}`);
+    const csvInfo = await this.v2Client.GET<ICsvOrder>(`orders/csv/${id}`);
 
     return new CsvOrder(this.protected, csvInfo);
   }
@@ -329,7 +354,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getCsvOrder(id: string, basePath = "orders"): Promise<CsvOrder> {
-    const data = await this.client.GET<ICsvOrder>(`${basePath}/csv/${id}`);
+    const data = await this.v2Client.GET<ICsvOrder>(`${basePath}/csv/${id}`);
 
     return new CsvOrder(this.protected, data);
   }
@@ -341,7 +366,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getOrder(id: string, basePath = "orders"): Promise<Order> {
-    const data = await this.client.GET<IOrder>(`${basePath}/${id}`);
+    const data = await this.v2Client.GET<IOrder>(`${basePath}/${id}`);
 
     return new Order(this.protected, data);
   }
@@ -395,7 +420,7 @@ export class PrintOne {
       };
     }
 
-    const data = await this.client.GET<IPaginatedResponse<IOrder>>(basePath, {
+    const data = await this.v2Client.GET<IPaginatedResponse<IOrder>>(basePath, {
       params,
     });
 
@@ -416,7 +441,7 @@ export class PrintOne {
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
 
-    const response = await this.client.POST<IBatch>("batches", {
+    const response = await this.v2Client.POST<IBatch>("batches", {
       name: data.name,
       billingId: data.billingId,
       templateId: templateId,
@@ -434,7 +459,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the batch could not be found.
    */
   public async getBatch(id: string): Promise<Batch> {
-    const data = await this.client.GET<IBatch>(`batches/${id}`);
+    const data = await this.v2Client.GET<IBatch>(`batches/${id}`);
 
     return new Batch(this.protected, data);
   }
@@ -520,9 +545,10 @@ export class PrintOne {
       };
     }
 
-    const data = await this.client.GET<IPaginatedResponse<IBatch>>("batches", {
-      params: params,
-    });
+    const data = await this.v2Client.GET<IPaginatedResponse<IBatch>>(
+      "batches",
+      { params: params },
+    );
 
     return PaginatedResponse.safe(
       this.protected,
@@ -536,7 +562,7 @@ export class PrintOne {
    * @param data The coupon data
    */
   public async createCoupon(data: CreateCoupon): Promise<Coupon> {
-    const response = await this.client.POST<ICoupon>("coupons", {
+    const response = await this.v2Client.POST<ICoupon>("coupons", {
       name: data.name,
     });
 
@@ -564,9 +590,10 @@ export class PrintOne {
       ...inFilterToQuery("name", options.filter?.name),
     };
 
-    const data = await this.client.GET<IPaginatedResponse<ICoupon>>("coupons", {
-      params: params,
-    });
+    const data = await this.v2Client.GET<IPaginatedResponse<ICoupon>>(
+      "coupons",
+      { params: params },
+    );
 
     return PaginatedResponse.safe(
       this.protected,
@@ -581,7 +608,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the coupon could not be found.
    */
   public async getCoupon(id: string): Promise<Coupon> {
-    const data = await this.client.GET<ICoupon>(`coupons/${id}`);
+    const data = await this.v2Client.GET<ICoupon>(`coupons/${id}`);
 
     return new Coupon(this.protected, data);
   }
@@ -616,7 +643,7 @@ export class PrintOne {
 
   public async getWebhooks(): Promise<PaginatedResponse<Webhook>> {
     const data =
-      await this.client.GET<IPaginatedResponse<IWebhook>>("webhooks");
+      await this.v2Client.GET<IPaginatedResponse<IWebhook>>("webhooks");
 
     return PaginatedResponse.safe(
       this.protected,
@@ -626,13 +653,13 @@ export class PrintOne {
   }
 
   public async getWebhook(id: string): Promise<Webhook> {
-    const data = await this.client.GET<IWebhook>(`webhooks/${id}`);
+    const data = await this.v2Client.GET<IWebhook>(`webhooks/${id}`);
 
     return new Webhook(this.protected, data);
   }
 
   public async createWebhook(data: CreateWebhook): Promise<Webhook> {
-    const response = await this.client.POST<IWebhook>("webhooks", {
+    const response = await this.v2Client.POST<IWebhook>("webhooks", {
       name: data.name,
       url: data.url,
       events: data.events,
@@ -645,7 +672,7 @@ export class PrintOne {
   }
 
   public async getWebhookSecret(): Promise<string> {
-    const data = await this.client.POST<{
+    const data = await this.v2Client.POST<{
       secret: string;
     }>(`webhooks/secret`, {});
 
