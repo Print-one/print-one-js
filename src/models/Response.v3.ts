@@ -1,10 +1,34 @@
 import {
   IPaginatedResponseV3,
+  IResponseV3,
   LinksV3,
   MetaV3,
-} from "~/models/_interfaces/IPaginatedResponse.v3";
+} from "~/models/_interfaces/IResponse.v3";
 import { Protected } from "~/PrintOne";
 import { Model } from "../Model";
+
+export class ResponseV3<T = unknown> extends Model<T> {
+  static safe<T, I>(
+    _protected: Protected,
+    data: IResponseV3<T>,
+    _convert: (data: T) => I,
+  ): I {
+    return new ResponseV3(_protected, data, _convert as (data: unknown) => I)
+      .data;
+  }
+
+  private constructor(
+    _protected: Protected,
+    data: IResponseV3,
+    private readonly _convert: (data: unknown) => T,
+  ) {
+    super(_protected, _convert(data.data));
+  }
+
+  public get data(): T {
+    return this._data;
+  }
+}
 
 export class PaginatedResponseV3<T = unknown> extends Model<
   IPaginatedResponseV3<T>

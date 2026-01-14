@@ -23,10 +23,10 @@ export class Campaign extends Model<ICampaign> {
 
   constructor(
     protected _protected: Protected,
-    data: ICampaign,
+    _data: ICampaign,
   ) {
-    super(_protected, data);
-    this.destinations = data.destinations;
+    super(_protected, _data);
+    this.destinations = _data.destinations;
   }
 
   public get id(): string {

@@ -1,3 +1,7 @@
+export type IResponseV3<T = unknown> = {
+  data: T;
+};
+
 export type IPaginatedResponseV3<T = unknown> = {
   data: T[];
   meta: MetaV3;
