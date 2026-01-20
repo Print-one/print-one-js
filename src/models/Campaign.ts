@@ -25,6 +25,16 @@ export type CreateCampaign = {
   npdrCategory?: string;
 };
 
+export type UpdateCampaign = {
+  name?: string;
+  sender?: Address | null;
+  ndprCategory?: string;
+  /**
+   * Appends to the existing meta object
+   */
+  meta?: Record<string, unknown>;
+};
+
 export class Campaign extends Model<ICampaign> {
   private _destinations: ContinuousDestination[] | OneOffDestination[] = [];
   private _designs: Design[] = [];

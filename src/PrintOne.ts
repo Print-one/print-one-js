@@ -39,7 +39,7 @@ import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
 import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
 import { Coupon, CreateCoupon } from "./models/Coupon";
 import { ICoupon } from "./models/_interfaces/ICoupon";
-import { Campaign, CreateCampaign } from "./models/Campaign";
+import { Campaign, CreateCampaign, UpdateCampaign } from "./models/Campaign";
 import { ICampaign } from "./models/_interfaces/ICampaign";
 import { PaginatedResponseV3, ResponseV3 } from "./models/Response.v3";
 import {
@@ -178,6 +178,29 @@ export class PrintOne {
         destinations: data.destinations,
         scheduleType: data.scheduleType,
         npdrCategory: data.npdrCategory,
+      },
+    );
+
+    return new Campaign(this.protected, response.data);
+  }
+
+  /**
+   * Update a campaign
+   * @param campaignId Campaign identifier
+   * @param data Data to update
+   * @returns { Promise<Campaign> } The updated campaign
+   */
+  public async updateCampaign(
+    campaignId: string,
+    data: UpdateCampaign,
+  ): Promise<Campaign> {
+    const response = await this.v3Client.PATCH<IResponseV3<ICampaign>>(
+      `campaigns/${campaignId}`,
+      {
+        name: data.name,
+        sender: data.sender,
+        ndprCategory: data.ndprCategory,
+        meta: data.meta,
       },
     );
 
