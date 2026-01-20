@@ -136,20 +136,34 @@ export class Campaign extends Model<ICampaign> {
     ).data;
   }
 
+  public async pause(): Promise<void> {
+    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
+      `campaigns/${this.id}/pause`,
+      {},
+    );
+
+    this._data = response.data;
+  }
+
+  public async resume(): Promise<void> {
+    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
+      `campaigns/${this.id}/resume`,
+      {},
+    );
+
+    this._data = response.data;
+  }
+
   /**
    * Refresh the Campaign
    * @throws { PrintOneError } If the campaign could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    const data = await this._protected.client.GET<IResponseV3<ICampaign>>(
+    const response = await this._protected.client.GET<IResponseV3<ICampaign>>(
       `campaigns/${this.id}`,
     );
 
-    this._data = ResponseV3.safe(
-      this._protected,
-      data,
-      (data) => new Campaign(this._protected, data),
-    );
+    this._data = response.data;
 
     await this.loadDesigns();
   }
