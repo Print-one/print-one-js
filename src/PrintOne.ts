@@ -49,6 +49,8 @@ import {
 import { PrintOneError } from "./errors/PrintOneError";
 import { Design } from "./models/Design";
 import { IDesign } from "./models/_interfaces/IDesign";
+import { ICampaignCounts } from "./models/_interfaces/ICampaignCounts";
+import { CampaignCounts } from "./models/CampaignCounts";
 
 export type RequestHandler = new (
   token: string,
@@ -207,6 +209,24 @@ export class PrintOne {
       this.protected,
       data,
       (data) => new Campaign(this.protected, data),
+    );
+  }
+
+  /**
+   * Get a campaign destination counts.
+   * @param { string } id The identifier of the campaign.
+   * @throws { PrintOneError } If the campaign could not be found.
+   * @returns { Promise<CampaignCounts> } The campaign counts.
+   */
+  public async getCampaignCounts(id: string): Promise<CampaignCounts> {
+    const data = await this.v3Client.GET<IResponseV3<ICampaignCounts>>(
+      `campaigns/${id}/counts`,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new CampaignCounts(this.protected, data),
     );
   }
 
