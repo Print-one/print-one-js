@@ -39,7 +39,7 @@ import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
 import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
 import { Coupon, CreateCoupon } from "./models/Coupon";
 import { ICoupon } from "./models/_interfaces/ICoupon";
-import { Campaign } from "./models/Campaign";
+import { Campaign, CreateCampaign } from "./models/Campaign";
 import { ICampaign } from "./models/_interfaces/ICampaign";
 import { PaginatedResponseV3, ResponseV3 } from "./models/Response.v3";
 import {
@@ -162,6 +162,26 @@ export class PrintOne {
     const data = await this.v2Client.GET<ICompany>("companies/me");
 
     return new Company(this.protected, data);
+  }
+
+  /**
+   * Create a campaign
+   * @param data The campaign data
+   * @returns { Promise<Campaign> } The created campaign
+   */
+  public async createCampaign(data: CreateCampaign): Promise<Campaign> {
+    const response = await this.v3Client.POST<IResponseV3<ICampaign>>(
+      "campaigns",
+      {
+        name: data.name,
+        identifier: data.identifier,
+        destinations: data.destinations,
+        scheduleType: data.scheduleType,
+        npdrCategory: data.npdrCategory,
+      },
+    );
+
+    return new Campaign(this.protected, response.data);
   }
 
   /**

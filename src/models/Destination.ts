@@ -9,10 +9,6 @@ import { Format } from "~/enums/Format";
 import { Finish } from "~/enums/Finish";
 
 class BaseDestination<T extends IBaseDestination> extends Model<T> {
-  public get campaignId(): string {
-    return this._data.campaignId;
-  }
-
   public get destination(): Destination {
     return this._data.destination;
   }
@@ -37,6 +33,12 @@ class BaseDestination<T extends IBaseDestination> extends Model<T> {
     | Record<string, string | number | boolean>
     | undefined {
     return this._data.variablesFallback;
+  }
+
+  public set variablesFallback(
+    value: Record<string, string | number | boolean>,
+  ) {
+    this._data.variablesFallback = value;
   }
 }
 

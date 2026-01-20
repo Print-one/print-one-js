@@ -13,11 +13,14 @@ import { Design } from "./Design";
 import { IDesign } from "./_interfaces/IDesign";
 import { PaginatedResponseV3, ResponseV3 } from "./Response.v3";
 import { IPaginatedResponseV3, IResponseV3 } from "./_interfaces/IResponse.v3";
+import { Destination } from "~/enums/Destination";
 
 export type CreateCampaign = {
   name: string;
   identifier?: string;
-  destinations: IContinuousDestination[] | IOneOffDestination[];
+  destinations:
+    | Omit<IContinuousDestination, "variablesFallback">[]
+    | Omit<IOneOffDestination, "variablesFallback">[];
   scheduleType: CampaignScheduleType;
   npdrCategory?: string;
 };
@@ -152,6 +155,34 @@ export class Campaign extends Model<ICampaign> {
     );
 
     this._data = response.data;
+  }
+
+  /**
+   * Add variable fallbacks to the campaign's destinations.
+   * NOT merging with existing fallbacks, so be sure to include all desired fallbacks for all destinations.
+   * @param variablesFallback A record of destination to variable fallbacks
+   * @throws { PrintOneError } If the variable fallbacks could not be added
+   * @returns { Promise<void> } Updates the destinations in place
+   */
+  public async addVariablesFallback(
+    variablesFallback: Partial<
+      Record<Destination, Record<string, string> | null>
+    >,
+  ): Promise<void> {
+    const result = await this._protected.client.PATCH<
+      ResponseV3<{
+        fallbacks: Partial<
+          Record<Destination, { values: Record<string, string> }>
+        >;
+      }>
+    >(`campaigns/${this.id}/variable-fallback`, { variablesFallback });
+
+    for (const dest of this._destinations) {
+      const fallback = result.data.fallbacks[dest.destination];
+      if (fallback) {
+        dest.variablesFallback = fallback.values;
+      }
+    }
   }
 
   /**
