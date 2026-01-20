@@ -39,7 +39,16 @@ import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
 import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
 import { Coupon, CreateCoupon } from "./models/Coupon";
 import { ICoupon } from "./models/_interfaces/ICoupon";
+import { Campaign } from "./models/Campaign";
+import { ICampaign } from "./models/_interfaces/ICampaign";
+import { PaginatedResponseV3, ResponseV3 } from "./models/Response.v3";
+import {
+  IPaginatedResponseV3,
+  IResponseV3,
+} from "./models/_interfaces/IResponse.v3";
 import { PrintOneError } from "./errors/PrintOneError";
+import { Design } from "./models/Design";
+import { IDesign } from "./models/_interfaces/IDesign";
 
 export type RequestHandler = new (
   token: string,
@@ -122,17 +131,6 @@ export class PrintOne {
     this.debug("Initialized");
   }
 
-  /**
-   * Get the currently logged in company.
-   * @throws { PrintOneError }
-   * @returns { Promise<Company> } Your company.
-   */
-  public async getSelf(): Promise<Company> {
-    const data = await this.v2Client.GET<ICompany>("companies/me");
-
-    return new Company(this.protected, data);
-  }
-
   public get v2Client(): HttpHandler<unknown, unknown> {
     if (this.options.version === "v2") {
       return this.client;
@@ -151,6 +149,90 @@ export class PrintOne {
     throw new PrintOneError(400, [
       "Initialize PrintOne with version 'v3' to use v3 endpoints.",
     ]);
+  }
+
+  /**
+   * Get the currently logged in company.
+   * @throws { PrintOneError }
+   * @returns { Promise<Company> } Your company.
+   */
+  public async getSelf(): Promise<Company> {
+    const data = await this.v2Client.GET<ICompany>("companies/me");
+
+    return new Company(this.protected, data);
+  }
+
+  /**
+   * Get all campaigns.
+   * @param { PaginationOptions } options The options to use for pagination
+   * @param options.limit The maximum amount of campaigns to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, can be 'createdAt', 'updatedAt', 'archivedAt', 'name', 'identifier' or 'status'.
+   * @throws { PrintOneError }
+   * @returns { Promise<PaginatedResponseV3<Campaign>> } The campaigns.
+   */
+  public async getCampaigns(
+    options: PaginationOptions<
+      | "createdAt"
+      | "updatedAt"
+      | "archivedAt"
+      | "name"
+      | "identifier"
+      | "status"
+    > = {},
+  ): Promise<PaginatedResponseV3<Campaign>> {
+    const data = await this.v3Client.GET<IPaginatedResponseV3<ICampaign>>(
+      "campaigns",
+      { params: sortToQuery(options) },
+    );
+
+    return PaginatedResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Campaign(this.protected, data),
+    );
+  }
+
+  /**
+   * Get a campaign by its identifier.
+   * @param { string } id The identifier of the campaign.
+   * @throws { PrintOneError } If the campaign could not be found.
+   */
+  public async getCampaign(id: string): Promise<Campaign> {
+    const data = await this.v3Client.GET<IResponseV3<ICampaign>>(
+      `campaigns/${id}`,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Campaign(this.protected, data),
+    );
+  }
+
+  /**
+   * Get all campaign designs.
+   * @param { PaginationOptions } options The options to use for pagination
+   * @param options.limit The maximum amount of campaign designs to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, can be 'name', 'labels', 'format', and 'deletedAt'.
+   * @throws { PrintOneError }
+   * @returns { Promise<PaginatedResponseV3<Design>> } The campaign designs.
+   */
+  public async getCampaignDesigns(
+    campaignId: string,
+    options: PaginationOptions<"name" | "labels" | "format" | "deletedAt"> = {},
+  ): Promise<PaginatedResponseV3<Design>> {
+    const data = await this.v3Client.GET<IPaginatedResponseV3<IDesign>>(
+      `campaigns/${campaignId}/designs`,
+      { params: sortToQuery(options) },
+    );
+
+    return PaginatedResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Design(this.protected, data),
+    );
   }
 
   /**

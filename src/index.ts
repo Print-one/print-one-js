@@ -13,6 +13,7 @@ export * from "./models/Coupon";
 export * from "./models/CouponCode";
 export * from "./models/CsvOrder";
 export * from "./models/CustomFile";
+export * from "./models/Design";
 export * from "./models/Destination";
 export * from "./models/Order";
 export * from "./models/PaginatedResponse";

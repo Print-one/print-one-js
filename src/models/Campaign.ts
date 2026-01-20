@@ -9,6 +9,10 @@ import { ICampaign } from "./_interfaces/ICampaign";
 import { CampaignStatus } from "~/enums/CampaignStatus";
 import { ContinuousDestination, OneOffDestination } from "./Destination";
 import { Protected } from "~/PrintOne";
+import { Design } from "./Design";
+import { IDesign } from "./_interfaces/IDesign";
+import { PaginatedResponseV3, ResponseV3 } from "./Response.v3";
+import { IPaginatedResponseV3, IResponseV3 } from "./_interfaces/IResponse.v3";
 
 export type CreateCampaign = {
   name: string;
@@ -20,6 +24,7 @@ export type CreateCampaign = {
 
 export class Campaign extends Model<ICampaign> {
   private _destinations: ContinuousDestination[] | OneOffDestination[] = [];
+  private _designs: Design[] = [];
 
   constructor(
     protected _protected: Protected,
@@ -115,14 +120,37 @@ export class Campaign extends Model<ICampaign> {
     }
   }
 
+  public get designs(): Design[] {
+    return this._designs;
+  }
+
+  public async loadDesigns() {
+    const data = await this._protected.client.GET<
+      IPaginatedResponseV3<IDesign>
+    >(`campaigns/${this.id}/designs`);
+
+    this._designs = PaginatedResponseV3.safe(
+      this._protected,
+      data,
+      (data) => new Design(this._protected, data),
+    ).data;
+  }
+
   /**
    * Refresh the Campaign
    * @throws { PrintOneError } If the campaign could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICampaign>(
+    const data = await this._protected.client.GET<IResponseV3<ICampaign>>(
       `campaigns/${this.id}`,
     );
-    this.destinations = this._data.destinations;
+
+    this._data = ResponseV3.safe(
+      this._protected,
+      data,
+      (data) => new Campaign(this._protected, data),
+    );
+
+    await this.loadDesigns();
   }
 }
