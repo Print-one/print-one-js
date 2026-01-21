@@ -3,11 +3,9 @@ import {
   Company,
   CreateCsvOrder,
   CsvOrder,
-  CsvStatus,
   CustomFile,
   Finish,
   Format,
-  FriendlyCsvStatus,
   FriendlyStatus,
   Order,
   PaginatedResponse,
@@ -29,6 +27,7 @@ import {
   OrderStatusUpdateWebhookRequest,
   TemplatePreviewRenderedWebhookRequest,
   CouponCodeUsedWebhookRequest,
+  QrCodeScannedWebhookRequest,
 } from "~/models/WebhookRequest";
 
 let template: Template = null as unknown as Template;
@@ -2272,6 +2271,54 @@ describe("validateWebhook", function () {
     expect(webhook.data).toEqual(expect.any(CouponCode));
   });
 
+  it("should return QrCodeScannedWebhookRequest if event is qr_code_scanned", async function () {
+    // arrange
+    const body = JSON.stringify({
+      data: {
+        id: "ord_QXitaPr7MumnHo2BYXuW9",
+        companyId: "2bd4c679-3d59-4a6f-a815-a60424746f8d",
+        templateId: "tmpl_AyDg3PxvP5ydyGq3kSFfj",
+        finish: "GLOSSY",
+        format: "POSTCARD_A5",
+        mergeVariables: {},
+        recipient: {
+          name: "Your Name",
+          address: "Street 1",
+          postalCode: "1234 AB",
+          city: "Amsterdam",
+          country: "NL",
+        },
+        definitiveCountryId: "NL",
+        region: "NETHERLANDS",
+        deliverySpeed: "FAST",
+        isBillable: true,
+        status: "order_created",
+        friendlyStatus: "Processing",
+        errors: [],
+        metadata: {},
+        sendDate: "2024-01-01T00:00:00.000Z",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+        anonymizedAt: null,
+        csvOrderId: null,
+      },
+      created_at: "2024-06-03T13:14:46.501Z",
+      event: "qr_code_scanned",
+    });
+    const headers = {
+      "x-printone-hmac-sha256": "71jF20za0eDB/2NSLhlr9W1HCHqwhZuZPz7mOdL0mGg=",
+    };
+
+    // act
+    const webhook = await client.validateWebhook(body, headers, "secret");
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(QrCodeScannedWebhookRequest));
+    expect(webhook.event).toEqual(WebhookEvent.qr_code_scanned);
+    expect(webhook.data).toEqual(expect.any(Order));
+  });
+
   it("should throw an error if event is not valid", async function () {
     // arrange
     jest.spyOn(client, "isValidWebhook").mockReturnValue(false);
@@ -2313,6 +2360,14 @@ describe("validateWebhook", function () {
 });
 
 describe("createWebhook", function () {
+  const createdWebhooks: Webhook[] = [];
+
+  afterEach(async () => {
+    for (const createdWebhook of createdWebhooks) {
+      await createdWebhook.delete().catch(() => null);
+    }
+  });
+
   it("should create a webhook", async function () {
     // arrange
 
@@ -2323,6 +2378,7 @@ describe("createWebhook", function () {
       active: false,
       events: [WebhookEvent.order_status_update],
     });
+    createdWebhooks.push(webhook);
 
     // assert
     expect(webhook).toBeDefined();
@@ -2345,6 +2401,7 @@ describe("createWebhook", function () {
         password: "password",
       },
     });
+    createdWebhooks.push(webhook);
 
     // assert
     expect(webhook).toBeDefined();

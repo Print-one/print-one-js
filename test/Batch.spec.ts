@@ -452,4 +452,24 @@ describe("BatchOrder", function () {
     // assert
     expect(order.status).not.toEqual("order_created");
   }, 30000);
+
+  it("toJSON should work", async () => {
+    // arrange
+    const order = await batch.createOrder({
+      recipient: {
+        name: "John Doe",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
+        country: "Nederland",
+      },
+    });
+
+    // act
+    const json = order.toJSON();
+
+    // assert
+    expect(json).toBeDefined();
+    expect(json).toHaveProperty("id", order.id);
+  });
 });
