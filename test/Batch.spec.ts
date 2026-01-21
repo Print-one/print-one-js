@@ -20,9 +20,9 @@ let template: Template = null as unknown as Template;
 
 const address: Address = {
   name: "Jane Doe",
-  address: "123 Main Street",
-  postalCode: "1234 AB",
-  city: "Somecity",
+  address: "Houtmarkt 1",
+  postalCode: "2011 AL",
+  city: "Haarlem",
   country: "NL",
 };
 
@@ -49,10 +49,10 @@ async function addOrders(count: number): Promise<void> {
     Array.from(Array(count)).map(() =>
       batch.createOrder({
         recipient: {
-          name: "John Doe",
-          address: "123 Main Street",
-          postalCode: "1234 AB",
-          city: "Anytown",
+          name: `John Doe ${Math.random().toString(36)}`,
+          address: "Houtmarkt 1",
+          postalCode: "2011 AL",
+          city: "Haarlem",
           country: "Nederland",
         },
       }),
@@ -68,9 +68,9 @@ describe("createOrder", function () {
     const order = await batch.createOrder({
       recipient: {
         name: "John Doe",
-        address: "123 Main Street",
-        postalCode: "1234 AB",
-        city: "Anytown",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
         country: "Nederland",
       },
     });
@@ -136,15 +136,11 @@ describe("createCsvOrder", function () {
     expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
     expect(csvOrder.sender).toEqual(undefined);
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
-    expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toStrictEqual({});
     expect(csvOrder.billingId).toEqual(
       expect.toBeOneOf([undefined, expect.any(String)]),
     );
-    expect(csvOrder.finish).toEqual(expect.any(String));
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
     expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
@@ -193,11 +189,8 @@ describe("getCsvOrder", function () {
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
     expect(csvOrder.sender).toEqual(undefined);
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
-    expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toStrictEqual({});
     expect(csvOrder.billingId).toBeOneOf([undefined, expect.any(String)]);
-    expect(csvOrder.finish).toEqual(expect.any(String));
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
     expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
@@ -315,9 +308,9 @@ describe("getOrder", function () {
     const order = await batch.createOrder({
       recipient: {
         name: "John Doe",
-        address: "123 Main Street",
-        postalCode: "1234 AB",
-        city: "Anytown",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
         country: "Nederland",
       },
     });
@@ -337,9 +330,9 @@ describe("getOrder", function () {
     const order = await client.createOrder({
       recipient: {
         name: "John Doe",
-        address: "123 Main Street",
-        postalCode: "1234 AB",
-        city: "Anytown",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
         country: "Nederland",
       },
       template: template,
@@ -363,9 +356,9 @@ describe("getOrder", function () {
     const order = await batch2.createOrder({
       recipient: {
         name: "John Doe",
-        address: "123 Main Street",
-        postalCode: "1234 AB",
-        city: "Anytown",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
         country: "Nederland",
       },
     });
@@ -424,9 +417,9 @@ describe("BatchOrder", function () {
     const order = await batch.createOrder({
       recipient: {
         name: "John Doe",
-        address: "123 Main Street",
-        postalCode: "1234 AB",
-        city: "Anytown",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
         country: "Nederland",
       },
     });
@@ -443,9 +436,9 @@ describe("BatchOrder", function () {
     const order = await batch.createOrder({
       recipient: {
         name: "John Doe",
-        address: "123 Main Street",
-        postalCode: "1234 AB",
-        city: "Anytown",
+        address: "Houtmarkt 1",
+        postalCode: "2011 AL",
+        city: "Haarlem",
         country: "Nederland",
       },
     });

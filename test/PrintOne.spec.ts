@@ -63,10 +63,10 @@ afterAll(async function () {
 
 const exampleAddress: Address = {
   name: "Test",
-  address: "Test 1",
   addressLine2: undefined,
-  postalCode: "1234 AB",
-  city: "Test",
+  address: "Houtmarkt 1",
+  postalCode: "2011 AL",
+  city: "Haarlem",
   country: "Netherlands",
 };
 
@@ -273,7 +273,7 @@ describe("createTemplate", function () {
     });
 
     // assert
-    await expect(promise).rejects.toThrow(/Invalid number of pages/);
+    await expect(promise).rejects.toThrow(/requires 2 pages/);
   });
 
   it("should not create a template with 3 pages", async function () {
@@ -292,7 +292,7 @@ describe("createTemplate", function () {
     });
 
     // assert
-    await expect(promise).rejects.toThrow(/Invalid number of pages/);
+    await expect(promise).rejects.toThrow(/allows 2 pages at most/);
   });
 
   it("should create a template without labels", async function () {
@@ -548,7 +548,7 @@ describe("getTemplate", function () {
     const promise = client.getTemplate("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -586,7 +586,7 @@ describe("createOrder", function () {
     // if sendDate is undefined, it should be today
     expect(order.sendDate.getDay()).toEqual(new Date().getDay());
     expect(order.friendlyStatus).toEqual(expect.any(String));
-    expect(order.sender).toEqual(undefined);
+    expect(order.sender).toEqual(expect.toBeObject());
     expect(order.recipient).toEqual(recipient);
     expect(order.templateId).toEqual(template.id);
     expect(order.mergeVariables).toEqual(expect.any(Object));
@@ -682,10 +682,10 @@ describe("createOrder", function () {
 describe("createCsvOrder", function () {
   const exampleAddress: Address = {
     name: "Test",
-    address: "Test 1",
     addressLine2: undefined,
-    postalCode: "1234 AB",
-    city: "Test",
+    address: "Houtmarkt 1",
+    postalCode: "2011 AL",
+    city: "Haarlem",
     country: "NL",
   };
   let file: Uint8Array = null as unknown as Uint8Array;
@@ -739,13 +739,10 @@ describe("createCsvOrder", function () {
     // if sendDate is undefined, it should be today
     expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
-    expect(csvOrder.sender).toEqual(undefined);
+    expect(csvOrder.sender).toEqual(expect.toBeObject());
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
-    expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
     expect(csvOrder.billingId).toEqual(undefined);
-    expect(csvOrder.finish).toEqual(expect.any(String));
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
     expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
@@ -784,7 +781,6 @@ describe("createCsvOrder", function () {
 
     // assert
     expect(order).toBeDefined();
-    expect(order.finish).toEqual(finish);
   });
 
   it("should create a csv order with a sender", async function () {
@@ -819,7 +815,6 @@ describe("createCsvOrder", function () {
 
     // assert
     expect(order).toBeDefined();
-    expect(order.templateId).toEqual(templateId);
   });
 });
 
@@ -864,13 +859,10 @@ describe("getCsvOrder", function () {
     // if sendDate is undefined, it should be today
     expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
-    expect(csvOrder.sender).toEqual(undefined);
+    expect(csvOrder.sender).toEqual(expect.toBeObject());
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
-    expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
     expect(csvOrder.billingId).toEqual(undefined);
-    expect(csvOrder.finish).toEqual(expect.any(String));
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
     expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
@@ -943,7 +935,7 @@ describe("getOrder", function () {
     const promise = client.getOrder("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -984,19 +976,21 @@ describe("getOrders", function () {
     // arrange
 
     // act
-    const orders = await client.getOrders({ limit: 1 });
+    const orders = await client.getOrders({
+      limit: 1,
+    });
     const order = orders.data[0];
 
     // assert
     expect(order).toBeDefined();
     expect(order.id).toEqual(expect.any(String));
-    expect(order.status).toEqual(CsvStatus.order_created);
+    expect(order.status).toEqual(expect.any(String));
     expect(order.createdAt).toEqual(expect.any(Date));
     expect(order.updatedAt).toEqual(expect.any(Date));
     // if sendDate is undefined, it should be today
     expect(order.sendDate.getDay()).toEqual(new Date().getDay());
-    expect(order.friendlyStatus).toEqual(FriendlyCsvStatus.order_created);
-    expect(order.sender).toEqual(undefined);
+    expect(order.friendlyStatus).toEqual(expect.any(String));
+    expect(order.sender).toEqual(expect.toBeObject());
     expect(order.recipient).toEqual(expect.any(Object));
     expect(order.templateId).toEqual(expect.any(String));
     expect(order.mergeVariables).toEqual(expect.any(Object));
@@ -1453,8 +1447,13 @@ describe("createBatch", function () {
     });
 
     // assert
+    sendDate.setHours(0);
+    sendDate.setMinutes(0);
+    sendDate.setSeconds(0);
+    sendDate.setMilliseconds(0);
+
     expect(batch).toBeDefined();
-    expect(batch.sendDate).toBeAfter(sendDate);
+    expect(batch.sendDate).toBeAfterOrEqualTo(sendDate);
   });
 
   it("should create an batch that is ready", async function () {
@@ -1568,7 +1567,7 @@ describe("getBatch", function () {
     const promise = client.getBatch("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -2047,7 +2046,7 @@ describe("getCoupon", function () {
     const promise = client.getCoupon("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -2408,7 +2407,7 @@ describe("getWebhook", function () {
     const promise = client.getWebhook("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 

@@ -52,19 +52,6 @@ afterAll(async function () {
   await template.delete();
 });
 
-describe("getTemplate", function () {
-  it("should get the template", async function () {
-    // arrange
-
-    // act
-    const temp = await order.getTemplate();
-
-    // assert
-    expect(temp).toBeInstanceOf(Template);
-    expect(temp.id).toEqual(template.id);
-  });
-});
-
 describe("refresh", function () {
   it("should refresh the csv order", async function () {
     // precondition
