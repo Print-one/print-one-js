@@ -23,3 +23,18 @@ export type LinksV3 = {
   next: string | null;
   last: string | null;
 };
+
+export type ISingleErrorV3 = {
+  message: string;
+  code: number;
+  error: string;
+  field: string;
+};
+
+export type IErrorResponseV3 = {
+  status: number;
+  message: string;
+  code: number;
+  errors?: ISingleErrorV3[];
+  uri: string;
+};

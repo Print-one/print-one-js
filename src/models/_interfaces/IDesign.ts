@@ -21,8 +21,9 @@ export type IFullDesign = IDesign & {
 };
 
 export type IDesignPage = {
-  orderingKey: number;
   content: string;
+  friendlyName: string;
+  orderingKey: number;
 };
 
 export type ISerializedHelperCall = Record<string, unknown>;

@@ -12,7 +12,6 @@ export type ICampaign = {
   meta: object | null;
   mergeVariables: string[];
   scheduleType: CampaignScheduleType;
-  companyId: string;
   stampId: string | null;
   sender: Address | null;
   billingId: string | null;

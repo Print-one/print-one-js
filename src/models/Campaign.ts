@@ -15,22 +15,12 @@ import { PaginatedResponseV3, ResponseV3 } from "./Response.v3";
 import { IPaginatedResponseV3, IResponseV3 } from "./_interfaces/IResponse.v3";
 import { Destination } from "~/enums/Destination";
 
-export type CreateCampaign = {
-  name: string;
-  identifier?: string;
-  destinations:
-    | Omit<IContinuousDestination, "variablesFallback">[]
-    | Omit<IOneOffDestination, "variablesFallback">[];
-  scheduleType: CampaignScheduleType;
-  npdrCategory?: string;
-};
-
 export type UpdateCampaign = {
   name?: string;
   sender?: Address | null;
   ndprCategory?: string;
   /**
-   * Appends to the existing meta object
+   * Discards the existing metadata
    */
   meta?: Record<string, unknown>;
 };
@@ -73,10 +63,6 @@ export class Campaign extends Model<ICampaign> {
 
   public get scheduleType(): CampaignScheduleType {
     return this._data.scheduleType;
-  }
-
-  public get companyId(): string {
-    return this._data.companyId;
   }
 
   public get stampId(): string | null {
@@ -156,6 +142,7 @@ export class Campaign extends Model<ICampaign> {
     );
 
     this._data = response.data;
+    this.destinations = response.data.destinations;
   }
 
   public async resume(): Promise<void> {
@@ -165,6 +152,7 @@ export class Campaign extends Model<ICampaign> {
     );
 
     this._data = response.data;
+    this.destinations = response.data.destinations;
   }
 
   /**
@@ -205,6 +193,7 @@ export class Campaign extends Model<ICampaign> {
     );
 
     this._data = response.data;
+    this.destinations = response.data.destinations;
 
     await this.loadDesigns();
   }
