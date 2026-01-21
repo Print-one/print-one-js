@@ -10,7 +10,7 @@ import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { Model } from "../Model";
 
 export type CreateCsvOrder = {
-  file: ArrayBuffer;
+  file: ArrayBuffer | Uint8Array;
   mapping: {
     recipient: Address;
     mergeVariables?: Record<string, string>;

@@ -160,7 +160,7 @@ export class Batch extends Model<IBatch> {
     const formData = new FormData();
     formData.append(
       "file",
-      new Blob([data.file], { type: "text/csv" }),
+      new Blob([new Uint8Array(data.file)], { type: "text/csv" }),
       "upload.csv",
     );
     formData.append("mapping", JSON.stringify(data.mapping));

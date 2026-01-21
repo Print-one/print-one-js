@@ -688,7 +688,7 @@ describe("createCsvOrder", function () {
     city: "Test",
     country: "NL",
   };
-  let file: ArrayBuffer = null as unknown as ArrayBuffer;
+  let file: Uint8Array = null as unknown as Uint8Array;
   const mapping: CreateCsvOrder["mapping"] = {
     recipient: {
       city: "{{City}}",

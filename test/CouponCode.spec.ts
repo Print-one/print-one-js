@@ -5,7 +5,7 @@ import * as path from "path";
 
 let coupon: Coupon = null as unknown as Coupon;
 let couponCode: CouponCode = null as unknown as CouponCode;
-let file: ArrayBuffer;
+let file: Uint8Array;
 
 beforeAll(function () {
   file = fs.readFileSync(path.join(__dirname, "assets/single-code.csv"));

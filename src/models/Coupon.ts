@@ -67,9 +67,13 @@ export class Coupon extends Model<ICoupon> {
    * The CSV file should have a header column and the first column should be the coupon codes
    * @throws { PrintOneError } If the coupon codes could not be added.
    */
-  public async addCodes(csv: ArrayBuffer): Promise<void> {
+  public async addCodes(csv: ArrayBuffer | Uint8Array): Promise<void> {
     const formData = new FormData();
-    formData.append("file", new Blob([csv], { type: "text/csv" }), "codes.csv");
+    formData.append(
+      "file",
+      new Blob([new Uint8Array(csv)], { type: "text/csv" }),
+      "codes.csv",
+    );
 
     await this._protected.client.POST<void>(`/coupons/${this.id}`, formData, {
       headers: {

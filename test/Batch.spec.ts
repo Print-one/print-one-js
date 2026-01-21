@@ -98,7 +98,7 @@ describe("createOrder", function () {
 });
 
 describe("createCsvOrder", function () {
-  let file: ArrayBuffer = null as unknown as ArrayBuffer;
+  let file: Uint8Array = null as unknown as Uint8Array;
 
   const mapping: CreateBatchCsvOrder["mapping"] = {
     recipient: {

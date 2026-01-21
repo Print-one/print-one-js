@@ -12,7 +12,7 @@ import { sleep } from "../src/utils";
 import * as fs from "fs";
 import * as path from "path";
 
-let file: ArrayBuffer = null as unknown as ArrayBuffer;
+let file: Uint8Array = null as unknown as Uint8Array;
 let order: CsvOrder = null as unknown as CsvOrder;
 let template: Template = null as unknown as Template;
 
