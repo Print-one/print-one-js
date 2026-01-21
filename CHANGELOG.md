@@ -1,3 +1,20 @@
+# [1.4.0-next.3](https://github.com/Print-one/print-one-js/compare/v1.4.0-next.2...v1.4.0-next.3) (2026-01-21)
+
+
+### Bug Fixes
+
+* enhance types ([4209d65](https://github.com/Print-one/print-one-js/commit/4209d654dd4abf21763b43b32a2d72b6358de161))
+* knip ([de9b79b](https://github.com/Print-one/print-one-js/commit/de9b79bdd40d58962a0e97758bd6018e95f00820))
+* lint ([72b37d5](https://github.com/Print-one/print-one-js/commit/72b37d535021e3dc1c6d803c476c7382fb624d89))
+* npm release ([f26aa58](https://github.com/Print-one/print-one-js/commit/f26aa58616bc69171e2a132bf43a7f1bd3ff459a))
+* shopify send date offset ([9c0f462](https://github.com/Print-one/print-one-js/commit/9c0f4626859c66fd3664fb8ec14a4c3f3103206f))
+
+
+### Features
+
+* :sparkles: make sender in batch create optional ([ec77455](https://github.com/Print-one/print-one-js/commit/ec77455503156677c258be89f5b5540aad1e854b))
+* qr code webhook ([379b3bd](https://github.com/Print-one/print-one-js/commit/379b3bd8e31b7de2c25a163da498f67d3717b634))
+
 # [1.4.0-next.2](https://github.com/Print-one/print-one-js/compare/v1.4.0-next.1...v1.4.0-next.2) (2024-08-27)
 
 
