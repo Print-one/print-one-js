@@ -28,6 +28,7 @@ export type UpdateCampaign = {
 export class Campaign extends Model<ICampaign> {
   private _destinations: ContinuousDestination[] | OneOffDestination[] = [];
   private _designs: Design[] = [];
+  private designsLoaded: boolean = false;
 
   constructor(
     protected _protected: Protected,
@@ -107,13 +108,17 @@ export class Campaign extends Model<ICampaign> {
     switch (this.scheduleType) {
       case CampaignScheduleType.CONTINUOUS:
         this._destinations = destinations.map(
-          (d) => new ContinuousDestination(this._protected, d),
+          (d) => new ContinuousDestination(this._protected, d, this.id),
         );
         break;
       case CampaignScheduleType.ONE_OFF:
         this._destinations = destinations.map(
           (d) =>
-            new OneOffDestination(this._protected, d as IOneOffDestination),
+            new OneOffDestination(
+              this._protected,
+              d as IOneOffDestination,
+              this.id,
+            ),
         );
         break;
     }
@@ -124,15 +129,30 @@ export class Campaign extends Model<ICampaign> {
   }
 
   public async loadDesigns() {
-    const data = await this._protected.client.GET<
-      IPaginatedResponseV3<IDesign>
-    >(`campaigns/${this.id}/designs`);
+    this.designsLoaded = true;
+    let nextPage: number | null = null;
 
-    this._designs = PaginatedResponseV3.safe(
-      this._protected,
-      data,
-      (data) => new Design(this._protected, data),
-    ).data;
+    const newDesigns: Design[] = [];
+    do {
+      const data: IPaginatedResponseV3<IDesign> =
+        await this._protected.client.GET<IPaginatedResponseV3<IDesign>>(
+          `campaigns/${this.id}/designs?page=${nextPage ?? 1}`,
+        );
+
+      const response = PaginatedResponseV3.safe(
+        this._protected,
+        data,
+        (d) => new Design(this._protected, d, this.id),
+      );
+
+      newDesigns.push(...response.data);
+      nextPage =
+        data.meta.currentPage < data.meta.totalPages
+          ? data.meta.currentPage + 1
+          : null;
+    } while (nextPage);
+
+    this._designs = newDesigns;
   }
 
   public async pause(): Promise<void> {
@@ -195,6 +215,8 @@ export class Campaign extends Model<ICampaign> {
     this._data = response.data;
     this.destinations = response.data.destinations;
 
-    await this.loadDesigns();
+    if (this.designsLoaded) {
+      await this.loadDesigns();
+    }
   }
 }

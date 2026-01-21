@@ -3,6 +3,7 @@ import { Finish } from "~/enums/Finish";
 import { Format } from "~/enums/Format";
 
 export interface IBaseDestination {
+  campaignId: string;
   destination: Destination;
   threshold: number;
   product: Format;

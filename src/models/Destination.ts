@@ -7,8 +7,17 @@ import {
 import { Destination } from "~/enums/Destination";
 import { Format } from "~/enums/Format";
 import { Finish } from "~/enums/Finish";
+import { Protected } from "~/PrintOne";
 
 class BaseDestination<T extends IBaseDestination> extends Model<T> {
+  constructor(
+    protected _protected: Protected,
+    _data: T,
+    public campaignId: string,
+  ) {
+    super(_protected, _data);
+  }
+
   public get destination(): Destination {
     return this._data.destination;
   }

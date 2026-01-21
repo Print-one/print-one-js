@@ -2,6 +2,7 @@ import { Destination } from "~/enums/Destination";
 import { Format } from "~/enums/Format";
 
 export type IDesign = {
+  campaignId: string;
   id: string;
   version: number;
   name: string;

@@ -7,8 +7,26 @@ import {
   IFullDesign,
   ISerializedHelperCall,
 } from "./_interfaces/IDesign";
+import { Protected } from "~/PrintOne";
+
+export interface AddDesign {
+  name: string;
+  format: Format;
+  labels?: string[];
+  pages: { content: string }[];
+  options?: { doubleSided?: boolean };
+  default?: boolean;
+}
 
 class BaseDesign<T extends IDesign> extends Model<T> {
+  constructor(
+    protected _protected: Protected,
+    _data: T,
+    public campaignId: string,
+  ) {
+    super(_protected, _data);
+  }
+
   public get id(): string {
     return this._data.id;
   }
@@ -51,6 +69,13 @@ class BaseDesign<T extends IDesign> extends Model<T> {
 
   public get destination(): Destination {
     return this._data.destination;
+  }
+
+  public async makeDefault(): Promise<void> {
+    await this._protected.client.PATCH(
+      `campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`,
+      { default: true },
+    );
   }
 }
 

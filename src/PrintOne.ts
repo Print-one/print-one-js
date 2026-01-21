@@ -39,7 +39,7 @@ import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
 import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
 import { Coupon, CreateCoupon } from "./models/Coupon";
 import { ICoupon } from "./models/_interfaces/ICoupon";
-import { Campaign, CreateCampaign, UpdateCampaign } from "./models/Campaign";
+import { Campaign, UpdateCampaign } from "./models/Campaign";
 import { ICampaign } from "./models/_interfaces/ICampaign";
 import { PaginatedResponseV3, ResponseV3 } from "./models/Response.v3";
 import {
@@ -47,10 +47,11 @@ import {
   IResponseV3,
 } from "./models/_interfaces/IResponse.v3";
 import { PrintOneError } from "./errors/PrintOneError";
-import { Design } from "./models/Design";
-import { IDesign } from "./models/_interfaces/IDesign";
+import { AddDesign, Design, FullDesign } from "./models/Design";
+import { IDesign, IFullDesign } from "./models/_interfaces/IDesign";
 import { ICampaignCounts } from "./models/_interfaces/ICampaignCounts";
 import { CampaignCounts } from "./models/CampaignCounts";
+import { Destination } from "./enums/Destination";
 
 export type RequestHandler = new (
   token: string,
@@ -165,26 +166,6 @@ export class PrintOne {
   }
 
   /**
-   * Create a campaign
-   * @param data The campaign data
-   * @returns { Promise<Campaign> } The created campaign
-   */
-  public async createCampaign(data: CreateCampaign): Promise<Campaign> {
-    const response = await this.v3Client.POST<IResponseV3<ICampaign>>(
-      "campaigns",
-      {
-        name: data.name,
-        identifier: data.identifier,
-        destinations: data.destinations,
-        scheduleType: data.scheduleType,
-        npdrCategory: data.npdrCategory,
-      },
-    );
-
-    return new Campaign(this.protected, response.data);
-  }
-
-  /**
    * Update a campaign
    * @param campaignId Campaign identifier
    * @param data Data to update
@@ -294,7 +275,48 @@ export class PrintOne {
     return PaginatedResponseV3.safe(
       this.protected,
       data,
-      (data) => new Design(this.protected, data),
+      (data) => new Design(this.protected, data, campaignId),
+    );
+  }
+
+  /**
+   * Add a design to a campaign destination.
+   * @param campaignId The identifier of the campaign.
+   * @param destination The destination to add the design to.
+   * @param data The design data.
+   * @returns { FullDesign } The created design.
+   */
+  public async addDesignToDestination(
+    campaignId: string,
+    destination: Destination,
+    data: AddDesign,
+  ): Promise<FullDesign> {
+    const response = await this.v3Client.POST<IResponseV3<IFullDesign>>(
+      `campaigns/${campaignId}/designs/${destination.toUpperCase()}`,
+      data,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      response,
+      (data) => new FullDesign(this.protected, data, campaignId),
+    );
+  }
+
+  /**
+   * Delete a design from a campaign destination.
+   * @param campaignId The identifier of the campaign.
+   * @param destination The destination to delete the design from.
+   * @param designId The identifier of the design to delete.
+   * @returns { Promise<void> }
+   */
+  public async deleteDesignFromDestination(
+    campaignId: string,
+    destination: Destination,
+    designId: string,
+  ): Promise<void> {
+    await this.v3Client.DELETE(
+      `campaigns/${campaignId}/designs/${destination}/${designId}`,
     );
   }
 
