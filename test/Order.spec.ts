@@ -18,10 +18,10 @@ beforeAll(async function () {
 beforeEach(async function () {
   order = await client.createOrder({
     recipient: {
-      name: "John Doe",
-      address: "123 Main Street",
-      postalCode: "1234 AB",
-      city: "Anytown",
+      name: `John Doe ${Math.random().toString(36)}`,
+      address: "Houtmarkt 1",
+      postalCode: "2011 AL",
+      city: "Haarlem",
       country: "Nederland",
     },
     template: template,

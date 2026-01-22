@@ -3,6 +3,7 @@ export const WebhookEvent = {
   template_preview_rendered: "template_preview_rendered",
   batch_status_update: "batch_status_update",
   coupon_code_used: "coupon_code_used",
+  qr_code_scanned: "qr_code_scanned",
 } as const;
 
 export type WebhookEvent = (typeof WebhookEvent)[keyof typeof WebhookEvent];

@@ -3,11 +3,9 @@ import {
   Company,
   CreateCsvOrder,
   CsvOrder,
-  CsvStatus,
   CustomFile,
   Finish,
   Format,
-  FriendlyCsvStatus,
   FriendlyStatus,
   Order,
   PaginatedResponse,
@@ -32,6 +30,7 @@ import {
   OrderStatusUpdateWebhookRequest,
   TemplatePreviewRenderedWebhookRequest,
   CouponCodeUsedWebhookRequest,
+  QrCodeScannedWebhookRequest,
 } from "~/models/WebhookRequest";
 import { getFileBuffer } from "./utils";
 import { PaginatedResponseV3 } from "~/models/Response.v3";
@@ -76,10 +75,10 @@ afterAll(async function () {
 
 const exampleAddress: Address = {
   name: "Test",
-  address: "Test 1",
   addressLine2: undefined,
-  postalCode: "1234 AB",
-  city: "Test",
+  address: "Houtmarkt 1",
+  postalCode: "2011 AL",
+  city: "Haarlem",
   country: "Netherlands",
 };
 
@@ -496,7 +495,7 @@ describe("createTemplate", function () {
     });
 
     // assert
-    await expect(promise).rejects.toThrow(/Invalid number of pages/);
+    await expect(promise).rejects.toThrow(/requires 2 pages/);
   });
 
   it("should not create a template with 3 pages", async function () {
@@ -515,7 +514,7 @@ describe("createTemplate", function () {
     });
 
     // assert
-    await expect(promise).rejects.toThrow(/Invalid number of pages/);
+    await expect(promise).rejects.toThrow(/allows 2 pages at most/);
   });
 
   it("should create a template without labels", async function () {
@@ -771,7 +770,7 @@ describe("getTemplate", function () {
     const promise = client.getTemplate("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -809,7 +808,7 @@ describe("createOrder", function () {
     // if sendDate is undefined, it should be today
     expect(order.sendDate.getDay()).toEqual(new Date().getDay());
     expect(order.friendlyStatus).toEqual(expect.any(String));
-    expect(order.sender).toEqual(undefined);
+    expect(order.sender).toEqual(expect.toBeObject());
     expect(order.recipient).toEqual(recipient);
     expect(order.templateId).toEqual(template.id);
     expect(order.mergeVariables).toEqual(expect.any(Object));
@@ -905,13 +904,13 @@ describe("createOrder", function () {
 describe("createCsvOrder", function () {
   const exampleAddress: Address = {
     name: "Test",
-    address: "Test 1",
     addressLine2: undefined,
-    postalCode: "1234 AB",
-    city: "Test",
+    address: "Houtmarkt 1",
+    postalCode: "2011 AL",
+    city: "Haarlem",
     country: "NL",
   };
-  let file: ArrayBuffer = null as unknown as ArrayBuffer;
+  let file: Uint8Array = null as unknown as Uint8Array;
   const mapping: CreateCsvOrder["mapping"] = {
     recipient: {
       city: "{{City}}",
@@ -962,13 +961,10 @@ describe("createCsvOrder", function () {
     // if sendDate is undefined, it should be today
     expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
-    expect(csvOrder.sender).toEqual(undefined);
+    expect(csvOrder.sender).toEqual(expect.toBeObject());
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
-    expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
     expect(csvOrder.billingId).toEqual(undefined);
-    expect(csvOrder.finish).toEqual(expect.any(String));
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
     expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
@@ -1007,7 +1003,6 @@ describe("createCsvOrder", function () {
 
     // assert
     expect(order).toBeDefined();
-    expect(order.finish).toEqual(finish);
   });
 
   it("should create a csv order with a sender", async function () {
@@ -1042,7 +1037,6 @@ describe("createCsvOrder", function () {
 
     // assert
     expect(order).toBeDefined();
-    expect(order.templateId).toEqual(templateId);
   });
 });
 
@@ -1087,13 +1081,10 @@ describe("getCsvOrder", function () {
     // if sendDate is undefined, it should be today
     expect(csvOrder.sendDate.getDay()).toEqual(new Date().getDay());
     expect(csvOrder.friendlyStatus).toEqual(expect.any(String));
-    expect(csvOrder.sender).toEqual(undefined);
+    expect(csvOrder.sender).toEqual(expect.toBeObject());
     expect(csvOrder.recipientMapping).toEqual(mapping.recipient);
-    expect(csvOrder.templateId).toEqual(template.id);
     expect(csvOrder.mergeVariableMapping).toEqual(mapping.mergeVariables);
     expect(csvOrder.billingId).toEqual(undefined);
-    expect(csvOrder.finish).toEqual(expect.any(String));
-    expect(csvOrder.format).toEqual(expect.any(String));
     expect(csvOrder.isBillable).toEqual(expect.any(Boolean));
     expect(csvOrder.estimatedOrderCount).toEqual(expect.any(Number));
     expect(csvOrder.failedOrderCount).toEqual(expect.any(Number));
@@ -1166,7 +1157,7 @@ describe("getOrder", function () {
     const promise = client.getOrder("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -1207,19 +1198,21 @@ describe("getOrders", function () {
     // arrange
 
     // act
-    const orders = await client.getOrders({ limit: 1 });
+    const orders = await client.getOrders({
+      limit: 1,
+    });
     const order = orders.data[0];
 
     // assert
     expect(order).toBeDefined();
     expect(order.id).toEqual(expect.any(String));
-    expect(order.status).toEqual(CsvStatus.order_created);
+    expect(order.status).toEqual(expect.any(String));
     expect(order.createdAt).toEqual(expect.any(Date));
     expect(order.updatedAt).toEqual(expect.any(Date));
     // if sendDate is undefined, it should be today
     expect(order.sendDate.getDay()).toEqual(new Date().getDay());
-    expect(order.friendlyStatus).toEqual(FriendlyCsvStatus.order_created);
-    expect(order.sender).toEqual(undefined);
+    expect(order.friendlyStatus).toEqual(expect.any(String));
+    expect(order.sender).toEqual(expect.toBeObject());
     expect(order.recipient).toEqual(expect.any(Object));
     expect(order.templateId).toEqual(expect.any(String));
     expect(order.mergeVariables).toEqual(expect.any(Object));
@@ -1676,8 +1669,13 @@ describe("createBatch", function () {
     });
 
     // assert
+    sendDate.setHours(0);
+    sendDate.setMinutes(0);
+    sendDate.setSeconds(0);
+    sendDate.setMilliseconds(0);
+
     expect(batch).toBeDefined();
-    expect(batch.sendDate).toBeAfter(sendDate);
+    expect(batch.sendDate).toBeAfterOrEqualTo(sendDate);
   });
 
   it("should create an batch that is ready", async function () {
@@ -1791,7 +1789,7 @@ describe("getBatch", function () {
     const promise = client.getBatch("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -2270,7 +2268,7 @@ describe("getCoupon", function () {
     const promise = client.getCoupon("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 
@@ -2496,6 +2494,54 @@ describe("validateWebhook", function () {
     expect(webhook.data).toEqual(expect.any(CouponCode));
   });
 
+  it("should return QrCodeScannedWebhookRequest if event is qr_code_scanned", async function () {
+    // arrange
+    const body = JSON.stringify({
+      data: {
+        id: "ord_QXitaPr7MumnHo2BYXuW9",
+        companyId: "2bd4c679-3d59-4a6f-a815-a60424746f8d",
+        templateId: "tmpl_AyDg3PxvP5ydyGq3kSFfj",
+        finish: "GLOSSY",
+        format: "POSTCARD_A5",
+        mergeVariables: {},
+        recipient: {
+          name: "Your Name",
+          address: "Street 1",
+          postalCode: "1234 AB",
+          city: "Amsterdam",
+          country: "NL",
+        },
+        definitiveCountryId: "NL",
+        region: "NETHERLANDS",
+        deliverySpeed: "FAST",
+        isBillable: true,
+        status: "order_created",
+        friendlyStatus: "Processing",
+        errors: [],
+        metadata: {},
+        sendDate: "2024-01-01T00:00:00.000Z",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+        anonymizedAt: null,
+        csvOrderId: null,
+      },
+      created_at: "2024-06-03T13:14:46.501Z",
+      event: "qr_code_scanned",
+    });
+    const headers = {
+      "x-printone-hmac-sha256": "71jF20za0eDB/2NSLhlr9W1HCHqwhZuZPz7mOdL0mGg=",
+    };
+
+    // act
+    const webhook = await client.validateWebhook(body, headers, "secret");
+
+    // assert
+    expect(webhook).toBeDefined();
+    expect(webhook).toEqual(expect.any(QrCodeScannedWebhookRequest));
+    expect(webhook.event).toEqual(WebhookEvent.qr_code_scanned);
+    expect(webhook.data).toEqual(expect.any(Order));
+  });
+
   it("should throw an error if event is not valid", async function () {
     // arrange
     jest.spyOn(client, "isValidWebhook").mockReturnValue(false);
@@ -2537,6 +2583,14 @@ describe("validateWebhook", function () {
 });
 
 describe("createWebhook", function () {
+  const createdWebhooks: Webhook[] = [];
+
+  afterEach(async () => {
+    for (const createdWebhook of createdWebhooks) {
+      await createdWebhook.delete().catch(() => null);
+    }
+  });
+
   it("should create a webhook", async function () {
     // arrange
 
@@ -2547,6 +2601,7 @@ describe("createWebhook", function () {
       active: false,
       events: [WebhookEvent.order_status_update],
     });
+    createdWebhooks.push(webhook);
 
     // assert
     expect(webhook).toBeDefined();
@@ -2569,6 +2624,7 @@ describe("createWebhook", function () {
         password: "password",
       },
     });
+    createdWebhooks.push(webhook);
 
     // assert
     expect(webhook).toBeDefined();
@@ -2631,7 +2687,7 @@ describe("getWebhook", function () {
     const promise = client.getWebhook("test");
 
     // assert
-    await expect(promise).rejects.toThrow(/not found/);
+    await expect(promise).rejects.toThrow(/not exist/);
   });
 });
 

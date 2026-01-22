@@ -4,16 +4,22 @@ import * as fs from "fs";
 import * as path from "path";
 
 let coupon: Coupon = null as unknown as Coupon;
-let file: ArrayBuffer;
+let file: Uint8Array;
 
-beforeAll(function () {
-  file = fs.readFileSync(path.join(__dirname, "assets/codes.csv"));
+beforeEach(function () {
+  file = Buffer.from(
+    [...new Array(26)].map(() => Math.random().toString(36) + "\n").join(""),
+  );
 });
 
 beforeEach(async function () {
   coupon = await client.createCoupon({
     name: `Test Coupon`,
   });
+});
+
+afterEach(async function () {
+  await coupon.delete().catch(() => null);
 });
 
 describe("refresh", function () {

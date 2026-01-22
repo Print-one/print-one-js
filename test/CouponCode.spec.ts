@@ -1,14 +1,14 @@
 import { Coupon, CouponCode, Format, Order } from "../src";
 import { client } from "./client";
-import * as fs from "fs";
-import * as path from "path";
 
 let coupon: Coupon = null as unknown as Coupon;
 let couponCode: CouponCode = null as unknown as CouponCode;
-let file: ArrayBuffer;
+let file: Uint8Array;
 
-beforeAll(function () {
-  file = fs.readFileSync(path.join(__dirname, "assets/single-code.csv"));
+beforeEach(function () {
+  file = Buffer.from(
+    [...new Array(2)].map(() => Math.random().toString(36) + "\n").join(""),
+  );
 });
 
 beforeEach(async function () {
@@ -19,6 +19,10 @@ beforeEach(async function () {
   await coupon.addCodes(file);
 
   couponCode = (await coupon.getCodes()).data[0];
+});
+
+afterEach(async function () {
+  await coupon.delete().catch(() => null);
 });
 
 const useCoupon = async function () {
@@ -32,9 +36,9 @@ const useCoupon = async function () {
   return await client.createOrder({
     recipient: {
       name: "John Doe",
-      address: "123 Main Street",
-      postalCode: "1234 AB",
-      city: "Anytown",
+      address: "Houtmarkt 1",
+      postalCode: "2011 AL",
+      city: "Haarlem",
       country: "Nederland",
     },
     template: template,

@@ -1,6 +1,5 @@
 import { OrderPaginatedQuery } from "~/PrintOne";
 import { Finish } from "~/enums/Finish";
-import { Format } from "~/enums/Format";
 import { Address } from "~/models/Address";
 import { Template } from "~/models/Template";
 import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
@@ -10,7 +9,7 @@ import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { Model } from "../Model";
 
 export type CreateCsvOrder = {
-  file: ArrayBuffer;
+  file: ArrayBuffer | Uint8Array;
   mapping: {
     recipient: Address;
     mergeVariables?: Record<string, string>;
@@ -34,18 +33,6 @@ export type CreateBatchCsvOrder = Pick<CreateCsvOrder, "file" | "mapping">;
 export class CsvOrder extends Model<ICsvOrder> {
   public get id(): string {
     return this._data.id;
-  }
-
-  public get templateId(): string {
-    return this._data.templateId;
-  }
-
-  public get finish(): Finish {
-    return this._data.finish as Finish;
-  }
-
-  public get format(): Format {
-    return this._data.format as Format;
   }
 
   public get recipientMapping(): Address {
@@ -105,14 +92,6 @@ export class CsvOrder extends Model<ICsvOrder> {
 
   public get updatedAt(): Date {
     return new Date(this._data.updatedAt);
-  }
-
-  /**
-   * Get the template of the order
-   * @throws { PrintOneError } If the template could not be fetched.
-   */
-  public async getTemplate(): Promise<Template> {
-    return this._protected.printOne.getTemplate(this.templateId);
   }
 
   /**

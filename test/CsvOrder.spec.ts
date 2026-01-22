@@ -12,7 +12,7 @@ import { sleep } from "../src/utils";
 import * as fs from "fs";
 import * as path from "path";
 
-let file: ArrayBuffer = null as unknown as ArrayBuffer;
+let file: Uint8Array = null as unknown as Uint8Array;
 let order: CsvOrder = null as unknown as CsvOrder;
 let template: Template = null as unknown as Template;
 
@@ -50,19 +50,6 @@ beforeEach(async function () {
 
 afterAll(async function () {
   await template.delete();
-});
-
-describe("getTemplate", function () {
-  it("should get the template", async function () {
-    // arrange
-
-    // act
-    const temp = await order.getTemplate();
-
-    // assert
-    expect(temp).toBeInstanceOf(Template);
-    expect(temp.id).toEqual(template.id);
-  });
 });
 
 describe("refresh", function () {
