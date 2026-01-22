@@ -49,11 +49,11 @@ export class PaginatedResponseV3<T = unknown> extends Model<
   private constructor(
     _protected: Protected,
     data: IPaginatedResponseV3,
-    private readonly _covert: (data: unknown) => T,
+    private readonly _convert: (data: unknown) => T,
   ) {
     super(_protected, {
       ...data,
-      data: [...data.data].map(_covert),
+      data: [...data.data].map(_convert),
     });
   }
 
@@ -83,7 +83,7 @@ export class PaginatedResponseV3<T = unknown> extends Model<
 
   /**
    * Get the first page of data
-   * @returns { PaginatedResponseV3 } If there is a next page
+   * @returns { PaginatedResponseV3 } If there is a first page
    * @returns { null } If there is no first page
    * @throws { PrintOneError }
    */
@@ -113,7 +113,7 @@ export class PaginatedResponseV3<T = unknown> extends Model<
 
   /**
    * Get the last page of data
-   * @returns { PaginatedResponseV3 } If there is a previous page
+   * @returns { PaginatedResponseV3 } If there is a last page
    * @returns { null } If there is no last page
    * @throws { PrintOneError }
    */
@@ -122,14 +122,23 @@ export class PaginatedResponseV3<T = unknown> extends Model<
   }
 
   private async _paginateTo(
-    url?: string | null,
+    _url?: string | null,
   ): Promise<PaginatedResponseV3<T> | null> {
-    if (!url) {
+    if (!_url) {
       return null;
     }
 
-    const data = await this._protected.client.GET<IPaginatedResponseV3>(url);
+    const url = new URL(_url);
+    let newUrl = url.pathname.replace(
+      "/" + this._protected.options.version,
+      "",
+    );
+    if (url.search) {
+      newUrl += url.search;
+    }
 
-    return new PaginatedResponseV3(this._protected, data, this._covert);
+    const data = await this._protected.client.GET<IPaginatedResponseV3>(newUrl);
+
+    return new PaginatedResponseV3(this._protected, data, this._convert);
   }
 }

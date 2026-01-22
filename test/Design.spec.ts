@@ -1,0 +1,66 @@
+import { Destination } from "~/index";
+import { contCampaignId } from "./Campaign.spec";
+import { v3Client } from "./client";
+import { addDesignData } from "./PrintOne.spec";
+
+describe("Design Model", function () {
+  it("should have all fields for Design", async function () {
+    // arrange
+    const newDesign = await v3Client.addDesignToDestination(
+      contCampaignId,
+      Destination.NETHERLANDS,
+      addDesignData,
+    );
+    const campaign = await v3Client.getCampaign(contCampaignId);
+
+    await campaign.loadDesigns();
+
+    // act
+    const design = campaign.designs.find(
+      (d) => d.destination === Destination.NETHERLANDS && d.id === newDesign.id,
+    );
+    if (!design) {
+      throw new Error("Design not found in campaign designs");
+    }
+
+    // assert
+    expect(design.campaignId).toEqual(campaign.id);
+    expect(design.id).toEqual(expect.any(String));
+    expect(design.version).toEqual(expect.any(Number));
+    expect(design.name).toEqual(expect.any(String));
+    // matching one of the Format enum values
+    expect(design.format).toBe(addDesignData.format);
+    expect(design.overlay).toEqual(expect.any(String));
+    expect(design.labels).toEqual(expect.any(Array));
+    expect(design.mergeVariables).toEqual(expect.any(Array));
+    expect(design.thumbnail).toEqual(expect.any(String) || null);
+    expect(design.apiVersion).toEqual(expect.any(Number));
+    expect(design.updatedAt).toEqual(expect.any(Date) || undefined);
+    expect(design.destination).toEqual(Destination.NETHERLANDS);
+  });
+
+  it("should be able to make a Design default", async function () {
+    // arrange
+    const campaign = await v3Client.getCampaign(contCampaignId);
+    await campaign.loadDesigns();
+    const design = await v3Client.addDesignToDestination(
+      campaign.id,
+      Destination.NETHERLANDS,
+      addDesignData,
+    );
+
+    // act
+    await design.makeDefault();
+
+    // assert
+    await campaign.refresh();
+    const destination = campaign.destinations.find(
+      (d) => d.destination === Destination.NETHERLANDS,
+    );
+    if (!destination) {
+      throw new Error("Destination NETHERLANDS not found");
+    }
+
+    expect(destination.designId).toBe(design.id);
+  });
+});
