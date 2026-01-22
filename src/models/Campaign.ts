@@ -94,10 +94,6 @@ export class Campaign extends Model<ICampaign> {
     return new Date(this._data.updatedAt);
   }
 
-  public get archivedAt(): Date | null {
-    return this._data.archivedAt ? new Date(this._data.archivedAt) : null;
-  }
-
   public get destinations(): ContinuousDestination[] | OneOffDestination[] {
     return this._destinations;
   }
@@ -129,7 +125,6 @@ export class Campaign extends Model<ICampaign> {
   }
 
   public async loadDesigns() {
-    this.designsLoaded = true;
     let nextPage: number | null = null;
 
     const newDesigns: Design[] = [];
@@ -152,27 +147,8 @@ export class Campaign extends Model<ICampaign> {
           : null;
     } while (nextPage);
 
+    this.designsLoaded = true;
     this._designs = newDesigns;
-  }
-
-  public async pause(): Promise<void> {
-    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
-      `campaigns/${this.id}/pause`,
-      {},
-    );
-
-    this._data = response.data;
-    this.destinations = response.data.destinations;
-  }
-
-  public async resume(): Promise<void> {
-    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
-      `campaigns/${this.id}/resume`,
-      {},
-    );
-
-    this._data = response.data;
-    this.destinations = response.data.destinations;
   }
 
   /**
@@ -203,6 +179,22 @@ export class Campaign extends Model<ICampaign> {
     }
   }
 
+  public async pause(): Promise<void> {
+    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
+      `campaigns/${this.id}/pause`,
+      {},
+    );
+    await this._refresh(response);
+  }
+
+  public async resume(): Promise<void> {
+    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
+      `campaigns/${this.id}/resume`,
+      {},
+    );
+    await this._refresh(response);
+  }
+
   /**
    * Refresh the Campaign
    * @throws { PrintOneError } If the campaign could not be refreshed.
@@ -211,7 +203,10 @@ export class Campaign extends Model<ICampaign> {
     const response = await this._protected.client.GET<IResponseV3<ICampaign>>(
       `campaigns/${this.id}`,
     );
+    await this._refresh(response);
+  }
 
+  private async _refresh(response: IResponseV3<ICampaign>): Promise<void> {
     this._data = response.data;
     this.destinations = response.data.destinations;
 

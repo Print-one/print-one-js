@@ -2,7 +2,6 @@ import { Destination } from "~/enums/Destination";
 import { Format } from "~/enums/Format";
 
 export type IDesign = {
-  campaignId: string;
   id: string;
   version: number;
   name: string;
@@ -12,14 +11,21 @@ export type IDesign = {
   mergeVariables: string[];
   thumbnail: string | null;
   apiVersion: number;
-  updatedAt?: Date;
+  updatedAt: Date;
+
+  campaignId: string;
   destination: Destination;
+
+  pages: undefined;
+  serializedHelperCalls: undefined;
 };
 
-export type IFullDesign = IDesign & {
+type _FullDesign = {
   pages: IDesignPage[];
   serializedHelperCalls: ISerializedHelperCall[];
 };
+
+export type IFullDesign = Omit<IDesign, keyof _FullDesign> & _FullDesign;
 
 export type IDesignPage = {
   content: string;

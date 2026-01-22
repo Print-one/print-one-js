@@ -8,6 +8,7 @@ import {
   ISerializedHelperCall,
 } from "./_interfaces/IDesign";
 import { Protected } from "~/PrintOne";
+import { ResponseV3 } from "./Response.v3";
 
 export interface AddDesign {
   name: string;
@@ -18,13 +19,16 @@ export interface AddDesign {
   default?: boolean;
 }
 
-class BaseDesign<T extends IDesign> extends Model<T> {
+export class Design extends Model<IFullDesign | IDesign> {
+  private _loaded?: IFullDesign;
+
   constructor(
     protected _protected: Protected,
-    _data: T,
+    _data: IDesign | IFullDesign,
     public campaignId: string,
   ) {
     super(_protected, _data);
+    if (_data.pages) this._loaded = _data as IFullDesign;
   }
 
   public get id(): string {
@@ -63,8 +67,8 @@ class BaseDesign<T extends IDesign> extends Model<T> {
     return this._data.apiVersion;
   }
 
-  public get updatedAt(): Date | undefined {
-    return this._data.updatedAt ? new Date(this._data.updatedAt) : undefined;
+  public get updatedAt(): Date {
+    return new Date(this._data.updatedAt);
   }
 
   public get destination(): Destination {
@@ -77,19 +81,43 @@ class BaseDesign<T extends IDesign> extends Model<T> {
       { default: true },
     );
   }
-}
 
-export class Design extends BaseDesign<IDesign> {
-  // No additional fields
-}
+  public async load(): Promise<void> {
+    const response = await this._protected.client.GET<ResponseV3<IFullDesign>>(
+      `campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`,
+    );
 
-// TODO: Implement API endpoint to fetch full design details
-export class FullDesign extends BaseDesign<IFullDesign> {
-  public get pages(): IDesignPage[] {
-    return this._data.pages;
+    this._data = response.data;
+    this._loaded = response.data;
   }
 
+  /**
+   * Get the pages of the design
+   *
+   * <b>NOTE: This method will throw an error if {@link load} has not been called</b>
+   * @throws { Error } When the design is not loaded
+   * @returns { IDesignPage[] } The pages of the design
+   */
+  public get pages(): IDesignPage[] {
+    if (this._loaded === undefined)
+      throw new Error("Design pages are not loaded, call 'load()' first");
+
+    return this._loaded.pages;
+  }
+
+  /**
+   * Get the serialized helper calls of the design
+   *
+   * <b>NOTE: This method will throw an error if {@link load} has not been called</b>
+   * @throws { Error } When the design is not loaded
+   * @returns { ISerializedHelperCall[] } The serialized helper calls of the design
+   */
   public get serializedHelperCalls(): ISerializedHelperCall[] {
-    return this._data.serializedHelperCalls;
+    if (this._loaded === undefined)
+      throw new Error(
+        "Design serializedHelperCalls are not loaded, call 'load()' first",
+      );
+
+    return this._loaded.serializedHelperCalls;
   }
 }

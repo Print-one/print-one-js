@@ -17,7 +17,7 @@ import {
   Design,
   Destination,
   AddDesign,
-  FullDesign,
+  PrintOneError,
 } from "../src";
 import "jest-extended";
 import { client, v3Client } from "./client";
@@ -88,6 +88,13 @@ describe("Campaign", function () {
       contCampaignId,
       Destination.NETHERLANDS,
       addDesignData,
+    );
+  });
+
+  it("should not be able to use v2 client", async function () {
+    // arrange & act & assert
+    await expect(client.getCampaigns()).rejects.toThrow(
+      /Initialize PrintOne with version 'v3' to use v3 endpoints./,
     );
   });
 
@@ -204,7 +211,7 @@ describe("Campaign", function () {
       );
 
       // assert
-      expect(design).toBeInstanceOf(FullDesign);
+      expect(design).toBeInstanceOf(Design);
       expect(design.pages.length).toBe(2);
       expect(design.serializedHelperCalls).toBeDefined();
     });
@@ -235,6 +242,38 @@ describe("Campaign", function () {
         ),
       ).rejects.toThrow(/10006: Destination 'GERMANY' does not exist/);
     });
+
+    it("should throw an error when the design is not correct", async function () {
+      // arrange
+      const data = {
+        ...addDesignData,
+        pages: [
+          { content: "{{not a function}} {{nested.is.not.allowed}}" },
+          { content: "{{hello}}" },
+        ],
+      };
+
+      const campaign = await v3Client.getCampaign(contCampaignId);
+      expect(campaign).toBeInstanceOf(Campaign);
+      // act & assert
+      try {
+        await v3Client.addDesignToDestination(
+          campaign.id,
+          Destination.NETHERLANDS,
+          data,
+        );
+      } catch (error) {
+        if (!(error instanceof PrintOneError)) {
+          throw error;
+        }
+
+        expect(error).toBeInstanceOf(PrintOneError);
+        expect(error.messages).toStrictEqual([
+          "10044: Design creation error",
+          '10054: Merge variable "not a function" is invalid, remove any spaces or consider using "notAFunction" instead',
+        ]);
+      }
+    });
   });
 
   describe("Delete Design from Campaign", function () {
@@ -248,7 +287,7 @@ describe("Campaign", function () {
         Destination.INTERNATIONAL,
         addDesignData,
       );
-      expect(design).toBeInstanceOf(FullDesign);
+      expect(design).toBeInstanceOf(Design);
 
       // act
       await v3Client.deleteDesignFromDestination(
@@ -293,6 +332,13 @@ describe("Campaign", function () {
 });
 
 describe("getSelf", function () {
+  it("should not be able to use v3 client", async function () {
+    // arrange & act & assert
+    await expect(v3Client.getSelf()).rejects.toThrow(
+      /Initialize PrintOne with version 'v2' to use v2 endpoints./,
+    );
+  });
+
   it("should return a company", async function () {
     // arrange
 
@@ -910,7 +956,7 @@ describe("createCsvOrder", function () {
     city: "Haarlem",
     country: "NL",
   };
-  let file: Uint8Array = null as unknown as Uint8Array;
+  let file: ArrayBuffer = null as unknown as ArrayBuffer;
   const mapping: CreateCsvOrder["mapping"] = {
     recipient: {
       city: "{{City}}",

@@ -19,6 +19,5 @@ export type ICampaign = {
   npdrCategory?: string;
   createdAt: Date;
   updatedAt: Date;
-  archivedAt: Date | null;
   destinations: IContinuousDestination[] | IOneOffDestination[];
 };

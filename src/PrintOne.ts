@@ -47,7 +47,7 @@ import {
   IResponseV3,
 } from "./models/_interfaces/IResponse.v3";
 import { PrintOneError } from "./errors/PrintOneError";
-import { AddDesign, Design, FullDesign } from "./models/Design";
+import { AddDesign, Design } from "./models/Design";
 import { IDesign, IFullDesign } from "./models/_interfaces/IDesign";
 import { ICampaignCounts } from "./models/_interfaces/ICampaignCounts";
 import { CampaignCounts } from "./models/CampaignCounts";
@@ -284,13 +284,13 @@ export class PrintOne {
    * @param campaignId The identifier of the campaign.
    * @param destination The destination to add the design to.
    * @param data The design data.
-   * @returns { FullDesign } The created design.
+   * @returns { Design } The created design.
    */
   public async addDesignToDestination(
     campaignId: string,
     destination: Destination,
     data: AddDesign,
-  ): Promise<FullDesign> {
+  ): Promise<Design> {
     const response = await this.v3Client.POST<IResponseV3<IFullDesign>>(
       `campaigns/${campaignId}/designs/${destination.toUpperCase()}`,
       data,
@@ -299,7 +299,7 @@ export class PrintOne {
     return ResponseV3.safe(
       this.protected,
       response,
-      (data) => new FullDesign(this.protected, data, campaignId),
+      (data) => new Design(this.protected, data, campaignId),
     );
   }
 

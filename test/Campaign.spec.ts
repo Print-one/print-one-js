@@ -2,6 +2,7 @@ import {
   CampaignScheduleType,
   CampaignStatus,
   ContinuousDestination,
+  Destination,
   OneOffDestination,
 } from "~/index";
 import { v3Client } from "./client";
@@ -26,10 +27,10 @@ describe("Campaign Model", function () {
     expect(campaign.stampId).toBeNull();
     expect(campaign.sender).toBeNull();
     expect(campaign.billingId).toBeNull();
+    expect(campaign.npdrCategory).toBeUndefined();
     expect(campaign.status).toBe(CampaignStatus.RUNNING);
     expect(campaign.createdAt).toBeInstanceOf(Date);
     expect(campaign.updatedAt).toBeInstanceOf(Date);
-    expect(campaign.archivedAt).toBeNull();
     expect(campaign.destinations).toBeInstanceOf(Array);
     expect(campaign.destinations.length).toBe(2);
     expect(campaign.destinations[0]).toBeInstanceOf(ContinuousDestination);
@@ -53,7 +54,6 @@ describe("Campaign Model", function () {
     expect(campaign.status).toBe(CampaignStatus.RUNNING);
     expect(campaign.createdAt).toBeInstanceOf(Date);
     expect(campaign.updatedAt).toBeInstanceOf(Date);
-    expect(campaign.archivedAt).toBeNull();
     expect(campaign.destinations).toBeInstanceOf(Array);
     expect(campaign.destinations.length).toBe(2);
     expect(campaign.destinations[0]).toBeInstanceOf(OneOffDestination);
@@ -76,7 +76,15 @@ describe("Campaign Model", function () {
     // assert
     expect(campaign.designs.length).toBeGreaterThanOrEqual(1);
     expect(campaign.designs[0].campaignId).toBe(campaign.id);
-    expect(campaign.designs[0].id).toBe(design.id);
+    // any design with the correct id
+    expect(campaign.designs.find((d) => d.id === design.id)).toBeDefined();
+
+    // cleanup
+    await v3Client.deleteDesignFromDestination(
+      design.campaignId,
+      design.destination,
+      design.id,
+    );
   });
 
   it("should pause a campaign", async function () {
@@ -108,14 +116,21 @@ describe("Campaign Model", function () {
   it("should add fallback variables", async function () {
     // arrange
     const campaign = await v3Client.getCampaign(contCampaignId);
+    // ensure no fallbacks exist
+    await campaign.addVariablesFallback({
+      [Destination.NETHERLANDS]: null,
+      [Destination.GERMANY]: null,
+      [Destination.INTERNATIONAL]: null,
+    });
     expect(
-      campaign.destinations.find((d) => d.destination === "NETHERLANDS")
-        ?.variablesFallback,
-    ).toStrictEqual({});
+      campaign.destinations.flatMap((d) =>
+        Object.keys(d.variablesFallback ?? {}),
+      ),
+    ).toHaveLength(0);
 
     const design = await v3Client.addDesignToDestination(
       campaign.id,
-      campaign.destinations[0].destination,
+      Destination.NETHERLANDS,
       {
         ...addDesignData,
         pages: [
@@ -130,7 +145,7 @@ describe("Campaign Model", function () {
 
     // act
     await campaign.addVariablesFallback({
-      NETHERLANDS: {
+      [Destination.NETHERLANDS]: {
         firstName: "John",
         lastName: "Doe",
       },
@@ -138,7 +153,7 @@ describe("Campaign Model", function () {
 
     // assert
     const destination = campaign.destinations.find(
-      (d) => d.destination === "NETHERLANDS",
+      (d) => d.destination === Destination.NETHERLANDS,
     );
     expect(destination).toBeDefined();
     expect(destination?.variablesFallback).toEqual({
@@ -153,9 +168,11 @@ describe("Campaign Model", function () {
       design.id,
     );
     await campaign.addVariablesFallback({
-      NETHERLANDS: null,
+      [Destination.NETHERLANDS]: null,
+      [Destination.GERMANY]: null,
+      [Destination.INTERNATIONAL]: null,
     });
-  });
+  }, 10000);
 
   it("should refresh a campaign", async function () {
     // arrange
@@ -183,5 +200,5 @@ describe("Campaign Model", function () {
     // assert
     expect(spy).toHaveBeenCalled();
     expect(spyLoadDesigns).toHaveBeenCalled();
-  });
+  }, 10000);
 });

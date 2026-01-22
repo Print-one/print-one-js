@@ -62,5 +62,39 @@ describe("Design Model", function () {
     }
 
     expect(destination.designId).toBe(design.id);
+  }, 10000);
+
+  it("should load full Design data", async function () {
+    // arrange
+    const design = await v3Client.addDesignToDestination(
+      contCampaignId,
+      Destination.NETHERLANDS,
+      addDesignData,
+    );
+
+    // act
+    await design.load();
+
+    // assert
+    expect(design.pages).toBeDefined();
+    expect(design.serializedHelperCalls).toBeDefined();
+  });
+
+  it("should throw if calling unloaded properties before loading full Design data", async function () {
+    // arrange
+    const campaign = await v3Client.getCampaign(contCampaignId);
+    await campaign.loadDesigns();
+    const design = campaign.designs[0];
+
+    // act & assert
+    expect(() => {
+      return design.pages;
+    }).toThrow("Design pages are not loaded, call 'load()' first");
+
+    expect(() => {
+      return design.serializedHelperCalls;
+    }).toThrow(
+      "Design serializedHelperCalls are not loaded, call 'load()' first",
+    );
   });
 });
