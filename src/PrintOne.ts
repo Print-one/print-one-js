@@ -52,6 +52,8 @@ import { IDesign, IFullDesign } from "./models/_interfaces/IDesign";
 import { ICampaignCounts } from "./models/_interfaces/ICampaignCounts";
 import { CampaignCounts } from "./models/CampaignCounts";
 import { Destination } from "./enums/Destination";
+import { Mailing } from "./models/Mailing";
+import { IMailing } from "./models/_interfaces/IMailing";
 
 export type RequestHandler = new (
   token: string,
@@ -276,6 +278,32 @@ export class PrintOne {
       this.protected,
       data,
       (data) => new Design(this.protected, data, campaignId),
+    );
+  }
+
+  /**
+   * Get all campaign mailings.
+   * @param campaignId The identifier of the campaign.
+   * @param options The options to use for pagination.
+   * @param options.limit The maximum amount of mailings to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, currently supports 'createdAt'.
+   * @throws { PrintOneError }
+   * @returns { Promise<PaginatedResponseV3<Mailing>> } The campaign mailings.
+   */
+  public async getCampaignMailings(
+    campaignId: string,
+    options: PaginationOptions<"createdAt"> = {},
+  ): Promise<PaginatedResponseV3<Mailing>> {
+    const data = await this.v3Client.GET<IPaginatedResponseV3<IMailing>>(
+      `campaigns/${campaignId}/mailings`,
+      { params: sortToQuery(options) },
+    );
+
+    return PaginatedResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Mailing(this.protected, data),
     );
   }
 

@@ -15,6 +15,7 @@ export * from "./models/CsvOrder";
 export * from "./models/CustomFile";
 export * from "./models/Design";
 export * from "./models/Destination";
+export * from "./models/Mailing";
 export * from "./models/Order";
 export * from "./models/PaginatedResponse";
 export * from "./models/Preview";

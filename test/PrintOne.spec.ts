@@ -18,6 +18,7 @@ import {
   Destination,
   AddDesign,
   PrintOneError,
+  Mailing,
 } from "../src";
 import "jest-extended";
 import { client, v3Client } from "./client";
@@ -327,6 +328,23 @@ describe("Campaign", function () {
           "some-design-id",
         ),
       ).rejects.toThrow(/10006: Destination 'GERMANY' does not exist/);
+    });
+  });
+
+  describe("Get Campaign Mailings", function () {
+    it("should get paginated campaign mailings", async function () {
+      // arrange
+
+      // act
+      const mailings = await v3Client.getCampaignMailings(contCampaignId);
+
+      // assert
+      expect(mailings).toBeInstanceOf(PaginatedResponseV3);
+      expect(mailings.data).toBeInstanceOf(Array);
+      if (mailings.data.length === 0) return; // No mailings to test further
+
+      expect(mailings.data.length).toBeGreaterThanOrEqual(0);
+      expect(mailings.data[0]).toBeInstanceOf(Mailing);
     });
   });
 });

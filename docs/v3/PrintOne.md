@@ -141,6 +141,35 @@ const designs = await client.getCampaignDesigns("cmp_123", {
 
 ---
 
+## `.getCampaignMailings(campaignId, [options])`
+
+Get all mailings for a campaign.
+
+**Parameters**
+
+| Name             | Type                           | Default          | Description                                                       |
+| ---------------- | ------------------------------ | ---------------- | ----------------------------------------------------------------- |
+| `campaignId`     | `string`                       | —                | The identifier of the campaign.                                   |
+| `options.limit`  | `number`                       | `10`             | The maximum number of mailings to return.                         |
+| `options.page`   | `number`                       | `1`              | The page of mailings to return.                                   |
+| `options.sortBy` | [`sort`](../Filtering#Sorting) | `createdAt:DESC` | The field(s) to sort mailings by. Currently supports `createdAt`. |
+
+**Returns:** `Promise<PaginatedResponseV3<Mailing>>`
+
+See [Mailing](./Mailing.md) for the returned item structure.
+
+**Example**
+
+```js
+const mailings = await client.getCampaignMailings("cmp_123", {
+  limit: 20,
+  page: 1,
+  sortBy: "createdAt:DESC",
+});
+```
+
+---
+
 ## `.addDesignToDestination(campaignId, destination, data)`
 
 Add a design to a campaign destination.
