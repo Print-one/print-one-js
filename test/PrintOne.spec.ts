@@ -585,6 +585,23 @@ describe("createTemplate", function () {
 });
 
 describe("getTemplates", function () {
+  let template: Template = null as unknown as Template;
+  beforeAll(async function () {
+    // Ensure at least one template exists
+    template = await client.createTemplate({
+      name: "Global test template for getTemplates",
+      format: Format.POSTCARD_SQ15,
+      labels: ["library-unit-test-getTemplates"],
+      pages: ["page1", "page2"],
+    });
+  });
+
+  afterAll(async function () {
+    if (template) {
+      await template.delete().catch(() => {});
+    }
+  });
+
   it("should return a paginated response", async function () {
     // arrange
 
