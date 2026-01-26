@@ -28,7 +28,7 @@ export type UpdateCampaign = {
 export class Campaign extends Model<ICampaign> {
   private _destinations: ContinuousDestination[] | OneOffDestination[] = [];
   private _designs: Design[] = [];
-  private designsLoaded: boolean = false;
+  private _designsLoaded: boolean = false;
 
   constructor(
     protected _protected: Protected,
@@ -152,7 +152,7 @@ export class Campaign extends Model<ICampaign> {
           : null;
     } while (nextPage);
 
-    this.designsLoaded = true;
+    this._designsLoaded = true;
     this._designs = newDesigns;
   }
 
@@ -215,7 +215,7 @@ export class Campaign extends Model<ICampaign> {
     this._data = response.data;
     this.destinations = response.data.destinations;
 
-    if (this.designsLoaded) {
+    if (this._designsLoaded) {
       await this.loadDesigns();
     }
   }
