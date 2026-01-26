@@ -28,7 +28,6 @@ describe("Design Model", function () {
     expect(design.id).toEqual(expect.any(String));
     expect(design.version).toEqual(expect.any(Number));
     expect(design.name).toEqual(expect.any(String));
-    // matching one of the Format enum values
     expect(design.format).toBe(addDesignData.format);
     expect(design.overlay).toEqual(expect.any(String));
     expect(design.labels).toEqual(expect.any(Array));
@@ -37,6 +36,7 @@ describe("Design Model", function () {
     expect(design.apiVersion).toEqual(expect.any(Number));
     expect(design.updatedAt).toEqual(expect.any(Date) || undefined);
     expect(design.destination).toEqual(Destination.NETHERLANDS);
+    expect(design.default).toBe(false);
   });
 
   it("should be able to make a Design default", async function () {

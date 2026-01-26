@@ -124,6 +124,11 @@ export class Campaign extends Model<ICampaign> {
     return this._designs;
   }
 
+  /**
+   * Load all the Designs in this campaign. Accessible via campaign.designs after loading.
+   * @throws { PrintOneError } If the designs could not be loaded
+   * @returns { Promise<void> }
+   */
   public async loadDesigns() {
     let nextPage: number | null = null;
 

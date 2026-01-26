@@ -75,6 +75,10 @@ export class Design extends Model<IFullDesign | IDesign> {
     return this._data.destination;
   }
 
+  public get default(): boolean {
+    return this._data.default;
+  }
+
   public async makeDefault(): Promise<void> {
     await this._protected.client.PATCH(
       `campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`,

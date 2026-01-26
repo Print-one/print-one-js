@@ -15,6 +15,7 @@ export type IDesign = {
 
   campaignId: string;
   destination: Destination;
+  default: boolean;
 
   pages: undefined;
   serializedHelperCalls: undefined;
