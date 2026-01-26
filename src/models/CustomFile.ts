@@ -1,5 +1,5 @@
 import { ICustomFile } from "~/models/_interfaces/ICustomFile";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class CustomFile extends Model<ICustomFile> {
   public get id(): string {

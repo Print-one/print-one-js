@@ -3,7 +3,7 @@ import { IFullTemplate, ITemplate } from "~/models/_interfaces/ITemplate";
 import { Format } from "~/enums/Format";
 import { IPreview } from "~/models/_interfaces/IPreview";
 import { Preview } from "~/models/Preview";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateTemplate = {
   name: string;

@@ -4,7 +4,7 @@ import { IWebhookLog } from "~/models/_interfaces/IWebhookLog";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class Webhook extends Model<IWebhook> {
   public get id(): string {

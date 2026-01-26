@@ -1,4 +1,4 @@
-import { Model } from "../Model";
+import { Model } from "~/Model";
 import { Destination } from "~/enums/Destination";
 import { Format } from "~/enums/Format";
 import {

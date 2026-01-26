@@ -4,7 +4,7 @@ import { PreviewDetails } from "~/models/PreviewDetails";
 import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
 import { TimeoutError } from "~/errors/TimeoutError";
 import { sleep } from "~/utils";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class Preview extends Model<IPreview> {
   public get detailsUrl(): string {

@@ -1,6 +1,6 @@
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
 import { Protected } from "~/PrintOne";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type Meta = {
   total: number;

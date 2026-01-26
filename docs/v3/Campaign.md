@@ -23,6 +23,15 @@ Contains information about a Campaign.
 | `destinations`   | `array`  | List of destinations for the campaign. See [Destination Docs](./Destination.md).                      |
 | `designs`        | `array`  | List of designs within the campaign. Load via [Campaign.loadDesigns()](#campaign.loaddesigns).        |
 
+## Update Campaign
+
+| Name           | Type     | Description                                             |
+| -------------- | -------- | ------------------------------------------------------- |
+| `name`         | `string` | The name of the campaign.                               |
+| `sender`       | `object` | The default return address for the campaign.            |
+| `ndprCategory` | `string` | (Optional) The Postfilter.nl category for the campaign. |
+| `meta`         | `object` | Additional metadata for the campaign.                   |
+
 ## Campaign Counts
 
 | Name           | Type                                     | Description                                                                                     |

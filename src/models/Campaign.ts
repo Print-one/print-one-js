@@ -1,5 +1,5 @@
 import { Address } from "~/models/Address";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 import {
   IContinuousDestination,
   IOneOffDestination,

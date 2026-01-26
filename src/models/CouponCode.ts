@@ -1,7 +1,7 @@
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
 import { Order } from "~/models/Order";
 import { IOrder } from "~/models/_interfaces/IOrder";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class CouponCode extends Model<ICouponCode> {
   public get id(): string {

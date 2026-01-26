@@ -3,7 +3,7 @@ import { CouponCode } from "~/models/CouponCode";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateCoupon = {
   name: string;

@@ -5,7 +5,7 @@ import { Address } from "~/models/Address";
 import { Template } from "~/models/Template";
 import { FriendlyStatus, Status } from "~/enums/Status";
 import { sleep } from "~/utils";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateOrder = {
   recipient: Address;

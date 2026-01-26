@@ -6,7 +6,7 @@ import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 import { CsvStatus, FriendlyCsvStatusText } from "~/enums/CsvStatus";
 import { Order } from "~/models/Order";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateCsvOrder = {
   file: ArrayBuffer | Uint8Array;

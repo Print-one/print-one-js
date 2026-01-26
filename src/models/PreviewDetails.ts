@@ -1,5 +1,5 @@
 import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class PreviewDetails extends Model<IPreviewDetails> {
   public get id(): string {

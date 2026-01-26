@@ -10,7 +10,7 @@ import { IOrder } from "~/models/_interfaces/IOrder";
 import { Format } from "~/enums/Format";
 import { CreateBatchCsvOrder, CsvOrder } from "~/models/CsvOrder";
 import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateBatch = {
   name: string;

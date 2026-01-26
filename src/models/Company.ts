@@ -1,5 +1,5 @@
 import { ICompany } from "~/models/_interfaces/ICompany";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class Company extends Model<ICompany> {
   public get id(): string {
