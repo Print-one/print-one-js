@@ -99,7 +99,7 @@ export abstract class HttpHandler<RequestOptions, Response> {
           : []),
       ];
 
-      throw new PrintOneError(res.status ?? res.data.code, messages);
+      throw new PrintOneError(res.status, messages);
     }
   }
 }
