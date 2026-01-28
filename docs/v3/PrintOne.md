@@ -141,6 +141,32 @@ const designs = await client.getCampaignDesigns("cmp_123", {
 
 ---
 
+## `.getCampaignDesign(campaignId, destination, designId)`
+
+Get a design for a campaign destination.
+
+**Parameters**
+
+| Name          | Type          | Description                     |
+| ------------- | ------------- | ------------------------------- |
+| `campaignId`  | `string`      | The identifier of the campaign. |
+| `destination` | `Destination` | The destination of the design.  |
+| `designId`    | `string`      | The identifier of the design.   |
+
+**Returns:** `Promise<Design>`
+
+**Example**
+
+```js
+import { Destination } from "@print-one/print-one-js";
+
+const design = await client.getCampaignDesign(
+  "cmp_123",
+  Destination.NETHERLANDS,
+  "dsg_456",
+);
+```
+
 ## `.getCampaignMailings(campaignId, [options])`
 
 Get all mailings for a campaign.

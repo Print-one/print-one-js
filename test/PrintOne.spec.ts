@@ -189,6 +189,39 @@ describe("Campaign", function () {
     });
   });
 
+  describe("Get Campaign Design", function () {
+    it("should get a campaign design by ID", async function () {
+      // arrange
+      const newDesign = await v3Client.addDesignToDestination(
+        contCampaignId,
+        Destination.INTERNATIONAL,
+        addDesignData,
+      );
+
+      // act
+      const getDesign = await v3Client.getCampaignDesign(
+        contCampaignId,
+        Destination.INTERNATIONAL,
+        newDesign.id,
+      );
+
+      // assert
+      expect(getDesign).toBeInstanceOf(Design);
+      expect(getDesign.id).toBe(newDesign.id);
+    });
+
+    it("should throw an error when getting a design for a non-existing campaign", async function () {
+      // arrange & act & assert
+      await expect(
+        v3Client.getCampaignDesign(
+          "non-existing-id",
+          Destination.NETHERLANDS,
+          "some-design-id",
+        ),
+      ).rejects.toThrow(/10006: Campaign 'non-existing-id' does not exist/);
+    });
+  });
+
   describe("Add Design to Campaign", function () {
     it("should add a design to a campaign", async function () {
       // arrange

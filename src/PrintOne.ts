@@ -282,6 +282,28 @@ export class PrintOne {
   }
 
   /**
+   * Get a campaign design.
+   * @param { string } campaignId The identifier of the campaign.
+   * @param { Destination } destination The destination of the design.
+   * @param { string } designId The identifier of the design.
+   */
+  public async getCampaignDesign(
+    campaignId: string,
+    destination: Destination,
+    designId: string,
+  ): Promise<Design> {
+    const response = await this.v3Client.GET<IResponseV3<IFullDesign>>(
+      `campaigns/${campaignId}/designs/${destination}/${designId}`,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      response,
+      (data) => new Design(this.protected, data, campaignId),
+    );
+  }
+
+  /**
    * Get all campaign mailings.
    * @param campaignId The identifier of the campaign.
    * @param options The options to use for pagination.
