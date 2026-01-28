@@ -302,6 +302,37 @@ describe("Campaign", function () {
     });
   });
 
+  describe("Set Default Design for Destination", function () {
+    it("should be able to make a Design default", async function () {
+      // arrange
+      const campaign = await v3Client.getCampaign(contCampaignId);
+      await campaign.loadDesigns();
+      const design = await v3Client.addDesignToDestination(
+        campaign.id,
+        Destination.NETHERLANDS,
+        addDesignData,
+      );
+
+      // act
+      await v3Client.setDefaultDesign(
+        campaign.id,
+        Destination.NETHERLANDS,
+        design.id,
+      );
+
+      // assert
+      await campaign.refresh();
+      const destination = campaign.destinations.find(
+        (d) => d.destination === Destination.NETHERLANDS,
+      );
+      if (!destination) {
+        throw new Error("Destination NETHERLANDS not found");
+      }
+
+      expect(destination.designId).toBe(design.id);
+    }, 10000);
+  });
+
   describe("Delete Design from Campaign", function () {
     it("should delete a design from a campaign", async function () {
       // arrange

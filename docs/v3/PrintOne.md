@@ -163,7 +163,7 @@ import { Destination } from "@print-one/print-one-js";
 const design = await client.getCampaignDesign(
   "cmp_123",
   Destination.NETHERLANDS,
-  "dsg_456",
+  "tmpl_456",
 );
 ```
 
@@ -226,6 +226,28 @@ const design = await client.addDesignToDestination(
 
 ---
 
+## `.setDefaultDesign(campaignId, destination, designId)`
+
+Set a design as the default for a campaign destination.
+
+**Parameters**
+
+| Name          | Type          | Description                             |
+| ------------- | ------------- | --------------------------------------- |
+| `campaignId`  | `string`      | The identifier of the campaign.         |
+| `destination` | `Destination` | The destination to set the default for. |
+| `designId`    | `string`      | The identifier of the design to set.    |
+
+**Returns:** `Promise<void>`
+
+**Example**
+
+```js
+import { Destination } from "@print-one/print-one-js";
+
+await client.setDefaultDesign("cmp_123", Destination.NETHERLANDS, "tmpl_456");
+```
+
 ## `.deleteDesignFromDestination(campaignId, destination, designId)`
 
 Delete a design from a campaign destination.
@@ -248,6 +270,6 @@ import { Destination } from "@print-one/print-one-js";
 await client.deleteDesignFromDestination(
   "cmp_123",
   Destination.NETHERLANDS,
-  "dsg_456",
+  "tmpl_456",
 );
 ```

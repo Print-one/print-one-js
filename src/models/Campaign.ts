@@ -181,8 +181,6 @@ export class Campaign extends Model<ICampaign> {
       const fallback = data.fallbacks[dest.destination];
       if (fallback) {
         dest.variablesFallback = fallback.values;
-      } else {
-        dest.variablesFallback = undefined;
       }
     }
   }

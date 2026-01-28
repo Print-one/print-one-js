@@ -304,6 +304,23 @@ export class PrintOne {
   }
 
   /**
+   * Set a design as the default for a campaign destination.
+   * @param campaignId The identifier of the campaign.
+   * @param destination The destination of the design.
+   * @param designId The identifier of the design.
+   */
+  public async setDefaultDesign(
+    campaignId: string,
+    destination: Destination,
+    designId: string,
+  ): Promise<void> {
+    await this.v3Client.PATCH<IResponseV3<IFullDesign>>(
+      `campaigns/${campaignId}/designs/${destination}/${designId}`,
+      { default: true },
+    );
+  }
+
+  /**
    * Get all campaign mailings.
    * @param campaignId The identifier of the campaign.
    * @param options The options to use for pagination.

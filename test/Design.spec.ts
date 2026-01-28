@@ -38,31 +38,6 @@ describe("Design Model", function () {
     expect(design.default).toBe(false);
   });
 
-  it("should be able to make a Design default", async function () {
-    // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
-    await campaign.loadDesigns();
-    const design = await v3Client.addDesignToDestination(
-      campaign.id,
-      Destination.NETHERLANDS,
-      addDesignData,
-    );
-
-    // act
-    await design.makeDefault();
-
-    // assert
-    await campaign.refresh();
-    const destination = campaign.destinations.find(
-      (d) => d.destination === Destination.NETHERLANDS,
-    );
-    if (!destination) {
-      throw new Error("Destination NETHERLANDS not found");
-    }
-
-    expect(destination.designId).toBe(design.id);
-  }, 10000);
-
   it("should load full Design data", async function () {
     // arrange
     const design = await v3Client.addDesignToDestination(
