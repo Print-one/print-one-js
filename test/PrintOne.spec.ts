@@ -16,14 +16,13 @@ import {
   Campaign,
   Design,
   Destination,
-  AddDesign,
   PrintOneError,
   Mailing,
-} from "../src";
+} from "~/index";
 import "jest-extended";
 import { client, v3Client } from "./client";
-import { Batch } from "../src/models/Batch";
-import { BatchStatus } from "../src/enums/BatchStatus";
+import { Batch } from "~/models/Batch";
+import { BatchStatus } from "~/enums/BatchStatus";
 import { Webhook } from "~/models/Webhook";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import {
@@ -33,18 +32,10 @@ import {
   CouponCodeUsedWebhookRequest,
   QrCodeScannedWebhookRequest,
 } from "~/models/WebhookRequest";
-import { getFileBuffer } from "./utils";
+import { addDesignData, contCampaignId, getFileBuffer } from "./utils";
 import { PaginatedResponseV3 } from "~/models/Response.v3";
-import { contCampaignId } from "./Campaign.spec";
 
 let template: Template = null as unknown as Template;
-
-export const addDesignData: AddDesign = {
-  name: "Test Design 1",
-  format: Format.POSTCARD_SQ15,
-  labels: ["test-design"],
-  pages: [{ content: "Page 1 content" }, { content: "Page 2 content" }],
-};
 
 beforeAll(async function () {
   // Ensure at least one custom file exists
@@ -343,7 +334,6 @@ describe("Campaign", function () {
       expect(mailings.data).toBeInstanceOf(Array);
       if (mailings.data.length === 0) return; // No mailings to test further
 
-      expect(mailings.data.length).toBeGreaterThanOrEqual(0);
       expect(mailings.data[0]).toBeInstanceOf(Mailing);
     });
   });

@@ -13,7 +13,6 @@ export type IDesign = {
   apiVersion: number;
   updatedAt: Date;
 
-  campaignId: string;
   destination: Destination;
   default: boolean;
 

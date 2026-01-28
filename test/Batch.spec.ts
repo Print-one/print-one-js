@@ -8,12 +8,12 @@ import {
   Order,
   PaginatedResponse,
   Template,
-} from "../src";
+} from "~/index";
 import { client } from "./client";
-import { BatchStatus } from "../src/enums/BatchStatus";
+import { BatchStatus } from "~/enums/BatchStatus";
 import * as fs from "fs";
 import * as path from "path";
-import { sleep } from "../src/utils";
+import { sleep } from "~/utils";
 
 let batch: Batch = null as unknown as Batch;
 let template: Template = null as unknown as Template;

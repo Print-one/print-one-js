@@ -168,16 +168,17 @@ export class Campaign extends Model<ICampaign> {
       Record<Destination, Record<string, string> | null>
     >,
   ): Promise<void> {
-    const result = await this._protected.client.PATCH<
-      ResponseV3<{
+    const response = await this._protected.client.PATCH<
+      IResponseV3<{
         fallbacks: Partial<
           Record<Destination, { values: Record<string, string> }>
         >;
       }>
     >(`campaigns/${this.id}/variable-fallback`, { variablesFallback });
+    const data = ResponseV3.safe(this._protected, response, (d) => d);
 
     for (const dest of this._destinations) {
-      const fallback = result.data.fallbacks[dest.destination];
+      const fallback = data.fallbacks[dest.destination];
       if (fallback) {
         dest.variablesFallback = fallback.values;
       }

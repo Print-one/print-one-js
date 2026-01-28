@@ -37,7 +37,7 @@ export class DestinationCounts extends Model<IDestinationCounts> {
 }
 
 export class CampaignCounts extends Model<ICampaignCounts> {
-  private _destinations: Record<Destination, DestinationCounts> | null = null;
+  private _destinations: Record<Destination, DestinationCounts>;
 
   constructor(_protected: Protected, data: ICampaignCounts) {
     super(_protected, data);
@@ -61,6 +61,6 @@ export class CampaignCounts extends Model<ICampaignCounts> {
   }
 
   public get destinations(): Record<Destination, DestinationCounts> {
-    return this._destinations!;
+    return this._destinations;
   }
 }

@@ -21,7 +21,7 @@ Contains information about a Campaign.
 | `createdAt`      | `Date`   | The date at which the campaign was created (ISO 8601 format).                                         |
 | `updatedAt`      | `Date`   | The date at which the campaign was last updated (ISO 8601 format).                                    |
 | `destinations`   | `array`  | List of destinations for the campaign. See [Destination Docs](./Destination.md).                      |
-| `designs`        | `array`  | List of designs within the campaign. Load via [Campaign.loadDesigns()](#campaign.loaddesigns).        |
+| `designs`        | `array`  | List of designs within the campaign. Load via [Campaign.loadDesigns()](#loaddesigns).                 |
 
 ## Update Campaign
 
@@ -55,11 +55,11 @@ All fields are optional.
 
 # Methods
 
-## Campaign.loadDesigns()
+## `.loadDesigns()`
 
 Load all designs associated with the campaign. Access via `campaign.designs`.
 
-## Campaign.addVariablesFallback()
+## `.addVariablesFallback()`
 
 Add variable fallbacks to the campaign's destinations. This will overwrite existing fallbacks, so be sure to include all desired fallbacks for all destinations. Set a destination to null to remove all fallbacks for that destination and halt any orders. Set any variable to an empty string to leave it empty, but continue processing the order.
 
@@ -69,14 +69,14 @@ It accepts a single parameter:
 
 All variables used in the campaign are accessible via `campaign.mergeVariables`.
 
-## Campaign.pause()
+## `.pause()`
 
 Pause the campaign. This will stop any orders from being sent until the campaign is resumed. Orders are still accepted while the campaign is paused.
 
-## Campaign.resume()
+## `.resume()`
 
 Resume a paused campaign. Orders will start being sent again.
 
-## Campaign.refresh()
+## `.refresh()`
 
 Refresh the campaign data from the API. Useful if you suspect the local data is outdated.

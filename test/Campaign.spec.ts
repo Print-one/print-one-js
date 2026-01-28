@@ -6,10 +6,7 @@ import {
   OneOffDestination,
 } from "~/index";
 import { v3Client } from "./client";
-import { addDesignData } from "./PrintOne.spec";
-
-export const contCampaignId = "e2e-print-one-js-continuous";
-export const oneOffCampaignId = "e2e-print-one-js-one-off";
+import { addDesignData, contCampaignId, oneOffCampaignId } from "./utils";
 
 describe("Campaign Model", function () {
   it("should have all properties defined continuous", async function () {

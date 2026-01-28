@@ -19,7 +19,7 @@ export class ResponseV3<T = unknown> extends Model<T> {
 
   private constructor(
     _protected: Protected,
-    data: IResponseV3,
+    data: IResponseV3<unknown>,
     private readonly _convert: (data: unknown) => T,
   ) {
     super(_protected, _convert(data.data));
@@ -48,7 +48,7 @@ export class PaginatedResponseV3<T = unknown> extends Model<
 
   private constructor(
     _protected: Protected,
-    data: IPaginatedResponseV3,
+    data: IPaginatedResponseV3<unknown>,
     private readonly _convert: (data: unknown) => T,
   ) {
     super(_protected, {

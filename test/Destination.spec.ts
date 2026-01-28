@@ -1,6 +1,6 @@
 import { OneOffDestination } from "~/index";
-import { contCampaignId, oneOffCampaignId } from "./Campaign.spec";
 import { v3Client } from "./client";
+import { contCampaignId, oneOffCampaignId } from "./utils";
 
 describe("Destination Model", function () {
   it("should have all fields for BaseDestination", async function () {

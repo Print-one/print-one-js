@@ -1,4 +1,4 @@
-import { Coupon, PaginatedResponse, PrintOneError } from "../src";
+import { Coupon, PaginatedResponse, PrintOneError } from "~/index";
 import { client } from "./client";
 
 let coupon: Coupon = null as unknown as Coupon;

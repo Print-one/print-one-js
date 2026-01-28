@@ -1,6 +1,8 @@
+import { DeliveryType } from "~/enums/DeliveryType";
 import { Destination } from "~/enums/Destination";
 import { Finish } from "~/enums/Finish";
 import { Format } from "~/enums/Format";
+import { MailingStatus } from "~/enums/MailingStatus";
 
 export type IMailingCosts = {
   total: number;
@@ -11,7 +13,7 @@ export type IMailingCosts = {
 export type IMailing = {
   id: string;
 
-  status: string;
+  status: MailingStatus;
 
   createdAt: string;
 
@@ -26,7 +28,7 @@ export type IMailing = {
 
   overlay: string;
   printingHouseId: string;
-  deliveryType: string;
+  deliveryType: DeliveryType;
 
   costs: IMailingCosts;
 };

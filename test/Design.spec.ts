@@ -1,7 +1,6 @@
 import { Destination } from "~/index";
-import { contCampaignId } from "./Campaign.spec";
 import { v3Client } from "./client";
-import { addDesignData } from "./PrintOne.spec";
+import { addDesignData, contCampaignId } from "./utils";
 
 describe("Design Model", function () {
   it("should have all fields for Design", async function () {

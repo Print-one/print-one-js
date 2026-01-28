@@ -4,6 +4,8 @@ import { Format } from "~/enums/Format";
 import { Model } from "~/Model";
 import { Protected } from "~/PrintOne";
 import { IMailing, IMailingCosts } from "./_interfaces/IMailing";
+import { DeliveryType } from "~/enums/DeliveryType";
+import { MailingStatus } from "~/enums/MailingStatus";
 
 export class Mailing extends Model<IMailing> {
   constructor(
@@ -17,7 +19,7 @@ export class Mailing extends Model<IMailing> {
     return this._data.id;
   }
 
-  public get status(): string {
+  public get status(): MailingStatus {
     return this._data.status;
   }
 
@@ -57,7 +59,7 @@ export class Mailing extends Model<IMailing> {
     return this._data.printingHouseId;
   }
 
-  public get deliveryType(): string {
+  public get deliveryType(): DeliveryType {
     return this._data.deliveryType;
   }
 

@@ -27,9 +27,11 @@ export * from "./enums/BatchStatus";
 export * from "./enums/CampaignScheduleType";
 export * from "./enums/CampaignStatus";
 export * from "./enums/CsvStatus";
+export * from "./enums/DeliveryType";
 export * from "./enums/Destination";
 export * from "./enums/Finish";
 export * from "./enums/Format";
+export * from "./enums/MailingStatus";
 export * from "./enums/Status";
 export * from "./enums/WebhookEvent";
 

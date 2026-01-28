@@ -1,6 +1,6 @@
 import { DestinationCounts } from "~/models/CampaignCounts";
 import { v3Client } from "./client";
-import { contCampaignId } from "./Campaign.spec";
+import { contCampaignId } from "./utils";
 
 describe("CampaignCounts Model", function () {
   // This test assumes that the campaign has destinations with at least one order

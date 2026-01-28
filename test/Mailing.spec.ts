@@ -1,6 +1,6 @@
 import { Destination, Finish, Format } from "~/index";
-import { contCampaignId } from "./Campaign.spec";
 import { v3Client } from "./client";
+import { contCampaignId } from "./utils";
 
 describe("Mailing Model", function () {
   it("should have all fields for Mailing", async function () {

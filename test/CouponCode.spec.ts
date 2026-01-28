@@ -1,4 +1,4 @@
-import { Coupon, CouponCode, Format, Order } from "../src";
+import { Coupon, CouponCode, Format, Order } from "~/index";
 import { client } from "./client";
 
 let coupon: Coupon = null as unknown as Coupon;
