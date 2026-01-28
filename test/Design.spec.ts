@@ -32,9 +32,9 @@ describe("Design Model", function () {
     expect(design.overlay).toEqual(expect.any(String));
     expect(design.labels).toEqual(expect.any(Array));
     expect(design.mergeVariables).toEqual(expect.any(Array));
-    expect(design.thumbnail).toEqual(expect.any(String) || null);
+    expect(design.thumbnail).toBeOneOf([expect.any(String), null]);
     expect(design.apiVersion).toEqual(expect.any(Number));
-    expect(design.updatedAt).toEqual(expect.any(Date) || undefined);
+    expect(design.updatedAt).toBeOneOf([expect.any(Date), undefined]);
     expect(design.destination).toEqual(Destination.NETHERLANDS);
     expect(design.default).toBe(false);
   });

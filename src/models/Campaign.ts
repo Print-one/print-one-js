@@ -18,7 +18,7 @@ import { Destination } from "~/enums/Destination";
 export type UpdateCampaign = {
   name?: string;
   sender?: Address | null;
-  ndprCategory?: string;
+  npdrCategory?: string;
   /**
    * Discards the existing metadata
    */

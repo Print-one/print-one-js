@@ -38,7 +38,7 @@ In addition to the [Compact Design](#compact-design) fields, Full Design has the
 
 # Methods
 
-## `Campaign.makeDefault()`
+## `.makeDefault()`
 
 Make this design the default design for its destination in the campaign. This will demote any other default designs for the same destination.
 

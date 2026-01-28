@@ -21,10 +21,11 @@ describe("Destination Model", function () {
     expect(destination.threshold).toEqual(expect.any(Number));
     expect(destination.product).toEqual(expect.any(String));
     expect(destination.finish).toEqual(expect.any(String));
-    expect(destination.designId).toEqual(expect.any(String) || undefined);
-    expect(destination.variablesFallback).toEqual(
-      expect.any(Object) || undefined,
-    );
+    expect(destination.designId).toBeOneOf([expect.any(String), undefined]);
+    expect(destination.variablesFallback).toBeOneOf([
+      expect.any(Object),
+      undefined,
+    ]);
   });
 
   it('should be able to set "variablesFallback" field', async function () {
@@ -67,6 +68,9 @@ describe("Destination Model", function () {
     expect(destination.campaignId).toEqual(expect.any(String));
     expect(destination.deliveryWeekIso).toEqual(expect.any(Number));
     expect(destination.deliveryWeekYear).toEqual(expect.any(Number));
-    expect(destination.asapFallback).toEqual(expect.any(Boolean) || undefined);
+    expect(destination.asapFallback).toBeOneOf([
+      expect.any(Boolean),
+      undefined,
+    ]);
   });
 });

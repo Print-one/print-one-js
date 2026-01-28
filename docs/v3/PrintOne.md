@@ -79,7 +79,7 @@ Update a campaign.
 | `campaignId` | `string`         | Campaign identifier.              |
 | `data`       | `UpdateCampaign` | Fields to update on the campaign. |
 
-[`UpdateCampaign`](./Campaign.md#update-campaign) supports (as sent to the API): `name`, `sender`, `ndprCategory`, `meta`.
+[`UpdateCampaign`](./Campaign.md#update-campaign) supports (as sent to the API): `name`, `sender`, `npdrCategory`, `meta`.
 
 **Returns:** `Promise<Campaign>`
 

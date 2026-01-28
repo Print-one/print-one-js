@@ -15,7 +15,7 @@ Contains information about Campaign Destination. There are two types of destinat
 
 ## One-off
 
-In addition of the [Continuous](#Continuous) fields, One-off has these fields too.
+In addition to the [Continuous](#Continuous) fields, One-off has these fields too.
 
 | Name               | Type      | Description                                                                                        |
 | ------------------ | --------- | -------------------------------------------------------------------------------------------------- |

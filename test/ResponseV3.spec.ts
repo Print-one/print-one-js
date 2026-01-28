@@ -43,14 +43,15 @@ describe("fields", function () {
 describe("first()", function () {
   it("should return the first page", async function () {
     // arrange
-
-    // act
     const next = await pageOne.next();
 
+    // act
+    const first = await next?.first();
+
     // assert
-    expect(next).toEqual(expect.any(PaginatedResponseV3));
-    expect(next?.meta.currentPage).toEqual(2);
-    expect(next?.links.previous).toEqual(pageOne.links.current);
+    expect(first).toEqual(expect.any(PaginatedResponseV3));
+    expect(first?.meta.currentPage).toEqual(1);
+    expect(next?.links.previous).toEqual(first?.links.current);
   });
 
   it("should return null on the first page", async function () {
@@ -60,7 +61,7 @@ describe("first()", function () {
     const first = await pageOne.first();
 
     // assert
-    expect(first).toEqual(null);
+    expect(first).toBeNull();
   });
 });
 
@@ -84,7 +85,7 @@ describe("previous()", function () {
     const prev = await pageOne.previous();
 
     // assert
-    expect(prev).toEqual(null);
+    expect(prev).toBeNull();
   });
 });
 
@@ -108,7 +109,7 @@ describe("next()", function () {
     const next = await lastPage?.next();
 
     // assert
-    expect(next).toEqual(null);
+    expect(next).toBeNull();
   });
 });
 
@@ -132,6 +133,6 @@ describe("last()", function () {
     const last = await lastPage?.last();
 
     // assert
-    expect(last).toEqual(null);
+    expect(last).toBeNull();
   });
 });

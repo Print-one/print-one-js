@@ -182,7 +182,7 @@ export class PrintOne {
       {
         name: data.name,
         sender: data.sender,
-        ndprCategory: data.ndprCategory,
+        npdrCategory: data.npdrCategory,
         meta: data.meta,
       },
     );
@@ -344,7 +344,7 @@ export class PrintOne {
     designId: string,
   ): Promise<void> {
     await this.v3Client.DELETE(
-      `campaigns/${campaignId}/designs/${destination}/${designId}`,
+      `campaigns/${campaignId}/designs/${destination.toUpperCase()}/${designId}`,
     );
   }
 

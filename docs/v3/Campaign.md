@@ -25,12 +25,14 @@ Contains information about a Campaign.
 
 ## Update Campaign
 
-| Name           | Type     | Description                                             |
-| -------------- | -------- | ------------------------------------------------------- |
-| `name`         | `string` | The name of the campaign.                               |
-| `sender`       | `object` | The default return address for the campaign.            |
-| `ndprCategory` | `string` | (Optional) The Postfilter.nl category for the campaign. |
-| `meta`         | `object` | Additional metadata for the campaign.                   |
+All fields are optional.
+
+| Name           | Type     | Description                                  |
+| -------------- | -------- | -------------------------------------------- |
+| `name`         | `string` | The name of the campaign.                    |
+| `sender`       | `object` | The default return address for the campaign. |
+| `npdrCategory` | `string` | The Postfilter.nl category for the campaign. |
+| `meta`         | `object` | Additional metadata for the campaign.        |
 
 ## Campaign Counts
 
