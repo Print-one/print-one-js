@@ -45,7 +45,7 @@ class BaseDestination<T extends IBaseDestination> extends Model<T> {
   }
 
   public set variablesFallback(
-    value: Record<string, string | number | boolean>,
+    value: Record<string, string | number | boolean> | undefined,
   ) {
     this._data.variablesFallback = value;
   }

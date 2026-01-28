@@ -65,7 +65,7 @@ Add variable fallbacks to the campaign's destinations. This will overwrite exist
 
 It accepts a single parameter:
 
-- `fallbacks: Record<string, Record<string, string>>` - An object where keys are destination codes and values are objects mapping variable names to their fallback values.
+- `fallbacks: Record<string, Record<string, string> | null>` - An object where keys are destination codes and values are objects mapping variable names to their fallback values.
 
 All variables used in the campaign are accessible via `campaign.mergeVariables`.
 

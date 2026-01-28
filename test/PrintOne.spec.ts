@@ -254,6 +254,7 @@ describe("Campaign", function () {
           Destination.NETHERLANDS,
           data,
         );
+        throw new Error("Expected error was not thrown");
       } catch (error) {
         if (!(error instanceof PrintOneError)) {
           throw error;
@@ -289,9 +290,9 @@ describe("Campaign", function () {
       );
 
       // assert
-      await expect(
-        v3Client.getCampaignDesigns(campaign.id, {}),
-      ).resolves.not.toContainEqual(design);
+      const designs = await v3Client.getCampaignDesigns(campaign.id, {});
+      const found = designs.data.find((d) => d.id === design.id);
+      expect(found).toBeUndefined();
     });
 
     it("should throw an error when deleting a design from a non-existing campaign", async function () {
