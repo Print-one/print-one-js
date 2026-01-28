@@ -130,27 +130,27 @@ export class Campaign extends Model<ICampaign> {
    * @returns { Promise<void> }
    */
   public async loadDesigns() {
-    let nextPage: number | null = null;
-
     const newDesigns: Design[] = [];
-    do {
-      const data: IPaginatedResponseV3<IDesign> =
-        await this._protected.client.GET<IPaginatedResponseV3<IDesign>>(
-          `campaigns/${this.id}/designs?page=${nextPage ?? 1}`,
-        );
 
-      const response = PaginatedResponseV3.safe(
-        this._protected,
-        data,
-        (d) => new Design(this._protected, d, this.id),
-      );
+    const data = await this._protected.client.GET<
+      IPaginatedResponseV3<IDesign>
+    >(`campaigns/${this.id}/designs`);
 
+    let response = PaginatedResponseV3.safe(
+      this._protected,
+      data,
+      (d) => new Design(this._protected, d, this.id),
+    );
+
+    newDesigns.push(...response.data);
+
+    while (true) {
+      const next = await response.next();
+      if (!next) break;
+
+      response = next;
       newDesigns.push(...response.data);
-      nextPage =
-        data.meta.currentPage < data.meta.totalPages
-          ? data.meta.currentPage + 1
-          : null;
-    } while (nextPage);
+    }
 
     this._designsLoaded = true;
     this._designs = newDesigns;
