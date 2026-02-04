@@ -9,6 +9,7 @@ import {
 } from "./_interfaces/IDesign";
 import { Protected } from "~/PrintOne";
 import { ResponseV3 } from "./Response.v3";
+import { IResponseV3 } from "./_interfaces/IResponse.v3";
 
 export interface AddDesign {
   name: string;
@@ -80,12 +81,16 @@ export class Design extends Model<IFullDesign | IDesign> {
   }
 
   public async load(): Promise<void> {
-    const response = await this._protected.clientV3.GET<
-      ResponseV3<IFullDesign>
-    >(`campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`);
+    const response = ResponseV3.safe(
+      this._protected,
+      await this._protected.clientV3.GET<IResponseV3<IFullDesign>>(
+        `campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`,
+      ),
+      (d) => d,
+    );
 
-    this._data = response.data;
-    this._loaded = response.data;
+    this._data = response;
+    this._loaded = response;
   }
 
   /**

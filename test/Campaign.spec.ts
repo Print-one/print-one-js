@@ -67,11 +67,12 @@ describe("Campaign Model", function () {
     const initialDesigns = await client.getCampaignDesigns(campaignId, {
       limit: 1,
     });
+    let totalItems = initialDesigns.meta.totalItems;
 
     expect(campaign.designs.length).toBe(0);
 
     const designIds: string[] = [];
-    while (initialDesigns.meta.totalItems <= defaultPageSize) {
+    while (totalItems++ <= defaultPageSize) {
       const design = await client.addDesignToDestination(
         campaignId,
         destination,
