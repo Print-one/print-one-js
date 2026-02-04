@@ -1,3 +1,10 @@
+# [1.4.0-next.4](https://github.com/Print-one/print-one-js/compare/v1.4.0-next.3...v1.4.0-next.4) (2026-02-04)
+
+
+### Features
+
+* ✨ Add Campaign Support ([#32](https://github.com/Print-one/print-one-js/issues/32)) ([7de2121](https://github.com/Print-one/print-one-js/commit/7de2121b0e1e85f8571305f229b88e7b1b739c75))
+
 # [1.4.0-next.3](https://github.com/Print-one/print-one-js/compare/v1.4.0-next.2...v1.4.0-next.3) (2026-01-21)
 
 
