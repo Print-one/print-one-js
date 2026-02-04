@@ -1,7 +1,7 @@
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
 import { Order } from "~/models/Order";
 import { IOrder } from "~/models/_interfaces/IOrder";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class CouponCode extends Model<ICouponCode> {
   public get id(): string {
@@ -33,7 +33,7 @@ export class CouponCode extends Model<ICouponCode> {
    * @throws { PrintOneError } If the coupon code could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICouponCode>(
+    this._data = await this._protected.clientV2.GET<ICouponCode>(
       `/coupons/${this.couponId}/codes/${this.id}`,
     );
   }
@@ -45,7 +45,7 @@ export class CouponCode extends Model<ICouponCode> {
   public async getOrder(): Promise<Order | null> {
     if (!this.orderId) return null;
 
-    const data = await this._protected.client.GET<IOrder>(
+    const data = await this._protected.clientV2.GET<IOrder>(
       `/orders/${this.orderId}`,
     );
     return new Order(this._protected, data);

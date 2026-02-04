@@ -1,7 +1,5 @@
-import { Coupon, PaginatedResponse, PrintOneError } from "../src";
+import { Coupon, PaginatedResponse, PrintOneError } from "~/index";
 import { client } from "./client";
-import * as fs from "fs";
-import * as path from "path";
 
 let coupon: Coupon = null as unknown as Coupon;
 let file: Uint8Array;

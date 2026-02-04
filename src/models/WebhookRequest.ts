@@ -8,7 +8,7 @@ import { Order } from "~/models/Order";
 import { Protected } from "~/PrintOne";
 import { PreviewDetails } from "~/models/PreviewDetails";
 import { CouponCode } from "~/models/CouponCode";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 abstract class AbstractWebhookRequest<
   T,

@@ -3,7 +3,7 @@ import { CouponCode } from "~/models/CouponCode";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateCoupon = {
   name: string;
@@ -31,7 +31,7 @@ export class Coupon extends Model<ICoupon> {
    * @throws { PrintOneError } If the coupon could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICoupon>(
+    this._data = await this._protected.clientV2.GET<ICoupon>(
       `/coupons/${this.id}`,
     );
   }
@@ -40,7 +40,7 @@ export class Coupon extends Model<ICoupon> {
    * Get all coupon codes for the coupon
    */
   public async getCodes(): Promise<PaginatedResponse<CouponCode>> {
-    const data = await this._protected.client.GET<
+    const data = await this._protected.clientV2.GET<
       IPaginatedResponse<ICouponCode>
     >(`/coupons/${this.id}/codes`);
 
@@ -56,7 +56,7 @@ export class Coupon extends Model<ICoupon> {
    * @throws { PrintOneError } If the coupon code could not be found.
    */
   public async getCode(codeId: string): Promise<CouponCode> {
-    const data = await this._protected.client.GET<ICouponCode>(
+    const data = await this._protected.clientV2.GET<ICouponCode>(
       `/coupons/${this.id}/codes/${codeId}`,
     );
     return new CouponCode(this._protected, data);
@@ -75,7 +75,7 @@ export class Coupon extends Model<ICoupon> {
       "codes.csv",
     );
 
-    await this._protected.client.POST<void>(`/coupons/${this.id}`, formData, {
+    await this._protected.clientV2.POST<void>(`/coupons/${this.id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -87,6 +87,6 @@ export class Coupon extends Model<ICoupon> {
    * @throws { PrintOneError } If the coupon could not be deleted.
    */
   public async delete(): Promise<void> {
-    await this._protected.client.DELETE(`/coupons/${this.id}`);
+    await this._protected.clientV2.DELETE(`/coupons/${this.id}`);
   }
 }

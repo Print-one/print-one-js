@@ -6,7 +6,7 @@ import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 import { CsvStatus, FriendlyCsvStatusText } from "~/enums/CsvStatus";
 import { Order } from "~/models/Order";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export type CreateCsvOrder = {
   file: ArrayBuffer | Uint8Array;
@@ -116,7 +116,7 @@ export class CsvOrder extends Model<ICsvOrder> {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICsvOrder>(
+    this._data = await this._protected.clientV2.GET<ICsvOrder>(
       `orders/csv/${this.id}`,
     );
   }

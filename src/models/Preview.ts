@@ -4,7 +4,7 @@ import { PreviewDetails } from "~/models/PreviewDetails";
 import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
 import { TimeoutError } from "~/errors/TimeoutError";
 import { sleep } from "~/utils";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class Preview extends Model<IPreview> {
   public get detailsUrl(): string {
@@ -36,7 +36,7 @@ export class Preview extends Model<IPreview> {
     let time = 0;
     do {
       try {
-        const data = await this._protected.client.GET<IPreviewDetails>(
+        const data = await this._protected.clientV2.GET<IPreviewDetails>(
           this.detailsUrl,
         );
 
@@ -78,7 +78,7 @@ export class Preview extends Model<IPreview> {
     let time = 0;
     do {
       try {
-        return await this._protected.client.GETBuffer(this.url);
+        return await this._protected.clientV2.GETBuffer(this.url);
       } catch (e) {
         if (polling && e instanceof PrintOneError) {
           const error = e as PrintOneError;

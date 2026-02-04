@@ -6,9 +6,9 @@ import {
   PaginatedResponse,
   Status,
   Template,
-} from "../src";
+} from "~/index";
 import { client } from "./client";
-import { sleep } from "../src/utils";
+import { sleep } from "~/utils";
 import * as fs from "fs";
 import * as path from "path";
 

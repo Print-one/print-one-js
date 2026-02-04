@@ -1,4 +1,4 @@
-import { CustomFile } from "../src";
+import { CustomFile } from "~/index";
 import { client } from "./client";
 import * as fs from "fs";
 import * as path from "path";

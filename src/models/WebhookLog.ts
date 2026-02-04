@@ -4,7 +4,7 @@ import {
 } from "~/models/_interfaces/IWebhookLog";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import { WebhookRequest, webhookRequestFactory } from "~/models/WebhookRequest";
-import { Model } from "../Model";
+import { Model } from "~/Model";
 
 export class WebhookLog extends Model<IWebhookLog> {
   public get id(): string {

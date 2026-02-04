@@ -13,13 +13,16 @@ import {
   Template,
   Coupon,
   CouponCode,
-} from "../src";
+  Campaign,
+  Design,
+  Destination,
+  PrintOneError,
+  Mailing,
+} from "~/index";
 import "jest-extended";
-import * as fs from "fs";
-import * as path from "path";
 import { client } from "./client";
-import { Batch } from "../src/models/Batch";
-import { BatchStatus } from "../src/enums/BatchStatus";
+import { Batch } from "~/models/Batch";
+import { BatchStatus } from "~/enums/BatchStatus";
 import { Webhook } from "~/models/Webhook";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import {
@@ -29,6 +32,8 @@ import {
   CouponCodeUsedWebhookRequest,
   QrCodeScannedWebhookRequest,
 } from "~/models/WebhookRequest";
+import { addDesignData, contCampaignId, getFileBuffer } from "./utils";
+import { PaginatedResponseV3 } from "~/models/Response.v3";
 
 let template: Template = null as unknown as Template;
 
@@ -39,7 +44,7 @@ beforeAll(async function () {
   if (files.meta.total === 0) {
     const file = await client.uploadCustomFile(
       "placeholder.png",
-      fs.readFileSync(path.join(__dirname, "assets/test.png")),
+      getFileBuffer("assets/test.png"),
     );
 
     expect(file).toBeDefined();
@@ -68,6 +73,329 @@ const exampleAddress: Address = {
   city: "Haarlem",
   country: "Netherlands",
 };
+
+describe("Campaign", function () {
+  beforeAll(async function () {
+    await client.addDesignToDestination(
+      contCampaignId,
+      Destination.NETHERLANDS,
+      addDesignData,
+    );
+  });
+
+  describe("Update Campaign", function () {
+    it("should update a campaign", async function () {
+      // arrange
+      const result = await client.getCampaign(contCampaignId);
+      expect(result).toBeInstanceOf(Campaign);
+
+      // act
+      const updated = await client.updateCampaign(result.id, {
+        name: "Updated Campaign Name",
+      });
+
+      // assert
+      expect(updated).toBeInstanceOf(Campaign);
+      expect(updated.name).toBe("Updated Campaign Name");
+
+      // teardown
+      await client.updateCampaign(result.id, {
+        name: result.name,
+      });
+    });
+  });
+
+  describe("Get Campaign list", function () {
+    it("should return paginated campaigns", async function () {
+      // arrange
+
+      // act
+      const campaigns = await client.getCampaigns();
+
+      // assert
+      expect(campaigns).toBeInstanceOf(PaginatedResponseV3);
+      expect(campaigns.data).toBeInstanceOf(Array);
+      expect(campaigns.data.length).toBeGreaterThanOrEqual(2);
+      expect(campaigns.data[0]).toBeInstanceOf(Campaign);
+      expect(campaigns.meta).toBeDefined();
+      expect(campaigns.links).toBeDefined();
+    });
+  });
+
+  describe("Get Campaign", function () {
+    it("should get a campaign by ID", async function () {
+      // arrange
+
+      // act
+      const fetched = await client.getCampaign(contCampaignId);
+
+      // assert
+      expect(fetched).toBeInstanceOf(Campaign);
+      expect(fetched.identifier).toBe(contCampaignId);
+    });
+
+    it("should throw an error when getting a non-existing campaign", async function () {
+      // arrange & act & assert
+      await expect(client.getCampaign("non-existing-id")).rejects.toThrow(
+        /10006: Campaign 'non-existing-id' does not exist/,
+      );
+    });
+  });
+
+  describe("Get Campaign Counts", function () {
+    it("should get campaign counts", async function () {
+      // arrange
+      const created = await client.getCampaign(contCampaignId);
+      expect(created).toBeInstanceOf(Campaign);
+
+      // act
+      const counts = await client.getCampaignCounts(created.id);
+
+      // assert
+      expect(counts).toBeDefined();
+      expect(counts.total).toBeGreaterThanOrEqual(0);
+      expect(counts.destinations).toBeDefined();
+    });
+  });
+
+  describe("Get Campaign Design list", function () {
+    it("should get paginated campaign designs", async function () {
+      // arrange
+
+      // act
+      const designs = await client.getCampaignDesigns(contCampaignId);
+
+      // assert
+      expect(designs).toBeInstanceOf(PaginatedResponseV3);
+      expect(designs.data).toBeInstanceOf(Array);
+      expect(designs.data.length).toBeGreaterThanOrEqual(1);
+      expect(designs.data[0]).toBeInstanceOf(Design);
+      expect(designs.meta).toBeDefined();
+      expect(designs.links).toBeDefined();
+    });
+
+    it("should throw an error when getting designs for a non-existing campaign", async function () {
+      // arrange & act & assert
+      await expect(
+        client.getCampaignDesigns("non-existing-id"),
+      ).rejects.toThrow(/10006: Campaign 'non-existing-id' does not exist/);
+    });
+  });
+
+  describe("Get Campaign Design", function () {
+    it("should get a campaign design by ID", async function () {
+      // arrange
+      const newDesign = await client.addDesignToDestination(
+        contCampaignId,
+        Destination.INTERNATIONAL,
+        addDesignData,
+      );
+
+      // act
+      const getDesign = await client.getCampaignDesign(
+        contCampaignId,
+        Destination.INTERNATIONAL,
+        newDesign.id,
+      );
+
+      // assert
+      expect(getDesign).toBeInstanceOf(Design);
+      expect(getDesign.id).toBe(newDesign.id);
+    });
+
+    it("should throw an error when getting a design for a non-existing campaign", async function () {
+      // arrange & act & assert
+      await expect(
+        client.getCampaignDesign(
+          "non-existing-id",
+          Destination.NETHERLANDS,
+          "some-design-id",
+        ),
+      ).rejects.toThrow(/10006: Campaign 'non-existing-id' does not exist/);
+    });
+  });
+
+  describe("Add Design to Campaign", function () {
+    it("should add a design to a campaign", async function () {
+      // arrange
+      const campaign = await client.getCampaign(contCampaignId);
+      expect(campaign).toBeInstanceOf(Campaign);
+
+      // act
+      const design = await client.addDesignToDestination(
+        campaign.id,
+        Destination.INTERNATIONAL,
+        addDesignData,
+      );
+
+      // assert
+      expect(design).toBeInstanceOf(Design);
+      expect(design.pages.length).toBe(2);
+      expect(design.serializedHelperCalls).toBeDefined();
+    });
+
+    it("should throw an error when adding a design to a non-existing campaign", async function () {
+      // arrange & act & assert
+      await expect(
+        client.addDesignToDestination(
+          "non-existing-id",
+          Destination.NETHERLANDS,
+          addDesignData,
+        ),
+      ).rejects.toThrow(/10006: Campaign 'non-existing-id' does not exist/);
+    });
+
+    it("should throw an error when adding a design to non-existing destination", async function () {
+      // arrange
+      const campaign = await client.getCampaign(contCampaignId);
+      expect(campaign).toBeInstanceOf(Campaign);
+
+      // act & assert
+      await expect(
+        client.addDesignToDestination(
+          campaign.id,
+          // This assumes the campaign does not have Germany as destination
+          Destination.GERMANY,
+          { ...addDesignData, format: Format.POSTCARD_A6 },
+        ),
+      ).rejects.toThrow(/10006: Destination 'GERMANY' does not exist/);
+    });
+
+    it("should throw an error when the design is not correct", async function () {
+      // arrange
+      const data = {
+        ...addDesignData,
+        pages: [
+          { content: "{{not a function}} {{nested.is.not.allowed}}" },
+          { content: "{{hello}}" },
+        ],
+      };
+
+      const campaign = await client.getCampaign(contCampaignId);
+      expect(campaign).toBeInstanceOf(Campaign);
+      // act & assert
+      try {
+        await client.addDesignToDestination(
+          campaign.id,
+          Destination.NETHERLANDS,
+          data,
+        );
+        throw new Error("Expected error was not thrown");
+      } catch (error) {
+        if (!(error instanceof PrintOneError)) {
+          throw error;
+        }
+
+        expect(error).toBeInstanceOf(PrintOneError);
+        expect(error.messages).toStrictEqual([
+          "10044: Design creation error",
+          '10054: Merge variable "not a function" is invalid, remove any spaces or consider using "notAFunction" instead',
+        ]);
+      }
+    });
+  });
+
+  describe("Set Default Design for Destination", function () {
+    it("should be able to make a Design default", async function () {
+      // arrange
+      const campaign = await client.getCampaign(contCampaignId);
+      await campaign.loadDesigns();
+      const design = await client.addDesignToDestination(
+        campaign.id,
+        Destination.NETHERLANDS,
+        addDesignData,
+      );
+
+      // act
+      await client.setDefaultDesign(
+        campaign.id,
+        Destination.NETHERLANDS,
+        design.id,
+      );
+
+      // assert
+      await campaign.refresh();
+      const destination = campaign.destinations.find(
+        (d) => d.destination === Destination.NETHERLANDS,
+      );
+      if (!destination) {
+        throw new Error("Destination NETHERLANDS not found");
+      }
+
+      expect(destination.designId).toBe(design.id);
+    }, 10000);
+  });
+
+  describe("Delete Design from Campaign", function () {
+    it("should delete a design from a campaign", async function () {
+      // arrange
+      const campaign = await client.getCampaign(contCampaignId);
+      expect(campaign).toBeInstanceOf(Campaign);
+
+      const design = await client.addDesignToDestination(
+        campaign.id,
+        Destination.INTERNATIONAL,
+        addDesignData,
+      );
+      expect(design).toBeInstanceOf(Design);
+
+      // act
+      await client.deleteDesignFromDestination(
+        campaign.id,
+        Destination.INTERNATIONAL,
+        design.id,
+      );
+
+      // assert
+      const designs = await client.getCampaignDesigns(campaign.id, {});
+      const found = designs.data.find((d) => d.id === design.id);
+      expect(found).toBeUndefined();
+    });
+
+    it("should throw an error when deleting a design from a non-existing campaign", async function () {
+      // arrange & act & assert
+      await expect(
+        client.deleteDesignFromDestination(
+          "non-existing-id",
+          Destination.NETHERLANDS,
+          "some-design-id",
+        ),
+      ).rejects.toThrow(/10006: Campaign 'non-existing-id' does not exist/);
+    });
+
+    it("should throw an error when deleting a design from non-existing destination", async function () {
+      // arrange
+      const campaign = await client.getCampaign(contCampaignId);
+      expect(campaign).toBeInstanceOf(Campaign);
+
+      // act & assert
+      await expect(
+        client.deleteDesignFromDestination(
+          campaign.id,
+          // This assumes the campaign does not have Germany as destination
+          Destination.GERMANY,
+          "some-design-id",
+        ),
+      ).rejects.toThrow(/10006: Destination 'GERMANY' does not exist/);
+    });
+  });
+
+  describe("Get Campaign Mailings", function () {
+    it("should get paginated campaign mailings", async function () {
+      // arrange
+
+      // act
+      const mailings = await client.getCampaignMailings(contCampaignId);
+
+      // assert
+      expect(mailings).toBeInstanceOf(PaginatedResponseV3);
+      expect(mailings.data).toBeInstanceOf(Array);
+      if (mailings.data.length === 0) return; // No mailings to test further
+
+      expect(mailings.data[0]).toBeInstanceOf(Mailing);
+    });
+  });
+});
 
 describe("getSelf", function () {
   it("should return a company", async function () {
@@ -197,7 +525,7 @@ describe("uploadCustomFile", function () {
 
   it("should upload a file", async function () {
     // arrange
-    const file = fs.readFileSync(path.join(__dirname, "assets/test.png"));
+    const file = getFileBuffer("assets/test.png");
 
     // act
     customFile = await client.uploadCustomFile("test.png", file);
@@ -209,7 +537,7 @@ describe("uploadCustomFile", function () {
 
   it("should upload a file with all fields", async function () {
     // arrange
-    const file = fs.readFileSync(path.join(__dirname, "assets/test.png"));
+    const file = getFileBuffer("assets/test.png");
 
     // act
     customFile = await client.uploadCustomFile("test.png", file);
@@ -316,6 +644,23 @@ describe("createTemplate", function () {
 });
 
 describe("getTemplates", function () {
+  let template: Template = null as unknown as Template;
+  beforeAll(async function () {
+    // Ensure at least one template exists
+    template = await client.createTemplate({
+      name: "Global test template for getTemplates",
+      format: Format.POSTCARD_SQ15,
+      labels: ["library-unit-test-getTemplates"],
+      pages: ["page1", "page2"],
+    });
+  });
+
+  afterAll(async function () {
+    if (template) {
+      await template.delete().catch(() => {});
+    }
+  });
+
   it("should return a paginated response", async function () {
     // arrange
 
@@ -687,7 +1032,7 @@ describe("createCsvOrder", function () {
     city: "Haarlem",
     country: "NL",
   };
-  let file: Uint8Array = null as unknown as Uint8Array;
+  let file: ArrayBuffer = null as unknown as ArrayBuffer;
   const mapping: CreateCsvOrder["mapping"] = {
     recipient: {
       city: "{{City}}",
@@ -700,7 +1045,7 @@ describe("createCsvOrder", function () {
   };
 
   beforeAll(() => {
-    file = fs.readFileSync(path.join(__dirname, "assets/test.csv"));
+    file = getFileBuffer("assets/test.csv");
   });
 
   it("should create a csv order", async function () {
@@ -831,7 +1176,7 @@ describe("getCsvOrder", function () {
   };
 
   beforeAll(async () => {
-    const file = fs.readFileSync(path.join(__dirname, "assets/test.csv"));
+    const file = getFileBuffer("assets/test.csv");
 
     const csvOrder = await client.createCsvOrder({
       mapping: mapping,

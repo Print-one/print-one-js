@@ -1,4 +1,4 @@
-import { Format, Preview, Template } from "../src";
+import { Format, Preview, Template } from "~/index";
 import { client } from "./client";
 
 let template: Template = null as unknown as Template;

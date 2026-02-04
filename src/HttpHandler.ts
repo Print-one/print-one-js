@@ -1,5 +1,6 @@
 import { PrintOneError } from "~/errors/PrintOneError";
 import { PrintOneDebugger, PrintOneOptions } from "~/PrintOne";
+import { IErrorResponseV3 } from "./models/_interfaces/IResponse.v3";
 
 export abstract class HttpHandler<RequestOptions, Response> {
   protected readonly debug: PrintOneDebugger;
@@ -63,6 +64,14 @@ export abstract class HttpHandler<RequestOptions, Response> {
   public abstract DELETE<T>(url: string, options?: RequestOptions): Promise<T>;
 
   protected handleErrors(response: Response) {
+    if (this.options.version === "v3") {
+      this.handleV3Errors(response);
+    } else {
+      this.handleV2Errors(response);
+    }
+  }
+
+  private handleV2Errors(response: Response) {
     const res = response as {
       status: number;
       data: { statusCode?: number; message: string[] };
@@ -73,6 +82,24 @@ export abstract class HttpHandler<RequestOptions, Response> {
         res.data.statusCode ?? res.status,
         res.data.message,
       );
+    }
+  }
+
+  private handleV3Errors(response: Response) {
+    const res = response as {
+      status: number;
+      data: IErrorResponseV3;
+    };
+
+    if (res.status >= 400) {
+      const messages = [
+        `${res.data.code}: ${res.data.message}`,
+        ...(res.data.errors
+          ? res.data.errors.map((e) => `${e.code}: ${e.message}`)
+          : []),
+      ];
+
+      throw new PrintOneError(res.status, messages);
     }
   }
 }

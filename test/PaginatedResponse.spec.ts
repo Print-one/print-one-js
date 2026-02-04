@@ -1,4 +1,4 @@
-import { PaginatedResponse, Template } from "../src";
+import { PaginatedResponse, Template } from "~/index";
 import { client } from "./client";
 
 let paginated: PaginatedResponse<Template> =

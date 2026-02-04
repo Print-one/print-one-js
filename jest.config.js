@@ -17,6 +17,7 @@ module.exports = {
     "index.ts",
   ],
   transformIgnorePatterns: ["/node_modules/", "/dist/"],
+  testTimeout: 10000,
   coverageDirectory: "./coverage",
   testEnvironment: "node",
   coverageReporters: ["text", "json", "html"],
