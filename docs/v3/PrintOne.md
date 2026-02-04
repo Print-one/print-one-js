@@ -1,26 +1,16 @@
 The main class of the library. It is used to create a client for the Print.one API.
 
-This page documents **only the methods that use v3 endpoints** (i.e. methods that call `v3Client.*` in `PrintOne.ts`).
+This page documents **only the methods that use v3 endpoints**. [See v2 documentation](../PrintOne.md).
 
-# Constructor (v3)
+# Constructor
 
 ```js
 import { PrintOne } from "@print-one/print-one-js";
 
-const client = new PrintOne(apiKey, { version: "v3" });
+const client = new PrintOne(apiKey);
 ```
 
-# Properties
-
-## `.v3Client`
-
-Access to the underlying HTTP handler configured for API **v3**.
-
-> Note: `client.v3Client` throws if the client was not initialized with `{ version: "v3" }`.
-
----
-
-# Methods (v3)
+# Methods
 
 ## `.getCampaigns([options])`
 
@@ -46,8 +36,6 @@ const campaigns = await client.getCampaigns({
 });
 ```
 
----
-
 ## `.getCampaign(id)`
 
 Get a campaign by its identifier.
@@ -65,8 +53,6 @@ Get a campaign by its identifier.
 ```js
 const campaign = await client.getCampaign("cmp_123");
 ```
-
----
 
 ## `.updateCampaign(campaignId, data)`
 
@@ -92,8 +78,6 @@ const updated = await client.updateCampaign("cmp_123", {
 });
 ```
 
----
-
 ## `.getCampaignCounts(id)`
 
 Get destination counts for a campaign.
@@ -111,8 +95,6 @@ Get destination counts for a campaign.
 ```js
 const counts = await client.getCampaignCounts("cmp_123");
 ```
-
----
 
 ## `.getCampaignDesigns(campaignId, [options])`
 
@@ -138,8 +120,6 @@ const designs = await client.getCampaignDesigns("cmp_123", {
   sortBy: "name:ASC",
 });
 ```
-
----
 
 ## `.getCampaignDesign(campaignId, destination, designId)`
 
@@ -194,8 +174,6 @@ const mailings = await client.getCampaignMailings("cmp_123", {
 });
 ```
 
----
-
 ## `.addDesignToDestination(campaignId, destination, data)`
 
 Add a design to a campaign destination.
@@ -223,8 +201,6 @@ const design = await client.addDesignToDestination(
   },
 );
 ```
-
----
 
 ## `.setDefaultDesign(campaignId, destination, designId)`
 

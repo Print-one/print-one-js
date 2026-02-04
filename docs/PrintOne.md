@@ -1,5 +1,7 @@
 The main class of the library. It is used to create a client for the Print.one API.
 
+This page documents **only the methods that use v2 endpoints**. [See v3 documentation](v3/PrintOne.md).
+
 # Constructor
 
 ```js
@@ -21,8 +23,6 @@ Get the company that the API key belongs to.
 ```js
 const company = await client.getSelf();
 ```
-
----
 
 ## `.getCustomFiles([options])`
 
@@ -48,8 +48,6 @@ const customFiles = await client.getCustomFiles({
 });
 ```
 
----
-
 ## `.uploadCustomFile(fileName, file)`
 
 Upload a custom file. The file must be a image or font.
@@ -71,8 +69,6 @@ import fs from "fs";
 const data = fs.readFileSync("example.png").buffer;
 const file = await client.uploadCustomFile("example.png", data);
 ```
-
----
 
 ## `.createTemplate(data)`
 
@@ -132,8 +128,6 @@ const templates = await client.getTemplates({
 });
 ```
 
----
-
 ## `.getTemplate(id)`
 
 Get a template by its ID.
@@ -151,8 +145,6 @@ Get a template by its ID.
 ```js
 const template = await client.getTemplate("example-template-id");
 ```
-
----
 
 ## `.createOrder(data)`
 
@@ -181,8 +173,6 @@ const order = await client.createOrder({
 });
 ```
 
----
-
 ## `.getOrder(id)`
 
 Get an order by its ID.
@@ -200,8 +190,6 @@ Get an order by its ID.
 ```js
 const order = await client.getOrder("example-order-id");
 ```
-
----
 
 ## `.getOrders([options])`
 
@@ -244,8 +232,6 @@ const orders = await client.getOrders({
 });
 ```
 
----
-
 ## `.createCsvOrder(data)`
 
 Create a new csv order.
@@ -279,8 +265,6 @@ const order = await client.createCsvOrder({
   file: file,
 });
 ```
-
----
 
 ## `.getCsvOrder(id)`
 
@@ -330,8 +314,6 @@ const batch = await client.createBatch({
 });
 ```
 
----
-
 ## `.getBatch(id)`
 
 Get a batch by its ID.
@@ -349,8 +331,6 @@ Get a batch by its ID.
 ```js
 const batch = await client.getBatch("example-batch-id");
 ```
-
----
 
 ## `.getBatches([options])`
 
@@ -399,8 +379,6 @@ const batches = await client.getBatches({
 });
 ```
 
----
-
 ## `.createCoupon(data)`
 
 Create a new coupon.
@@ -420,8 +398,6 @@ const coupon = await client.createCoupon({
   name: "coupon",
 });
 ```
-
----
 
 ## `.getCoupons([options])`
 
@@ -451,8 +427,6 @@ const coupons = await client.getCoupons({
 });
 ```
 
----
-
 ## `.getCoupon(id)`
 
 Get a coupon by its ID.
@@ -470,5 +444,3 @@ Get a coupon by its ID.
 ```js
 const coupon = await client.getCoupon("example-coupon-id");
 ```
-
----
