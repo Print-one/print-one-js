@@ -116,7 +116,7 @@ export class CsvOrder extends Model<ICsvOrder> {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICsvOrder>(
+    this._data = await this._protected.clientV2.GET<ICsvOrder>(
       `orders/csv/${this.id}`,
     );
   }

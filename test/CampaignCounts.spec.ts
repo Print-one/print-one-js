@@ -1,12 +1,12 @@
 import { DestinationCounts } from "~/models/CampaignCounts";
-import { v3Client } from "./client";
+import { client } from "./client";
 import { contCampaignId } from "./utils";
 
 describe("CampaignCounts Model", function () {
   // This test assumes that the campaign has destinations with at least one order
   it("should have all properties defined", async function () {
     // arrange
-    const campaignCounts = await v3Client.getCampaignCounts(contCampaignId);
+    const campaignCounts = await client.getCampaignCounts(contCampaignId);
 
     // assert
     expect(campaignCounts.total).toEqual(expect.any(Number));

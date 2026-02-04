@@ -20,7 +20,7 @@ import {
   Mailing,
 } from "~/index";
 import "jest-extended";
-import { client, v3Client } from "./client";
+import { client } from "./client";
 import { Batch } from "~/models/Batch";
 import { BatchStatus } from "~/enums/BatchStatus";
 import { Webhook } from "~/models/Webhook";
@@ -76,28 +76,21 @@ const exampleAddress: Address = {
 
 describe("Campaign", function () {
   beforeAll(async function () {
-    await v3Client.addDesignToDestination(
+    await client.addDesignToDestination(
       contCampaignId,
       Destination.NETHERLANDS,
       addDesignData,
     );
   });
 
-  it("should not be able to use v2 client", async function () {
-    // arrange & act & assert
-    await expect(client.getCampaigns()).rejects.toThrow(
-      /Initialize PrintOne with version 'v3' to use v3 endpoints./,
-    );
-  });
-
   describe("Update Campaign", function () {
     it("should update a campaign", async function () {
       // arrange
-      const result = await v3Client.getCampaign(contCampaignId);
+      const result = await client.getCampaign(contCampaignId);
       expect(result).toBeInstanceOf(Campaign);
 
       // act
-      const updated = await v3Client.updateCampaign(result.id, {
+      const updated = await client.updateCampaign(result.id, {
         name: "Updated Campaign Name",
       });
 
@@ -106,7 +99,7 @@ describe("Campaign", function () {
       expect(updated.name).toBe("Updated Campaign Name");
 
       // teardown
-      await v3Client.updateCampaign(result.id, {
+      await client.updateCampaign(result.id, {
         name: result.name,
       });
     });
@@ -117,7 +110,7 @@ describe("Campaign", function () {
       // arrange
 
       // act
-      const campaigns = await v3Client.getCampaigns();
+      const campaigns = await client.getCampaigns();
 
       // assert
       expect(campaigns).toBeInstanceOf(PaginatedResponseV3);
@@ -134,7 +127,7 @@ describe("Campaign", function () {
       // arrange
 
       // act
-      const fetched = await v3Client.getCampaign(contCampaignId);
+      const fetched = await client.getCampaign(contCampaignId);
 
       // assert
       expect(fetched).toBeInstanceOf(Campaign);
@@ -143,7 +136,7 @@ describe("Campaign", function () {
 
     it("should throw an error when getting a non-existing campaign", async function () {
       // arrange & act & assert
-      await expect(v3Client.getCampaign("non-existing-id")).rejects.toThrow(
+      await expect(client.getCampaign("non-existing-id")).rejects.toThrow(
         /10006: Campaign 'non-existing-id' does not exist/,
       );
     });
@@ -152,11 +145,11 @@ describe("Campaign", function () {
   describe("Get Campaign Counts", function () {
     it("should get campaign counts", async function () {
       // arrange
-      const created = await v3Client.getCampaign(contCampaignId);
+      const created = await client.getCampaign(contCampaignId);
       expect(created).toBeInstanceOf(Campaign);
 
       // act
-      const counts = await v3Client.getCampaignCounts(created.id);
+      const counts = await client.getCampaignCounts(created.id);
 
       // assert
       expect(counts).toBeDefined();
@@ -170,7 +163,7 @@ describe("Campaign", function () {
       // arrange
 
       // act
-      const designs = await v3Client.getCampaignDesigns(contCampaignId);
+      const designs = await client.getCampaignDesigns(contCampaignId);
 
       // assert
       expect(designs).toBeInstanceOf(PaginatedResponseV3);
@@ -184,7 +177,7 @@ describe("Campaign", function () {
     it("should throw an error when getting designs for a non-existing campaign", async function () {
       // arrange & act & assert
       await expect(
-        v3Client.getCampaignDesigns("non-existing-id"),
+        client.getCampaignDesigns("non-existing-id"),
       ).rejects.toThrow(/10006: Campaign 'non-existing-id' does not exist/);
     });
   });
@@ -192,14 +185,14 @@ describe("Campaign", function () {
   describe("Get Campaign Design", function () {
     it("should get a campaign design by ID", async function () {
       // arrange
-      const newDesign = await v3Client.addDesignToDestination(
+      const newDesign = await client.addDesignToDestination(
         contCampaignId,
         Destination.INTERNATIONAL,
         addDesignData,
       );
 
       // act
-      const getDesign = await v3Client.getCampaignDesign(
+      const getDesign = await client.getCampaignDesign(
         contCampaignId,
         Destination.INTERNATIONAL,
         newDesign.id,
@@ -213,7 +206,7 @@ describe("Campaign", function () {
     it("should throw an error when getting a design for a non-existing campaign", async function () {
       // arrange & act & assert
       await expect(
-        v3Client.getCampaignDesign(
+        client.getCampaignDesign(
           "non-existing-id",
           Destination.NETHERLANDS,
           "some-design-id",
@@ -225,11 +218,11 @@ describe("Campaign", function () {
   describe("Add Design to Campaign", function () {
     it("should add a design to a campaign", async function () {
       // arrange
-      const campaign = await v3Client.getCampaign(contCampaignId);
+      const campaign = await client.getCampaign(contCampaignId);
       expect(campaign).toBeInstanceOf(Campaign);
 
       // act
-      const design = await v3Client.addDesignToDestination(
+      const design = await client.addDesignToDestination(
         campaign.id,
         Destination.INTERNATIONAL,
         addDesignData,
@@ -244,7 +237,7 @@ describe("Campaign", function () {
     it("should throw an error when adding a design to a non-existing campaign", async function () {
       // arrange & act & assert
       await expect(
-        v3Client.addDesignToDestination(
+        client.addDesignToDestination(
           "non-existing-id",
           Destination.NETHERLANDS,
           addDesignData,
@@ -254,12 +247,12 @@ describe("Campaign", function () {
 
     it("should throw an error when adding a design to non-existing destination", async function () {
       // arrange
-      const campaign = await v3Client.getCampaign(contCampaignId);
+      const campaign = await client.getCampaign(contCampaignId);
       expect(campaign).toBeInstanceOf(Campaign);
 
       // act & assert
       await expect(
-        v3Client.addDesignToDestination(
+        client.addDesignToDestination(
           campaign.id,
           // This assumes the campaign does not have Germany as destination
           Destination.GERMANY,
@@ -278,11 +271,11 @@ describe("Campaign", function () {
         ],
       };
 
-      const campaign = await v3Client.getCampaign(contCampaignId);
+      const campaign = await client.getCampaign(contCampaignId);
       expect(campaign).toBeInstanceOf(Campaign);
       // act & assert
       try {
-        await v3Client.addDesignToDestination(
+        await client.addDesignToDestination(
           campaign.id,
           Destination.NETHERLANDS,
           data,
@@ -305,16 +298,16 @@ describe("Campaign", function () {
   describe("Set Default Design for Destination", function () {
     it("should be able to make a Design default", async function () {
       // arrange
-      const campaign = await v3Client.getCampaign(contCampaignId);
+      const campaign = await client.getCampaign(contCampaignId);
       await campaign.loadDesigns();
-      const design = await v3Client.addDesignToDestination(
+      const design = await client.addDesignToDestination(
         campaign.id,
         Destination.NETHERLANDS,
         addDesignData,
       );
 
       // act
-      await v3Client.setDefaultDesign(
+      await client.setDefaultDesign(
         campaign.id,
         Destination.NETHERLANDS,
         design.id,
@@ -336,10 +329,10 @@ describe("Campaign", function () {
   describe("Delete Design from Campaign", function () {
     it("should delete a design from a campaign", async function () {
       // arrange
-      const campaign = await v3Client.getCampaign(contCampaignId);
+      const campaign = await client.getCampaign(contCampaignId);
       expect(campaign).toBeInstanceOf(Campaign);
 
-      const design = await v3Client.addDesignToDestination(
+      const design = await client.addDesignToDestination(
         campaign.id,
         Destination.INTERNATIONAL,
         addDesignData,
@@ -347,14 +340,14 @@ describe("Campaign", function () {
       expect(design).toBeInstanceOf(Design);
 
       // act
-      await v3Client.deleteDesignFromDestination(
+      await client.deleteDesignFromDestination(
         campaign.id,
         Destination.INTERNATIONAL,
         design.id,
       );
 
       // assert
-      const designs = await v3Client.getCampaignDesigns(campaign.id, {});
+      const designs = await client.getCampaignDesigns(campaign.id, {});
       const found = designs.data.find((d) => d.id === design.id);
       expect(found).toBeUndefined();
     });
@@ -362,7 +355,7 @@ describe("Campaign", function () {
     it("should throw an error when deleting a design from a non-existing campaign", async function () {
       // arrange & act & assert
       await expect(
-        v3Client.deleteDesignFromDestination(
+        client.deleteDesignFromDestination(
           "non-existing-id",
           Destination.NETHERLANDS,
           "some-design-id",
@@ -372,12 +365,12 @@ describe("Campaign", function () {
 
     it("should throw an error when deleting a design from non-existing destination", async function () {
       // arrange
-      const campaign = await v3Client.getCampaign(contCampaignId);
+      const campaign = await client.getCampaign(contCampaignId);
       expect(campaign).toBeInstanceOf(Campaign);
 
       // act & assert
       await expect(
-        v3Client.deleteDesignFromDestination(
+        client.deleteDesignFromDestination(
           campaign.id,
           // This assumes the campaign does not have Germany as destination
           Destination.GERMANY,
@@ -392,7 +385,7 @@ describe("Campaign", function () {
       // arrange
 
       // act
-      const mailings = await v3Client.getCampaignMailings(contCampaignId);
+      const mailings = await client.getCampaignMailings(contCampaignId);
 
       // assert
       expect(mailings).toBeInstanceOf(PaginatedResponseV3);
@@ -405,13 +398,6 @@ describe("Campaign", function () {
 });
 
 describe("getSelf", function () {
-  it("should not be able to use v3 client", async function () {
-    // arrange & act & assert
-    await expect(v3Client.getSelf()).rejects.toThrow(
-      /Initialize PrintOne with version 'v2' to use v2 endpoints./,
-    );
-  });
-
   it("should return a company", async function () {
     // arrange
 

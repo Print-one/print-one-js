@@ -1,16 +1,16 @@
 import { Destination } from "~/index";
-import { v3Client } from "./client";
+import { client } from "./client";
 import { addDesignData, contCampaignId } from "./utils";
 
 describe("Design Model", function () {
   it("should have all fields for Design", async function () {
     // arrange
-    const newDesign = await v3Client.addDesignToDestination(
+    const newDesign = await client.addDesignToDestination(
       contCampaignId,
       Destination.NETHERLANDS,
       addDesignData,
     );
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
 
     await campaign.loadDesigns();
 
@@ -40,7 +40,7 @@ describe("Design Model", function () {
 
   it("should load full Design data", async function () {
     // arrange
-    const design = await v3Client.addDesignToDestination(
+    const design = await client.addDesignToDestination(
       contCampaignId,
       Destination.NETHERLANDS,
       addDesignData,
@@ -56,7 +56,7 @@ describe("Design Model", function () {
 
   it("should throw if calling unloaded properties before loading full Design data", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     await campaign.loadDesigns();
     const design = campaign.designs[0];
 

@@ -5,13 +5,13 @@ import {
   Destination,
   OneOffDestination,
 } from "~/index";
-import { v3Client } from "./client";
+import { client } from "./client";
 import { addDesignData, contCampaignId, oneOffCampaignId } from "./utils";
 
 describe("Campaign Model", function () {
   it("should have all properties defined continuous", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
 
     // assert
     expect(campaign.id).toEqual(expect.any(String));
@@ -35,7 +35,7 @@ describe("Campaign Model", function () {
 
   it("should have all properties defined one-off", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(oneOffCampaignId);
+    const campaign = await client.getCampaign(oneOffCampaignId);
 
     // assert
     expect(campaign.id).toEqual(expect.any(String));
@@ -58,35 +58,56 @@ describe("Campaign Model", function () {
 
   it("should load campaign Designs", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
+
+    const campaignId = campaign.id;
+    const destination = campaign.destinations[0].destination;
+    const defaultPageSize = 20;
+
+    const initialDesigns = await client.getCampaignDesigns(campaignId, {
+      limit: 1,
+    });
+
     expect(campaign.designs.length).toBe(0);
 
-    const design = await v3Client.addDesignToDestination(
-      campaign.id,
-      campaign.destinations[0].destination,
-      addDesignData,
-    );
+    const designIds: string[] = [];
+    while (initialDesigns.meta.totalItems <= defaultPageSize) {
+      const design = await client.addDesignToDestination(
+        campaignId,
+        destination,
+        addDesignData,
+      );
+      designIds.push(design.id);
+    }
 
     // act
     await campaign.loadDesigns();
 
     // assert
-    expect(campaign.designs.length).toBeGreaterThanOrEqual(1);
+    expect(campaign.designs.length).toBeGreaterThanOrEqual(designIds.length);
     expect(campaign.designs[0].campaignId).toBe(campaign.id);
     // any design with the correct id
-    expect(campaign.designs.find((d) => d.id === design.id)).toBeDefined();
+    expect(campaign.designs.map((d) => d.id)).toEqual(
+      expect.arrayContaining(designIds),
+    );
 
     // cleanup
-    await v3Client.deleteDesignFromDestination(
-      design.campaignId,
-      design.destination,
-      design.id,
-    );
-  });
+    try {
+      for (const designId of designIds) {
+        await client.deleteDesignFromDestination(
+          campaignId,
+          destination,
+          designId,
+        );
+      }
+    } catch {
+      // ignore cleanup errors
+    }
+  }, 20000);
 
   it("should pause a campaign", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     if (campaign.status !== CampaignStatus.RUNNING) await campaign.resume();
 
     // act
@@ -100,7 +121,7 @@ describe("Campaign Model", function () {
 
   it("should resume a campaign", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     if (campaign.status !== CampaignStatus.PAUSED) await campaign.pause();
 
     // act
@@ -112,7 +133,7 @@ describe("Campaign Model", function () {
 
   it("should add fallback variables", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     // ensure no fallbacks exist
     await campaign.addVariablesFallback({
       [Destination.NETHERLANDS]: null,
@@ -125,7 +146,7 @@ describe("Campaign Model", function () {
       ),
     ).toHaveLength(0);
 
-    const design = await v3Client.addDesignToDestination(
+    const design = await client.addDesignToDestination(
       campaign.id,
       Destination.NETHERLANDS,
       {
@@ -159,7 +180,7 @@ describe("Campaign Model", function () {
     });
 
     // tear down
-    await v3Client.deleteDesignFromDestination(
+    await client.deleteDesignFromDestination(
       design.campaignId,
       design.destination,
       design.id,
@@ -173,8 +194,8 @@ describe("Campaign Model", function () {
 
   it("should refresh a campaign", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
-    const spy = jest.spyOn(campaign["_protected"].client, "GET");
+    const campaign = await client.getCampaign(contCampaignId);
+    const spy = jest.spyOn(campaign["_protected"].clientV3, "GET");
 
     // act
     await campaign.refresh();
@@ -185,10 +206,10 @@ describe("Campaign Model", function () {
 
   it("should refresh a campaign with designs", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     await campaign.loadDesigns();
 
-    const spy = jest.spyOn(campaign["_protected"].client, "GET");
+    const spy = jest.spyOn(campaign["_protected"].clientV3, "GET");
     const spyLoadDesigns = jest.spyOn(campaign, "loadDesigns");
 
     // act

@@ -132,7 +132,7 @@ export class Campaign extends Model<ICampaign> {
   public async loadDesigns() {
     const newDesigns: Design[] = [];
 
-    const data = await this._protected.client.GET<
+    const data = await this._protected.clientV3.GET<
       IPaginatedResponseV3<IDesign>
     >(`campaigns/${this.id}/designs`);
 
@@ -168,7 +168,7 @@ export class Campaign extends Model<ICampaign> {
       Record<Destination, Record<string, string> | null>
     >,
   ): Promise<void> {
-    const response = await this._protected.client.PATCH<
+    const response = await this._protected.clientV3.PATCH<
       IResponseV3<{
         fallbacks: Partial<
           Record<Destination, { values: Record<string, string> }>
@@ -186,18 +186,16 @@ export class Campaign extends Model<ICampaign> {
   }
 
   public async pause(): Promise<void> {
-    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
-      `campaigns/${this.id}/pause`,
-      {},
-    );
+    const response = await this._protected.clientV3.POST<
+      IResponseV3<ICampaign>
+    >(`campaigns/${this.id}/pause`, {});
     await this._refresh(response);
   }
 
   public async resume(): Promise<void> {
-    const response = await this._protected.client.POST<IResponseV3<ICampaign>>(
-      `campaigns/${this.id}/resume`,
-      {},
-    );
+    const response = await this._protected.clientV3.POST<
+      IResponseV3<ICampaign>
+    >(`campaigns/${this.id}/resume`, {});
     await this._refresh(response);
   }
 
@@ -206,7 +204,7 @@ export class Campaign extends Model<ICampaign> {
    * @throws { PrintOneError } If the campaign could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    const response = await this._protected.client.GET<IResponseV3<ICampaign>>(
+    const response = await this._protected.clientV3.GET<IResponseV3<ICampaign>>(
       `campaigns/${this.id}`,
     );
     await this._refresh(response);

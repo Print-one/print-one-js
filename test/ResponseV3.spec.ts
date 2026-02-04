@@ -1,12 +1,12 @@
 import { PaginatedResponseV3 } from "~/models/Response.v3";
 import { Campaign } from "~/index";
-import { v3Client } from "./client";
+import { client } from "./client";
 
 let pageOne: PaginatedResponseV3<Campaign> =
   null as unknown as PaginatedResponseV3<Campaign>;
 
 beforeEach(async function () {
-  pageOne = await v3Client.getCampaigns({
+  pageOne = await client.getCampaigns({
     limit: 1,
   });
 

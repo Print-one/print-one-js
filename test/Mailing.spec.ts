@@ -1,11 +1,11 @@
 import { Destination, Finish, Format } from "~/index";
-import { v3Client } from "./client";
+import { client } from "./client";
 import { contCampaignId } from "./utils";
 
 describe("Mailing Model", function () {
   it("should have all fields for Mailing", async function () {
     // arrange
-    const mailings = await v3Client.getCampaignMailings(contCampaignId, {});
+    const mailings = await client.getCampaignMailings(contCampaignId, {});
 
     // act
     if (mailings.data.length === 0) return; // No mailings to test further

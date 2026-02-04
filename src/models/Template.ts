@@ -61,7 +61,7 @@ export class Template extends Model<IFullTemplate | ITemplate> {
    * @throws { PrintOneError } When the template could not be loaded
    */
   public async load(): Promise<void> {
-    const data = await this._protected.client.GET<IFullTemplate>(
+    const data = await this._protected.clientV2.GET<IFullTemplate>(
       "templates/" + this.id,
     );
     this._data = data;
@@ -88,7 +88,7 @@ export class Template extends Model<IFullTemplate | ITemplate> {
   public async preview(
     mergeVariables: Record<string, unknown> = {},
   ): Promise<Preview[]> {
-    const data = await this._protected.client.POST<IPreview[]>(
+    const data = await this._protected.clientV2.POST<IPreview[]>(
       "templates/preview/" + this.id,
       mergeVariables,
     );
@@ -101,7 +101,7 @@ export class Template extends Model<IFullTemplate | ITemplate> {
    * @throws { PrintOneError } When the template could not be deleted
    */
   public async delete(): Promise<void> {
-    await this._protected.client.DELETE("templates/" + this.id);
+    await this._protected.clientV2.DELETE("templates/" + this.id);
   }
 
   //TODO: Add update method

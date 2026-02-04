@@ -40,18 +40,18 @@ export class Webhook extends Model<IWebhook> {
   }
 
   public async update(data: Partial<Omit<IWebhook, "id">>): Promise<void> {
-    this._data = await this._protected.client.PATCH<IWebhook>(
+    this._data = await this._protected.clientV2.PATCH<IWebhook>(
       `/webhooks/${this.id}`,
       data,
     );
   }
 
   public async delete(): Promise<void> {
-    await this._protected.client.DELETE<void>(`/webhooks/${this.id}`);
+    await this._protected.clientV2.DELETE<void>(`/webhooks/${this.id}`);
   }
 
   public async getLogs(): Promise<PaginatedResponse<WebhookLog>> {
-    const logs = await this._protected.client.GET<
+    const logs = await this._protected.clientV2.GET<
       IPaginatedResponse<IWebhookLog>
     >(`/webhooks/${this.id}/logs`);
 

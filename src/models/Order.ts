@@ -134,7 +134,7 @@ export class Order extends Model<IOrder> {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<IOrder>(
+    this._data = await this._protected.clientV2.GET<IOrder>(
       `${this.urlPrefix}orders/${this.id}`,
     );
   }
@@ -160,7 +160,7 @@ export class Order extends Model<IOrder> {
       time++;
     }
 
-    return await this._protected.client.GETBuffer(
+    return await this._protected.clientV2.GETBuffer(
       `storage/order/preview/${this.id}`,
     );
   }
@@ -179,7 +179,7 @@ export class Order extends Model<IOrder> {
       time++;
     }
 
-    this._data = await this._protected.client.POST<IOrder>(
+    this._data = await this._protected.clientV2.POST<IOrder>(
       `${this.urlPrefix}orders/${this.id}/cancel`,
       {},
     );

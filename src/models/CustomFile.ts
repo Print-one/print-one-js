@@ -28,7 +28,7 @@ export class CustomFile extends Model<ICustomFile> {
    * @throws { PrintOneError } If the file could not be downloaded
    */
   public async download(): Promise<ArrayBuffer> {
-    return this._protected.client.GET(`/customfiles/${this.id}/download`, {
+    return this._protected.clientV2.GET(`/customfiles/${this.id}/download`, {
       responseType: "arraybuffer",
     });
   }
@@ -39,6 +39,6 @@ export class CustomFile extends Model<ICustomFile> {
    * @throws { PrintOneError } If the file could not be deleted
    */
   public async delete(): Promise<void> {
-    return this._protected.client.DELETE(`/customfiles/${this.id}`);
+    return this._protected.clientV2.DELETE(`/customfiles/${this.id}`);
   }
 }

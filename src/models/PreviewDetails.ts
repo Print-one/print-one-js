@@ -19,6 +19,6 @@ export class PreviewDetails extends Model<IPreviewDetails> {
    * @throws { PrintOneError } If the preview could not be downloaded.
    */
   public async download(): Promise<Uint8Array> {
-    return this._protected.client.GETBuffer(this.imageUrl);
+    return this._protected.clientV2.GETBuffer(this.imageUrl);
   }
 }

@@ -80,9 +80,9 @@ export class Design extends Model<IFullDesign | IDesign> {
   }
 
   public async load(): Promise<void> {
-    const response = await this._protected.client.GET<ResponseV3<IFullDesign>>(
-      `campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`,
-    );
+    const response = await this._protected.clientV3.GET<
+      ResponseV3<IFullDesign>
+    >(`campaigns/${this.campaignId}/designs/${this.destination}/${this.id}`);
 
     this._data = response.data;
     this._loaded = response.data;

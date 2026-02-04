@@ -76,7 +76,7 @@ export class PaginatedResponse<T = unknown> extends Model<
       return null;
     }
 
-    const data = await this._protected.client.GET<IPaginatedResponse>(
+    const data = await this._protected.clientV2.GET<IPaginatedResponse>(
       this._data.nextUrl,
     );
 
@@ -94,7 +94,7 @@ export class PaginatedResponse<T = unknown> extends Model<
       return null;
     }
 
-    const data = await this._protected.client.GET<IPaginatedResponse>(
+    const data = await this._protected.clientV2.GET<IPaginatedResponse>(
       this._data.previousUrl,
     );
 

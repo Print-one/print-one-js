@@ -129,15 +129,13 @@ export class PaginatedResponseV3<T = unknown> extends Model<
     }
 
     const url = new URL(_url);
-    let newUrl = url.pathname.replace(
-      "/" + this._protected.options.version,
-      "",
-    );
+    let newUrl = url.pathname.replace("/v3", "");
     if (url.search) {
       newUrl += url.search;
     }
 
-    const data = await this._protected.client.GET<IPaginatedResponseV3>(newUrl);
+    const data =
+      await this._protected.clientV3.GET<IPaginatedResponseV3>(newUrl);
 
     return new PaginatedResponseV3(this._protected, data, this._convert);
   }

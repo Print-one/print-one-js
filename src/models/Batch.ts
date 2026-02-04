@@ -102,7 +102,7 @@ export class Batch extends Model<IBatch> {
    * Refreshes the batch data, can be used to poll for status changes.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<IBatch>(
+    this._data = await this._protected.clientV2.GET<IBatch>(
       `/batches/${this.id}`,
     );
   }
@@ -143,7 +143,7 @@ export class Batch extends Model<IBatch> {
    * Create a new order in the batch
    */
   public async createOrder(order: CreateBatchOrder): Promise<Order> {
-    const data = await this._protected.client.POST<IOrder>(
+    const data = await this._protected.clientV2.POST<IOrder>(
       `/batches/${this.id}/orders`,
       {
         recipient: order.recipient,
@@ -165,7 +165,7 @@ export class Batch extends Model<IBatch> {
     );
     formData.append("mapping", JSON.stringify(data.mapping));
 
-    const response = await this._protected.client.POST<{ id: string }>(
+    const response = await this._protected.clientV2.POST<{ id: string }>(
       `/batches/${this.id}/orders/csv`,
       formData,
       {
@@ -176,7 +176,7 @@ export class Batch extends Model<IBatch> {
     );
 
     const id = response.id;
-    const csvInfo = await this._protected.client.GET<ICsvOrder>(
+    const csvInfo = await this._protected.clientV2.GET<ICsvOrder>(
       `batches/${this.id}/orders/csv/${id}`,
     );
 
@@ -202,7 +202,7 @@ export class Batch extends Model<IBatch> {
    * <i>Note: Only the `ready` field can be updated.</i>
    */
   public async update(data: { ready: Date | boolean }): Promise<void> {
-    this._data = await this._protected.client.PATCH<IBatch>(
+    this._data = await this._protected.clientV2.PATCH<IBatch>(
       `/batches/${this.id}`,
       {
         ready: data.ready === false ? null : data.ready,

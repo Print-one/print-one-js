@@ -1,11 +1,11 @@
 import { OneOffDestination } from "~/index";
-import { v3Client } from "./client";
+import { client } from "./client";
 import { contCampaignId, oneOffCampaignId } from "./utils";
 
 describe("Destination Model", function () {
   it("should have all fields for BaseDestination", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     const destination = campaign.destinations.find(
       (d) => d.destination === "NETHERLANDS",
     );
@@ -30,7 +30,7 @@ describe("Destination Model", function () {
 
   it('should be able to set "variablesFallback" field', async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(contCampaignId);
+    const campaign = await client.getCampaign(contCampaignId);
     const destination = campaign.destinations.find(
       (d) => d.destination === "NETHERLANDS",
     );
@@ -53,7 +53,7 @@ describe("Destination Model", function () {
 
   it("should have all fields for OneOffDestination", async function () {
     // arrange
-    const campaign = await v3Client.getCampaign(oneOffCampaignId);
+    const campaign = await client.getCampaign(oneOffCampaignId);
     const destination = campaign.destinations.find(
       (d) => d.destination === "NETHERLANDS",
     );

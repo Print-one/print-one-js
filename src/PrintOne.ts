@@ -46,7 +46,6 @@ import {
   IPaginatedResponseV3,
   IResponseV3,
 } from "./models/_interfaces/IResponse.v3";
-import { PrintOneError } from "./errors/PrintOneError";
 import { AddDesign, Design } from "./models/Design";
 import { IDesign, IFullDesign } from "./models/_interfaces/IDesign";
 import { ICampaignCounts } from "./models/_interfaces/ICampaignCounts";
@@ -62,6 +61,9 @@ export type RequestHandler = new (
 ) => HttpHandler<{ headers: Record<string, string> }, unknown>;
 export type PrintOneOptions = Partial<{
   url: string;
+  /**
+   * @deprecated Separate clients for v2 and v3 endpoints are used instead
+   */
   version: "v2" | "v3";
 
   /** Overwrite the default client */
@@ -77,7 +79,8 @@ const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
 export type PrintOneDebugger = (formatter: unknown, ...args: unknown[]) => void;
 
 export type Protected = {
-  client: HttpHandler<unknown, unknown>;
+  clientV2: HttpHandler<unknown, unknown>;
+  clientV3: HttpHandler<unknown, unknown>;
   options: Required<PrintOneOptions>;
   debug: PrintOneDebugger;
   printOne: PrintOne;
@@ -113,10 +116,6 @@ export class PrintOne {
     return this.protected.options;
   }
 
-  private get client(): HttpHandler<unknown, unknown> {
-    return this.protected.client;
-  }
-
   protected get debug(): PrintOneDebugger {
     return this.protected.debug;
   }
@@ -127,33 +126,33 @@ export class PrintOne {
       ...DEFAULT_OPTIONS,
       ...options,
     } as Required<PrintOneOptions>;
-    this._protected.client = new this._protected.options.client(
+
+    this._protected.clientV2 = new this._protected.options.client(
       token,
-      this.options,
+      {
+        ...this.options,
+        version: "v2",
+      },
+      this.debug,
+    );
+    this._protected.clientV3 = new this._protected.options.client(
+      token,
+      {
+        ...this.options,
+        version: "v3",
+      },
       this.debug,
     );
 
     this.debug("Initialized");
   }
 
-  public get v2Client(): HttpHandler<unknown, unknown> {
-    if (this.options.version === "v2") {
-      return this.client;
-    }
-
-    throw new PrintOneError(400, [
-      "Initialize PrintOne with version 'v2' to use v2 endpoints.",
-    ]);
+  protected get v2Client(): HttpHandler<unknown, unknown> {
+    return this.protected.clientV2;
   }
 
-  public get v3Client(): HttpHandler<unknown, unknown> {
-    if (this.options.version === "v3") {
-      return this.client;
-    }
-
-    throw new PrintOneError(400, [
-      "Initialize PrintOne with version 'v3' to use v3 endpoints.",
-    ]);
+  protected get v3Client(): HttpHandler<unknown, unknown> {
+    return this.protected.clientV3;
   }
 
   /**
