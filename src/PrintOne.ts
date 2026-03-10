@@ -564,8 +564,21 @@ export class PrintOne {
       }),
     );
 
+    const queryParams = {
+      scheduleId: data.__source?.scheduleId,
+      originSource: data.__source?.integrationType,
+      originId: data.__source?.integrationId,
+    };
+
+    const queryString = new URLSearchParams(
+      Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        Object.entries(queryParams).filter(([_, v]) => v) as [string, string][],
+      ),
+    ).toString();
+
     const response = await this.v2Client.POST<{ id: string }>(
-      "orders/csv",
+      `orders/csv?${queryString}`,
       formData,
       {
         headers: {

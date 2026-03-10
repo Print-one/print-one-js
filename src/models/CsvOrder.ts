@@ -17,6 +17,12 @@ export type CreateCsvOrder = {
   finish?: Finish;
   billingId?: string;
   sender?: Address;
+  /** @internal */
+  __source?: {
+    integrationId: string;
+    integrationType: string;
+    scheduleId?: string;
+  };
 } & (
   | {
       template: Template | string;
@@ -28,7 +34,14 @@ export type CreateCsvOrder = {
     }
 );
 
-export type CreateBatchCsvOrder = Pick<CreateCsvOrder, "file" | "mapping">;
+export type CreateBatchCsvOrder = Pick<
+  CreateCsvOrder,
+  "file" | "mapping" | "__source"
+>;
+export type CreateCampaignImport = Pick<
+  CreateCsvOrder,
+  "file" | "mapping" | "__source"
+>;
 
 export class CsvOrder extends Model<ICsvOrder> {
   public get id(): string {

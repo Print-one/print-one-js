@@ -14,6 +14,8 @@ import { IDesign } from "./_interfaces/IDesign";
 import { PaginatedResponseV3, ResponseV3 } from "./Response.v3";
 import { IPaginatedResponseV3, IResponseV3 } from "./_interfaces/IResponse.v3";
 import { Destination } from "~/enums/Destination";
+import { CreateCampaignImport } from "~/models/CsvOrder";
+import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 
 export type UpdateCampaign = {
   name?: string;
@@ -217,5 +219,49 @@ export class Campaign extends Model<ICampaign> {
     if (this._designsLoaded) {
       await this.loadDesigns();
     }
+  }
+
+  /**
+   * @internal
+   * @returns The created import, this return type fill change as the v3 import works differently than the v2 import, but for now it returns the plain data.
+   */
+  public async createImport(data: CreateCampaignImport): Promise<ICsvOrder> {
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new Blob([new Uint8Array(data.file)], { type: "text/csv" }),
+      "upload.csv",
+    );
+    formData.append("mapping", JSON.stringify(data.mapping));
+
+    const queryParams = {
+      scheduleId: data.__source?.scheduleId,
+      originSource: data.__source?.integrationType,
+      originId: data.__source?.integrationId,
+    };
+
+    const queryString = new URLSearchParams(
+      Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        Object.entries(queryParams).filter(([_, v]) => v) as [string, string][],
+      ),
+    ).toString();
+
+    const response = await this._protected.clientV3.POST<{ id: string }>(
+      `/campaigns/${this.id}/imports?${queryString}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    const id = response.id;
+    const csvInfo = await this._protected.clientV3.GET<ICsvOrder>(
+      `/campaigns/${this.id}/imports/${id}`,
+    );
+
+    return csvInfo;
   }
 }
