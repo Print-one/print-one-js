@@ -15,5 +15,7 @@ export const addDesignData: AddDesign = {
   pages: [{ content: "Page 1 content" }, { content: "Page 2 content" }],
 };
 
-export const contCampaignId = "e2e-print-one-js-continuous";
-export const oneOffCampaignId = "e2e-print-one-js-one-off";
+export const contCampaignId =
+  process.env.CONTINUOUS_CAMPAIGN_ID ?? "e2e-print-one-js-continuous";
+export const oneOffCampaignId =
+  process.env.ONE_OFF_CAMPAIGN_ID ?? "e2e-print-one-js-one-off";

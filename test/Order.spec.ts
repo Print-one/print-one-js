@@ -1,7 +1,8 @@
-import { Format, Order, Protected, Template } from "~/index";
+import { Format, Order, Template } from "~/index";
 import { client } from "./client";
 import { sleep } from "~/utils";
 import { IOrder } from "~/models/_interfaces/IOrder";
+import { Protected } from "~/types";
 
 let order: Order = null as unknown as Order;
 let template: Template = null as unknown as Template;

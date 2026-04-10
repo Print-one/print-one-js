@@ -11,6 +11,7 @@ import { Format } from "~/enums/Format";
 import { CreateBatchCsvOrder, CsvOrder } from "~/models/CsvOrder";
 import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 import { Model } from "~/Model";
+import { UnsafeCreationContext } from "~/types";
 
 export type CreateBatch = {
   name: string;
@@ -29,6 +30,13 @@ export type CreateBatchOrder = {
 };
 
 export class Batch extends Model<IBatch> {
+  public static createUnsafe(ctx: UnsafeCreationContext, id: string): Batch {
+    // @ts-expect-error - We know the _protected is protected, but as an internal method we can access it just fine
+    return new Batch(ctx._protected, {
+      id: id,
+    } as IBatch);
+  }
+
   public get id(): string {
     return this._data.id;
   }
@@ -126,7 +134,7 @@ export class Batch extends Model<IBatch> {
   }
 
   /**
-   * Get all orders from a csv order
+   * Get all orders from the batch
    */
   public async getOrders(
     args: Omit<OrderPaginatedQuery, "filter"> & {

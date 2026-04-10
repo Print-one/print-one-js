@@ -1,5 +1,5 @@
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { Model } from "~/Model";
 
 export type Meta = {
