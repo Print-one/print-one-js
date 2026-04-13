@@ -4,7 +4,7 @@ import {
   LinksV3,
   MetaV3,
 } from "~/models/_interfaces/IResponse.v3";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { Model } from "~/Model";
 
 export class ResponseV3<T = unknown> extends Model<T> {

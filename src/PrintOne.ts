@@ -53,6 +53,7 @@ import { CampaignCounts } from "./models/CampaignCounts";
 import { Destination } from "./enums/Destination";
 import { Mailing } from "./models/Mailing";
 import { IMailing } from "./models/_interfaces/IMailing";
+import { Protected, UnsafeCreationContext } from "./types";
 
 export type RequestHandler = new (
   token: string,
@@ -78,14 +79,6 @@ const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
 
 export type PrintOneDebugger = (formatter: unknown, ...args: unknown[]) => void;
 
-export type Protected = {
-  clientV2: HttpHandler<unknown, unknown>;
-  clientV3: HttpHandler<unknown, unknown>;
-  options: Required<PrintOneOptions>;
-  debug: PrintOneDebugger;
-  printOne: PrintOne;
-};
-
 export type OrderPaginatedQuery = PaginationOptions<
   "createdAt" | "anonymizedAt" | "updatedAt" | "friendlyStatus" | "sendDate"
 > & {
@@ -102,11 +95,8 @@ export type OrderPaginatedQuery = PaginationOptions<
   };
 };
 
-export class PrintOne {
-  private readonly _protected: Partial<Protected> = {
-    debug: debug("print-one"),
-    printOne: this,
-  };
+export class PrintOne extends UnsafeCreationContext {
+  protected readonly _protected: Protected;
 
   protected get protected(): Protected {
     return this._protected as Protected;
@@ -122,27 +112,12 @@ export class PrintOne {
 
   // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
-    this._protected.options = {
+    super();
+
+    this._protected = new Protected(token, debug("print-one"), this, {
       ...DEFAULT_OPTIONS,
       ...options,
-    } as Required<PrintOneOptions>;
-
-    this._protected.clientV2 = new this._protected.options.client(
-      token,
-      {
-        ...this.options,
-        version: "v2",
-      },
-      this.debug,
-    );
-    this._protected.clientV3 = new this._protected.options.client(
-      token,
-      {
-        ...this.options,
-        version: "v3",
-      },
-      this.debug,
-    );
+    });
 
     this.debug("Initialized");
   }

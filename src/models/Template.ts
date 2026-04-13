@@ -1,4 +1,4 @@
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { IFullTemplate, ITemplate } from "~/models/_interfaces/ITemplate";
 import { Format } from "~/enums/Format";
 import { IPreview } from "~/models/_interfaces/IPreview";

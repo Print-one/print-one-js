@@ -7,7 +7,7 @@ import {
   IFullDesign,
   ISerializedHelperCall,
 } from "./_interfaces/IDesign";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { ResponseV3 } from "./Response.v3";
 import { IResponseV3 } from "./_interfaces/IResponse.v3";
 

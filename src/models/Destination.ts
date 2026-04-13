@@ -7,7 +7,7 @@ import {
 import { Destination } from "~/enums/Destination";
 import { Format } from "~/enums/Format";
 import { Finish } from "~/enums/Finish";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 
 class BaseDestination<T extends IBaseDestination> extends Model<T> {
   constructor(

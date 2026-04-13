@@ -5,7 +5,7 @@ import {
 } from "~/models/_interfaces/IWebhookRequest";
 import { Batch } from "~/models/Batch";
 import { Order } from "~/models/Order";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { PreviewDetails } from "~/models/PreviewDetails";
 import { CouponCode } from "~/models/CouponCode";
 import { Model } from "~/Model";

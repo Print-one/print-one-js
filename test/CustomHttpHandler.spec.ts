@@ -1,6 +1,7 @@
-import PrintOne, { Batch, CustomFile, Preview, Protected } from "~/index";
+import PrintOne, { Batch, CustomFile, Preview } from "~/index";
 import { HttpHandler } from "~/HttpHandler";
 import { IBatch } from "~/models/_interfaces/IBatch";
+import { Protected } from "~/types";
 
 class CustomHttpHandler extends HttpHandler<unknown, unknown> {
   public override GET<T>(): Promise<T> {

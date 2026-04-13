@@ -4,7 +4,7 @@ import {
   ICampaignCounts,
   IDestinationCounts,
 } from "./_interfaces/ICampaignCounts";
-import { Protected } from "~/index";
+import { Protected } from "../types";
 
 export class DestinationCounts extends Model<IDestinationCounts> {
   public get draft(): number {

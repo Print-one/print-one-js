@@ -38,10 +38,6 @@ export type CreateBatchCsvOrder = Pick<
   CreateCsvOrder,
   "file" | "mapping" | "__source"
 >;
-export type CreateCampaignImport = Pick<
-  CreateCsvOrder,
-  "file" | "mapping" | "__source"
->;
 
 export class CsvOrder extends Model<ICsvOrder> {
   public get id(): string {

@@ -8,6 +8,7 @@ export * from "./PrintOne";
 export * from "./models/Address";
 export * from "./models/Batch";
 export * from "./models/Campaign";
+export * from "./models/CampaignItem";
 export * from "./models/Company";
 export * from "./models/Coupon";
 export * from "./models/CouponCode";

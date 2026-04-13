@@ -2,7 +2,7 @@ import { Destination } from "~/enums/Destination";
 import { Finish } from "~/enums/Finish";
 import { Format } from "~/enums/Format";
 import { Model } from "~/Model";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { IMailing, IMailingCosts } from "./_interfaces/IMailing";
 import { DeliveryType } from "~/enums/DeliveryType";
 import { MailingStatus } from "~/enums/MailingStatus";

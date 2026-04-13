@@ -55,20 +55,20 @@ afterAll(async function () {
 describe("refresh", function () {
   it("should refresh the csv order", async function () {
     // precondition
-    if (order.status !== CsvStatus.order_created) {
+    if (order.status !== CsvStatus.import_created) {
       return;
     }
 
     // arrange
 
     // act
-    while (order.status === CsvStatus.order_created) {
+    while (order.status === CsvStatus.import_created) {
       await order.refresh();
       await sleep(1000);
     }
 
     // assert
-    expect(order.status).not.toEqual(CsvStatus.order_created);
+    expect(order.status).not.toEqual(CsvStatus.import_created);
   }, 30000);
 });
 
