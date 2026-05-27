@@ -41,7 +41,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Test
-        if: ${{ inputs.skip-tests != 'true' }}
+        if: ${{ inputs.skip-tests != true }}
         run: npm run test
         env:
           API_KEY: ${{ secrets.API_KEY }}
