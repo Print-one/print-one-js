@@ -1,5 +1,6 @@
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
+import { Model } from "~/Model";
 
 export type Meta = {
   total: number;
@@ -15,9 +16,9 @@ export type Links = {
   nextUrl: string | null;
 };
 
-export class PaginatedResponse<T = unknown> {
-  protected readonly _data: IPaginatedResponse<T>;
-
+export class PaginatedResponse<T = unknown> extends Model<
+  IPaginatedResponse<T>
+> {
   // We have need to use a static method because we can't use a generic just for the constructor
   static safe<T, I>(
     _protected: Protected,
@@ -32,14 +33,14 @@ export class PaginatedResponse<T = unknown> {
   }
 
   private constructor(
-    private readonly _protected: Protected,
+    _protected: Protected,
     data: IPaginatedResponse,
     private readonly _covert: (data: unknown) => T,
   ) {
-    this._data = {
+    super(_protected, {
       ...data,
       data: [...data.data].map(_covert),
-    };
+    });
   }
 
   public get meta(): Meta {
@@ -75,7 +76,7 @@ export class PaginatedResponse<T = unknown> {
       return null;
     }
 
-    const data = await this._protected.client.GET<IPaginatedResponse>(
+    const data = await this._protected.clientV2.GET<IPaginatedResponse>(
       this._data.nextUrl,
     );
 
@@ -93,7 +94,7 @@ export class PaginatedResponse<T = unknown> {
       return null;
     }
 
-    const data = await this._protected.client.GET<IPaginatedResponse>(
+    const data = await this._protected.clientV2.GET<IPaginatedResponse>(
       this._data.previousUrl,
     );
 

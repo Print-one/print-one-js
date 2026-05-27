@@ -23,6 +23,7 @@ export class AxiosHTTPHandler extends HttpHandler<
       },
     });
   }
+
   /**
    * Performs a GET request.
    * @param url The url to perform the request to

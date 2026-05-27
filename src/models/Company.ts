@@ -1,12 +1,7 @@
 import { ICompany } from "~/models/_interfaces/ICompany";
-import { Protected } from "~/PrintOne";
+import { Model } from "~/Model";
 
-export class Company {
-  constructor(
-    private readonly _protected: Protected,
-    private readonly _data: ICompany,
-  ) {}
-
+export class Company extends Model<ICompany> {
   public get id(): string {
     return this._data.id;
   }

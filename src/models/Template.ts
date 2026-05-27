@@ -1,8 +1,9 @@
-import { Protected } from "~/PrintOne";
+import { Protected } from "~/types";
 import { IFullTemplate, ITemplate } from "~/models/_interfaces/ITemplate";
 import { Format } from "~/enums/Format";
 import { IPreview } from "~/models/_interfaces/IPreview";
 import { Preview } from "~/models/Preview";
+import { Model } from "~/Model";
 
 export type CreateTemplate = {
   name: string;
@@ -11,15 +12,11 @@ export type CreateTemplate = {
   pages: string[];
 };
 
-export class Template {
-  private _data: IFullTemplate | ITemplate;
+export class Template extends Model<IFullTemplate | ITemplate> {
   private _loaded?: IFullTemplate;
 
-  constructor(
-    private readonly _protected: Protected,
-    _data: ITemplate | IFullTemplate,
-  ) {
-    this._data = _data;
+  constructor(_protected: Protected, _data: ITemplate | IFullTemplate) {
+    super(_protected, _data);
     if (_data.pages) this._loaded = _data as IFullTemplate;
   }
 
@@ -64,7 +61,7 @@ export class Template {
    * @throws { PrintOneError } When the template could not be loaded
    */
   public async load(): Promise<void> {
-    const data = await this._protected.client.GET<IFullTemplate>(
+    const data = await this._protected.clientV2.GET<IFullTemplate>(
       "templates/" + this.id,
     );
     this._data = data;
@@ -91,7 +88,7 @@ export class Template {
   public async preview(
     mergeVariables: Record<string, unknown> = {},
   ): Promise<Preview[]> {
-    const data = await this._protected.client.POST<IPreview[]>(
+    const data = await this._protected.clientV2.POST<IPreview[]>(
       "templates/preview/" + this.id,
       mergeVariables,
     );
@@ -104,7 +101,7 @@ export class Template {
    * @throws { PrintOneError } When the template could not be deleted
    */
   public async delete(): Promise<void> {
-    await this._protected.client.DELETE("templates/" + this.id);
+    await this._protected.clientV2.DELETE("templates/" + this.id);
   }
 
   //TODO: Add update method

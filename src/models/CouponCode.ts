@@ -1,18 +1,9 @@
-import { Protected } from "~/PrintOne";
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
 import { Order } from "~/models/Order";
 import { IOrder } from "~/models/_interfaces/IOrder";
+import { Model } from "~/Model";
 
-export class CouponCode {
-  private _data: ICouponCode;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: ICouponCode,
-  ) {
-    this._data = _data;
-  }
-
+export class CouponCode extends Model<ICouponCode> {
   public get id(): string {
     return this._data.id;
   }
@@ -42,7 +33,7 @@ export class CouponCode {
    * @throws { PrintOneError } If the coupon code could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICouponCode>(
+    this._data = await this._protected.clientV2.GET<ICouponCode>(
       `/coupons/${this.couponId}/codes/${this.id}`,
     );
   }
@@ -54,7 +45,7 @@ export class CouponCode {
   public async getOrder(): Promise<Order | null> {
     if (!this.orderId) return null;
 
-    const data = await this._protected.client.GET<IOrder>(
+    const data = await this._protected.clientV2.GET<IOrder>(
       `/orders/${this.orderId}`,
     );
     return new Order(this._protected, data);

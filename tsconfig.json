@@ -23,9 +23,9 @@
       { "transform": "typescript-transform-paths", "afterDeclarations": true }
     ],
     "paths": {
-      "~/*": ["*"]
+      "~/*": ["./src/*"]
     },
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "outDir": "./lib"
   },
 

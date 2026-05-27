@@ -1,12 +1,7 @@
-import { Protected } from "~/PrintOne";
 import { ICustomFile } from "~/models/_interfaces/ICustomFile";
+import { Model } from "~/Model";
 
-export class CustomFile {
-  constructor(
-    private readonly _protected: Protected,
-    private readonly _data: ICustomFile,
-  ) {}
-
+export class CustomFile extends Model<ICustomFile> {
   public get id(): string {
     return this._data.id;
   }
@@ -33,7 +28,7 @@ export class CustomFile {
    * @throws { PrintOneError } If the file could not be downloaded
    */
   public async download(): Promise<ArrayBuffer> {
-    return this._protected.client.GET(`/customfiles/${this.id}/download`, {
+    return this._protected.clientV2.GET(`/customfiles/${this.id}/download`, {
       responseType: "arraybuffer",
     });
   }
@@ -44,6 +39,6 @@ export class CustomFile {
    * @throws { PrintOneError } If the file could not be deleted
    */
   public async delete(): Promise<void> {
-    return this._protected.client.DELETE(`/customfiles/${this.id}`);
+    return this._protected.clientV2.DELETE(`/customfiles/${this.id}`);
   }
 }

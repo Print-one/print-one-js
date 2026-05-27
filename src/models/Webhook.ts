@@ -1,21 +1,12 @@
-import { Protected } from "~/PrintOne";
 import { IWebhook } from "~/models/_interfaces/IWebhook";
 import { WebhookLog } from "~/models/WebhookLog";
 import { IWebhookLog } from "~/models/_interfaces/IWebhookLog";
 import { WebhookEvent } from "~/enums/WebhookEvent";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
+import { Model } from "~/Model";
 
-export class Webhook {
-  private _data: IWebhook;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IWebhook,
-  ) {
-    this._data = _data;
-  }
-
+export class Webhook extends Model<IWebhook> {
   public get id(): string {
     return this._data.id;
   }
@@ -49,18 +40,18 @@ export class Webhook {
   }
 
   public async update(data: Partial<Omit<IWebhook, "id">>): Promise<void> {
-    this._data = await this._protected.client.PATCH<IWebhook>(
+    this._data = await this._protected.clientV2.PATCH<IWebhook>(
       `/webhooks/${this.id}`,
       data,
     );
   }
 
   public async delete(): Promise<void> {
-    await this._protected.client.DELETE<void>(`/webhooks/${this.id}`);
+    await this._protected.clientV2.DELETE<void>(`/webhooks/${this.id}`);
   }
 
   public async getLogs(): Promise<PaginatedResponse<WebhookLog>> {
-    const logs = await this._protected.client.GET<
+    const logs = await this._protected.clientV2.GET<
       IPaginatedResponse<IWebhookLog>
     >(`/webhooks/${this.id}/logs`);
 

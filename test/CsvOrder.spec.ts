@@ -6,13 +6,13 @@ import {
   PaginatedResponse,
   Status,
   Template,
-} from "../src";
+} from "~/index";
 import { client } from "./client";
-import { sleep } from "../src/utils";
+import { sleep } from "~/utils";
 import * as fs from "fs";
 import * as path from "path";
 
-let file: ArrayBuffer = null as unknown as ArrayBuffer;
+let file: Uint8Array = null as unknown as Uint8Array;
 let order: CsvOrder = null as unknown as CsvOrder;
 let template: Template = null as unknown as Template;
 
@@ -52,36 +52,23 @@ afterAll(async function () {
   await template.delete();
 });
 
-describe("getTemplate", function () {
-  it("should get the template", async function () {
-    // arrange
-
-    // act
-    const temp = await order.getTemplate();
-
-    // assert
-    expect(temp).toBeInstanceOf(Template);
-    expect(temp.id).toEqual(template.id);
-  });
-});
-
 describe("refresh", function () {
   it("should refresh the csv order", async function () {
     // precondition
-    if (order.status !== CsvStatus.order_created) {
+    if (order.status !== CsvStatus.import_created) {
       return;
     }
 
     // arrange
 
     // act
-    while (order.status === CsvStatus.order_created) {
+    while (order.status === CsvStatus.import_created) {
       await order.refresh();
       await sleep(1000);
     }
 
     // assert
-    expect(order.status).not.toEqual(CsvStatus.order_created);
+    expect(order.status).not.toEqual(CsvStatus.import_created);
   }, 30000);
 });
 

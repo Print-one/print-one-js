@@ -1,6 +1,6 @@
-import { Company } from "../src";
-import { Protected } from "../src/PrintOne";
-import { ICompany } from "../src/models/_interfaces/ICompany";
+import { Company } from "~/index";
+import { ICompany } from "~/models/_interfaces/ICompany";
+import { Protected } from "~/types";
 
 it("should return undefined emailVerifiedAt", async function () {
   // arrange

@@ -1,7 +1,8 @@
-import { Format, Order, Protected, Template } from "../src";
+import { Format, Order, Template } from "~/index";
 import { client } from "./client";
-import { sleep } from "../src/utils";
-import { IOrder } from "../src/models/_interfaces/IOrder";
+import { sleep } from "~/utils";
+import { IOrder } from "~/models/_interfaces/IOrder";
+import { Protected } from "~/types";
 
 let order: Order = null as unknown as Order;
 let template: Template = null as unknown as Template;
@@ -18,10 +19,10 @@ beforeAll(async function () {
 beforeEach(async function () {
   order = await client.createOrder({
     recipient: {
-      name: "John Doe",
-      address: "123 Main Street",
-      postalCode: "1234 AB",
-      city: "Anytown",
+      name: `John Doe ${Math.random().toString(36)}`,
+      address: "Houtmarkt 1",
+      postalCode: "2011 AL",
+      city: "Haarlem",
       country: "Nederland",
     },
     template: template,

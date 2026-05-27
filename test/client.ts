@@ -1,4 +1,4 @@
-import { PrintOne } from "../src";
+import { PrintOne } from "../src/index";
 import * as process from "process";
 
 export const client = new PrintOne(process.env.API_KEY ?? "", {

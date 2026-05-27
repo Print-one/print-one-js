@@ -1,4 +1,4 @@
-import { OrderPaginatedQuery, Protected } from "~/PrintOne";
+import { OrderPaginatedQuery } from "~/PrintOne";
 import { IBatch } from "~/models/_interfaces/IBatch";
 import { Finish } from "~/enums/Finish";
 import { BatchStatus } from "~/enums/BatchStatus";
@@ -10,6 +10,8 @@ import { IOrder } from "~/models/_interfaces/IOrder";
 import { Format } from "~/enums/Format";
 import { CreateBatchCsvOrder, CsvOrder } from "~/models/CsvOrder";
 import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
+import { Model } from "~/Model";
+import { UnsafeCreationContext } from "~/types";
 
 export type CreateBatch = {
   name: string;
@@ -17,23 +19,22 @@ export type CreateBatch = {
   template: string | Template;
   finish: Finish;
   ready?: Date | boolean;
-  sender: Address;
+  sender?: Address;
 };
 
 export type CreateBatchOrder = {
   recipient: Address;
   mergeVariables?: Record<string, string>;
   autoGenNextBatch?: boolean;
+  metadata?: Record<string, string | undefined>;
 };
 
-export class Batch {
-  private _data: IBatch;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IBatch,
-  ) {
-    this._data = _data;
+export class Batch extends Model<IBatch> {
+  public static createUnsafe(ctx: UnsafeCreationContext, id: string): Batch {
+    // @ts-expect-error - We know the _protected is protected, but as an internal method we can access it just fine
+    return new Batch(ctx._protected, {
+      id: id,
+    } as IBatch);
   }
 
   public get id(): string {
@@ -109,7 +110,7 @@ export class Batch {
    * Refreshes the batch data, can be used to poll for status changes.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<IBatch>(
+    this._data = await this._protected.clientV2.GET<IBatch>(
       `/batches/${this.id}`,
     );
   }
@@ -133,7 +134,7 @@ export class Batch {
   }
 
   /**
-   * Get all orders from a csv order
+   * Get all orders from the batch
    */
   public async getOrders(
     args: Omit<OrderPaginatedQuery, "filter"> & {
@@ -150,12 +151,13 @@ export class Batch {
    * Create a new order in the batch
    */
   public async createOrder(order: CreateBatchOrder): Promise<Order> {
-    const data = await this._protected.client.POST<IOrder>(
+    const data = await this._protected.clientV2.POST<IOrder>(
       `/batches/${this.id}/orders`,
       {
         recipient: order.recipient,
         mergeVariables: order.mergeVariables,
         autoGenNextBatch: order.autoGenNextBatch,
+        metadata: order.metadata,
       },
     );
 
@@ -166,13 +168,26 @@ export class Batch {
     const formData = new FormData();
     formData.append(
       "file",
-      new Blob([data.file], { type: "text/csv" }),
+      new Blob([new Uint8Array(data.file)], { type: "text/csv" }),
       "upload.csv",
     );
     formData.append("mapping", JSON.stringify(data.mapping));
 
-    const response = await this._protected.client.POST<{ id: string }>(
-      `/batches/${this.id}/orders/csv`,
+    const queryParams = {
+      scheduleId: data.__source?.scheduleId,
+      originSource: data.__source?.integrationType,
+      originId: data.__source?.integrationId,
+    };
+
+    const queryString = new URLSearchParams(
+      Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        Object.entries(queryParams).filter(([_, v]) => v) as [string, string][],
+      ),
+    ).toString();
+
+    const response = await this._protected.clientV2.POST<{ id: string }>(
+      `/batches/${this.id}/orders/csv?${queryString}`,
       formData,
       {
         headers: {
@@ -182,7 +197,7 @@ export class Batch {
     );
 
     const id = response.id;
-    const csvInfo = await this._protected.client.GET<ICsvOrder>(
+    const csvInfo = await this._protected.clientV2.GET<ICsvOrder>(
       `batches/${this.id}/orders/csv/${id}`,
     );
 
@@ -208,7 +223,7 @@ export class Batch {
    * <i>Note: Only the `ready` field can be updated.</i>
    */
   public async update(data: { ready: Date | boolean }): Promise<void> {
-    this._data = await this._protected.client.PATCH<IBatch>(
+    this._data = await this._protected.clientV2.PATCH<IBatch>(
       `/batches/${this.id}`,
       {
         ready: data.ready === false ? null : data.ready,

@@ -1,24 +1,15 @@
 import { ICoupon } from "~/models/_interfaces/ICoupon";
-import { Protected } from "~/PrintOne";
 import { CouponCode } from "~/models/CouponCode";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
 import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
 import { ICouponCode } from "~/models/_interfaces/ICouponCode";
+import { Model } from "~/Model";
 
 export type CreateCoupon = {
   name: string;
 };
 
-export class Coupon {
-  private _data: ICoupon;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: ICoupon,
-  ) {
-    this._data = _data;
-  }
-
+export class Coupon extends Model<ICoupon> {
   public get id(): string {
     return this._data.id;
   }
@@ -40,7 +31,7 @@ export class Coupon {
    * @throws { PrintOneError } If the coupon could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICoupon>(
+    this._data = await this._protected.clientV2.GET<ICoupon>(
       `/coupons/${this.id}`,
     );
   }
@@ -49,7 +40,7 @@ export class Coupon {
    * Get all coupon codes for the coupon
    */
   public async getCodes(): Promise<PaginatedResponse<CouponCode>> {
-    const data = await this._protected.client.GET<
+    const data = await this._protected.clientV2.GET<
       IPaginatedResponse<ICouponCode>
     >(`/coupons/${this.id}/codes`);
 
@@ -65,7 +56,7 @@ export class Coupon {
    * @throws { PrintOneError } If the coupon code could not be found.
    */
   public async getCode(codeId: string): Promise<CouponCode> {
-    const data = await this._protected.client.GET<ICouponCode>(
+    const data = await this._protected.clientV2.GET<ICouponCode>(
       `/coupons/${this.id}/codes/${codeId}`,
     );
     return new CouponCode(this._protected, data);
@@ -76,11 +67,15 @@ export class Coupon {
    * The CSV file should have a header column and the first column should be the coupon codes
    * @throws { PrintOneError } If the coupon codes could not be added.
    */
-  public async addCodes(csv: ArrayBuffer): Promise<void> {
+  public async addCodes(csv: ArrayBuffer | Uint8Array): Promise<void> {
     const formData = new FormData();
-    formData.append("file", new Blob([csv], { type: "text/csv" }), "codes.csv");
+    formData.append(
+      "file",
+      new Blob([new Uint8Array(csv)], { type: "text/csv" }),
+      "codes.csv",
+    );
 
-    await this._protected.client.POST<void>(`/coupons/${this.id}`, formData, {
+    await this._protected.clientV2.POST<void>(`/coupons/${this.id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -92,6 +87,6 @@ export class Coupon {
    * @throws { PrintOneError } If the coupon could not be deleted.
    */
   public async delete(): Promise<void> {
-    await this._protected.client.DELETE(`/coupons/${this.id}`);
+    await this._protected.clientV2.DELETE(`/coupons/${this.id}`);
   }
 }

@@ -1,7 +1,7 @@
-import { Company } from "~/models/Company";
+import { Company } from "./models/Company";
 import debug from "debug";
-import { HttpHandler } from "~/HttpHandler";
-import { ICompany } from "~/models/_interfaces/ICompany";
+import { HttpHandler } from "./HttpHandler";
+import { ICompany } from "./models/_interfaces/ICompany";
 import {
   ContainsFilter,
   containsFilterToQuery,
@@ -15,30 +15,45 @@ import {
   mapInFilter,
   PaginationOptions,
   sortToQuery,
-} from "~/utils";
-import { IPaginatedResponse } from "~/models/_interfaces/IPaginatedResponse";
-import { ICustomFile } from "~/models/_interfaces/ICustomFile";
-import { PaginatedResponse } from "~/models/PaginatedResponse";
-import { CustomFile } from "~/models/CustomFile";
-import { ITemplate } from "~/models/_interfaces/ITemplate";
-import { CreateTemplate, Template } from "~/models/Template";
-import { CreateOrder, Order } from "~/models/Order";
-import { IOrder } from "~/models/_interfaces/IOrder";
-import { FriendlyStatus } from "~/enums/Status";
-import { Format } from "~/enums/Format";
-import { AxiosHTTPHandler } from "~/AxiosHttpHandler";
-import { CreateCsvOrder, CsvOrder } from "~/models/CsvOrder";
-import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
-import { Batch, CreateBatch } from "~/models/Batch";
-import { IBatch } from "~/models/_interfaces/IBatch";
-import { BatchStatus } from "~/enums/BatchStatus";
+} from "./utils";
+import { IPaginatedResponse } from "./models/_interfaces/IPaginatedResponse";
+import { ICustomFile } from "./models/_interfaces/ICustomFile";
+import { PaginatedResponse } from "./models/PaginatedResponse";
+import { CustomFile } from "./models/CustomFile";
+import { ITemplate } from "./models/_interfaces/ITemplate";
+import { CreateTemplate, Template } from "./models/Template";
+import { CreateOrder, Order } from "./models/Order";
+import { IOrder } from "./models/_interfaces/IOrder";
+import { FriendlyStatus } from "./enums/Status";
+import { Format } from "./enums/Format";
+import { AxiosHTTPHandler } from "./AxiosHttpHandler";
+import { CreateCsvOrder, CsvOrder } from "./models/CsvOrder";
+import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
+import { Batch, CreateBatch } from "./models/Batch";
+import { IBatch } from "./models/_interfaces/IBatch";
+import { BatchStatus } from "./enums/BatchStatus";
 import * as crypto from "crypto";
-import { Webhook } from "~/models/Webhook";
-import { CreateWebhook, IWebhook } from "~/models/_interfaces/IWebhook";
-import { WebhookRequest, webhookRequestFactory } from "~/models/WebhookRequest";
-import { IWebhookRequest } from "~/models/_interfaces/IWebhookRequest";
-import { Coupon, CreateCoupon } from "~/models/Coupon";
-import { ICoupon } from "~/models/_interfaces/ICoupon";
+import { Webhook } from "./models/Webhook";
+import { CreateWebhook, IWebhook } from "./models/_interfaces/IWebhook";
+import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
+import { IWebhookRequest } from "./models/_interfaces/IWebhookRequest";
+import { Coupon, CreateCoupon } from "./models/Coupon";
+import { ICoupon } from "./models/_interfaces/ICoupon";
+import { Campaign, UpdateCampaign } from "./models/Campaign";
+import { ICampaign } from "./models/_interfaces/ICampaign";
+import { PaginatedResponseV3, ResponseV3 } from "./models/Response.v3";
+import {
+  IPaginatedResponseV3,
+  IResponseV3,
+} from "./models/_interfaces/IResponse.v3";
+import { AddDesign, Design } from "./models/Design";
+import { IDesign, IFullDesign } from "./models/_interfaces/IDesign";
+import { ICampaignCounts } from "./models/_interfaces/ICampaignCounts";
+import { CampaignCounts } from "./models/CampaignCounts";
+import { Destination } from "./enums/Destination";
+import { Mailing } from "./models/Mailing";
+import { IMailing } from "./models/_interfaces/IMailing";
+import { Protected, UnsafeCreationContext } from "./types";
 
 export type RequestHandler = new (
   token: string,
@@ -47,7 +62,10 @@ export type RequestHandler = new (
 ) => HttpHandler<{ headers: Record<string, string> }, unknown>;
 export type PrintOneOptions = Partial<{
   url: string;
-  version: "v2";
+  /**
+   * @deprecated Separate clients for v2 and v3 endpoints are used instead
+   */
+  version: "v2" | "v3";
 
   /** Overwrite the default client */
   client?: RequestHandler;
@@ -60,13 +78,6 @@ const DEFAULT_OPTIONS: Required<PrintOneOptions> = {
 };
 
 export type PrintOneDebugger = (formatter: unknown, ...args: unknown[]) => void;
-
-export type Protected = {
-  client: HttpHandler<unknown, unknown>;
-  options: Required<PrintOneOptions>;
-  debug: PrintOneDebugger;
-  printOne: PrintOne;
-};
 
 export type OrderPaginatedQuery = PaginationOptions<
   "createdAt" | "anonymizedAt" | "updatedAt" | "friendlyStatus" | "sendDate"
@@ -84,11 +95,8 @@ export type OrderPaginatedQuery = PaginationOptions<
   };
 };
 
-export class PrintOne {
-  private readonly _protected: Partial<Protected> = {
-    debug: debug("print-one"),
-    printOne: this,
-  };
+export class PrintOne extends UnsafeCreationContext {
+  protected readonly _protected: Protected;
 
   protected get protected(): Protected {
     return this._protected as Protected;
@@ -98,27 +106,28 @@ export class PrintOne {
     return this.protected.options;
   }
 
-  protected get client(): HttpHandler<unknown, unknown> {
-    return this.protected.client;
-  }
-
   protected get debug(): PrintOneDebugger {
     return this.protected.debug;
   }
 
   // istanbul ignore next
   constructor(token: string, options: PrintOneOptions = {}) {
-    this._protected.options = {
+    super();
+
+    this._protected = new Protected(token, debug("print-one"), this, {
       ...DEFAULT_OPTIONS,
       ...options,
-    } as Required<PrintOneOptions>;
-    this._protected.client = new this._protected.options.client(
-      token,
-      this.options,
-      this.debug,
-    );
+    });
 
     this.debug("Initialized");
+  }
+
+  protected get v2Client(): HttpHandler<unknown, unknown> {
+    return this.protected.clientV2;
+  }
+
+  protected get v3Client(): HttpHandler<unknown, unknown> {
+    return this.protected.clientV3;
   }
 
   /**
@@ -127,9 +136,229 @@ export class PrintOne {
    * @returns { Promise<Company> } Your company.
    */
   public async getSelf(): Promise<Company> {
-    const data = await this.client.GET<ICompany>("companies/me");
+    const data = await this.v2Client.GET<ICompany>("companies/me");
 
     return new Company(this.protected, data);
+  }
+
+  /**
+   * Update a campaign
+   * @param campaignId Campaign identifier
+   * @param data Data to update
+   * @returns { Promise<Campaign> } The updated campaign
+   */
+  public async updateCampaign(
+    campaignId: string,
+    data: UpdateCampaign,
+  ): Promise<Campaign> {
+    const response = await this.v3Client.PATCH<IResponseV3<ICampaign>>(
+      `campaigns/${campaignId}`,
+      {
+        name: data.name,
+        sender: data.sender,
+        npdrCategory: data.npdrCategory,
+        meta: data.meta,
+      },
+    );
+
+    return new Campaign(this.protected, response.data);
+  }
+
+  /**
+   * Get all campaigns.
+   * @param { PaginationOptions } options The options to use for pagination
+   * @param options.limit The maximum amount of campaigns to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, can be 'createdAt', 'updatedAt', 'archivedAt', 'name', 'identifier' or 'status'.
+   * @throws { PrintOneError }
+   * @returns { Promise<PaginatedResponseV3<Campaign>> } The campaigns.
+   */
+  public async getCampaigns(
+    options: PaginationOptions<
+      | "createdAt"
+      | "updatedAt"
+      | "archivedAt"
+      | "name"
+      | "identifier"
+      | "status"
+    > = {},
+  ): Promise<PaginatedResponseV3<Campaign>> {
+    const data = await this.v3Client.GET<IPaginatedResponseV3<ICampaign>>(
+      "campaigns",
+      { params: sortToQuery(options) },
+    );
+
+    return PaginatedResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Campaign(this.protected, data),
+    );
+  }
+
+  /**
+   * Get a campaign by its identifier.
+   * @param { string } id The identifier of the campaign.
+   * @throws { PrintOneError } If the campaign could not be found.
+   */
+  public async getCampaign(id: string): Promise<Campaign> {
+    const data = await this.v3Client.GET<IResponseV3<ICampaign>>(
+      `campaigns/${id}`,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Campaign(this.protected, data),
+    );
+  }
+
+  /**
+   * Get a campaign destination counts.
+   * @param { string } id The identifier of the campaign.
+   * @throws { PrintOneError } If the campaign could not be found.
+   * @returns { Promise<CampaignCounts> } The campaign counts.
+   */
+  public async getCampaignCounts(id: string): Promise<CampaignCounts> {
+    const data = await this.v3Client.GET<IResponseV3<ICampaignCounts>>(
+      `campaigns/${id}/counts`,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new CampaignCounts(this.protected, data),
+    );
+  }
+
+  /**
+   * Get all campaign designs.
+   * @param { PaginationOptions } options The options to use for pagination
+   * @param options.limit The maximum amount of campaign designs to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, can be 'name', 'labels', 'format', and 'deletedAt'.
+   * @throws { PrintOneError }
+   * @returns { Promise<PaginatedResponseV3<Design>> } The campaign designs.
+   */
+  public async getCampaignDesigns(
+    campaignId: string,
+    options: PaginationOptions<"name" | "labels" | "format" | "deletedAt"> = {},
+  ): Promise<PaginatedResponseV3<Design>> {
+    const data = await this.v3Client.GET<IPaginatedResponseV3<IDesign>>(
+      `campaigns/${campaignId}/designs`,
+      { params: sortToQuery(options) },
+    );
+
+    return PaginatedResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Design(this.protected, data, campaignId),
+    );
+  }
+
+  /**
+   * Get a campaign design.
+   * @param { string } campaignId The identifier of the campaign.
+   * @param { Destination } destination The destination of the design.
+   * @param { string } designId The identifier of the design.
+   */
+  public async getCampaignDesign(
+    campaignId: string,
+    destination: Destination,
+    designId: string,
+  ): Promise<Design> {
+    const response = await this.v3Client.GET<IResponseV3<IFullDesign>>(
+      `campaigns/${campaignId}/designs/${destination}/${designId}`,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      response,
+      (data) => new Design(this.protected, data, campaignId),
+    );
+  }
+
+  /**
+   * Set a design as the default for a campaign destination.
+   * @param campaignId The identifier of the campaign.
+   * @param destination The destination of the design.
+   * @param designId The identifier of the design.
+   */
+  public async setDefaultDesign(
+    campaignId: string,
+    destination: Destination,
+    designId: string,
+  ): Promise<void> {
+    await this.v3Client.PATCH<IResponseV3<IFullDesign>>(
+      `campaigns/${campaignId}/designs/${destination}/${designId}`,
+      { default: true },
+    );
+  }
+
+  /**
+   * Get all campaign mailings.
+   * @param campaignId The identifier of the campaign.
+   * @param options The options to use for pagination.
+   * @param options.limit The maximum amount of mailings to return.
+   * @param options.page The page to return.
+   * @param options.sortBy The fields to sort by, currently supports 'createdAt'.
+   * @throws { PrintOneError }
+   * @returns { Promise<PaginatedResponseV3<Mailing>> } The campaign mailings.
+   */
+  public async getCampaignMailings(
+    campaignId: string,
+    options: PaginationOptions<"createdAt"> = {},
+  ): Promise<PaginatedResponseV3<Mailing>> {
+    const data = await this.v3Client.GET<IPaginatedResponseV3<IMailing>>(
+      `campaigns/${campaignId}/mailings`,
+      { params: sortToQuery(options) },
+    );
+
+    return PaginatedResponseV3.safe(
+      this.protected,
+      data,
+      (data) => new Mailing(this.protected, data),
+    );
+  }
+
+  /**
+   * Add a design to a campaign destination.
+   * @param campaignId The identifier of the campaign.
+   * @param destination The destination to add the design to.
+   * @param data The design data.
+   * @returns { Design } The created design.
+   */
+  public async addDesignToDestination(
+    campaignId: string,
+    destination: Destination,
+    data: AddDesign,
+  ): Promise<Design> {
+    const response = await this.v3Client.POST<IResponseV3<IFullDesign>>(
+      `campaigns/${campaignId}/designs/${destination.toUpperCase()}`,
+      data,
+    );
+
+    return ResponseV3.safe(
+      this.protected,
+      response,
+      (data) => new Design(this.protected, data, campaignId),
+    );
+  }
+
+  /**
+   * Delete a design from a campaign destination.
+   * @param campaignId The identifier of the campaign.
+   * @param destination The destination to delete the design from.
+   * @param designId The identifier of the design to delete.
+   * @returns { Promise<void> }
+   */
+  public async deleteDesignFromDestination(
+    campaignId: string,
+    destination: Destination,
+    designId: string,
+  ): Promise<void> {
+    await this.v3Client.DELETE(
+      `campaigns/${campaignId}/designs/${destination.toUpperCase()}/${designId}`,
+    );
   }
 
   /**
@@ -146,7 +375,7 @@ export class PrintOne {
       "createdAt" | "fileName" | "size" | "id" | "fileExtension"
     > = {},
   ): Promise<PaginatedResponse<CustomFile>> {
-    const data = await this.client.GET<IPaginatedResponse<ICustomFile>>(
+    const data = await this.v2Client.GET<IPaginatedResponse<ICustomFile>>(
       "customfiles",
       {
         params: sortToQuery(options),
@@ -169,16 +398,20 @@ export class PrintOne {
    */
   public async uploadCustomFile(
     fileName: string,
-    file: ArrayBuffer,
+    file: ArrayBuffer | Uint8Array,
   ): Promise<CustomFile> {
     const formData = new FormData();
-    formData.append("file", new Blob([file]), fileName);
+    formData.append("file", new Blob([new Uint8Array(file)]), fileName);
 
-    const data = await this.client.POST<ICustomFile>("customfiles", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const data = await this.v2Client.POST<ICustomFile>(
+      "customfiles",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+    );
 
     return new CustomFile(this.protected, data);
   }
@@ -187,7 +420,7 @@ export class PrintOne {
    * Create an template.
    */
   public async createTemplate(data: CreateTemplate): Promise<Template> {
-    const response = await this.client.POST<ITemplate>("templates", {
+    const response = await this.v2Client.POST<ITemplate>("templates", {
       name: data.name,
       format: data.format,
       labels: data.labels ?? [],
@@ -219,7 +452,7 @@ export class PrintOne {
       };
     } = {},
   ): Promise<PaginatedResponse<Template>> {
-    const data = await this.client.GET<IPaginatedResponse<ITemplate>>(
+    const data = await this.v2Client.GET<IPaginatedResponse<ITemplate>>(
       "templates",
       {
         params: {
@@ -250,7 +483,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the template could not be found.
    */
   public async getTemplate(id: string): Promise<Template> {
-    const data = await this.client.GET<ITemplate>("templates/" + id);
+    const data = await this.v2Client.GET<ITemplate>("templates/" + id);
 
     return new Template(this.protected, data);
   }
@@ -270,7 +503,7 @@ export class PrintOne {
         ? data.sendDate.toISOString()
         : data.sendDate;
 
-    const response = await this.client.POST<IOrder>("orders", {
+    const response = await this.v2Client.POST<IOrder>("orders", {
       sender: data.sender,
       recipient: data.recipient,
       templateId: templateId,
@@ -278,6 +511,8 @@ export class PrintOne {
       mergeVariables: data.mergeVariables,
       billingId: data.billingId,
       sendDate: sendDateStr,
+      sendDateOffset: data.sendDateOffset,
+      metadata: data.metadata,
     });
 
     return new Order(this.protected, response);
@@ -290,7 +525,7 @@ export class PrintOne {
     const formData = new FormData();
     formData.append(
       "file",
-      new Blob([data.file], { type: "text/csv" }),
+      new Blob([new Uint8Array(data.file)], { type: "text/csv" }),
       "upload.csv",
     );
     formData.append("mapping", JSON.stringify(data.mapping));
@@ -304,8 +539,21 @@ export class PrintOne {
       }),
     );
 
-    const response = await this.client.POST<{ id: string }>(
-      "orders/csv",
+    const queryParams = {
+      scheduleId: data.__source?.scheduleId,
+      originSource: data.__source?.integrationType,
+      originId: data.__source?.integrationId,
+    };
+
+    const queryString = new URLSearchParams(
+      Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        Object.entries(queryParams).filter(([_, v]) => v) as [string, string][],
+      ),
+    ).toString();
+
+    const response = await this.v2Client.POST<{ id: string }>(
+      `orders/csv?${queryString}`,
       formData,
       {
         headers: {
@@ -315,7 +563,7 @@ export class PrintOne {
     );
 
     const id = response.id;
-    const csvInfo = await this.client.GET<ICsvOrder>(`orders/csv/${id}`);
+    const csvInfo = await this.v2Client.GET<ICsvOrder>(`orders/csv/${id}`);
 
     return new CsvOrder(this.protected, csvInfo);
   }
@@ -327,7 +575,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getCsvOrder(id: string, basePath = "orders"): Promise<CsvOrder> {
-    const data = await this.client.GET<ICsvOrder>(`${basePath}/csv/${id}`);
+    const data = await this.v2Client.GET<ICsvOrder>(`${basePath}/csv/${id}`);
 
     return new CsvOrder(this.protected, data);
   }
@@ -339,7 +587,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the order could not be found.
    */
   public async getOrder(id: string, basePath = "orders"): Promise<Order> {
-    const data = await this.client.GET<IOrder>(`${basePath}/${id}`);
+    const data = await this.v2Client.GET<IOrder>(`${basePath}/${id}`);
 
     return new Order(this.protected, data);
   }
@@ -393,7 +641,7 @@ export class PrintOne {
       };
     }
 
-    const data = await this.client.GET<IPaginatedResponse<IOrder>>(basePath, {
+    const data = await this.v2Client.GET<IPaginatedResponse<IOrder>>(basePath, {
       params,
     });
 
@@ -414,7 +662,7 @@ export class PrintOne {
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
 
-    const response = await this.client.POST<IBatch>("batches", {
+    const response = await this.v2Client.POST<IBatch>("batches", {
       name: data.name,
       billingId: data.billingId,
       templateId: templateId,
@@ -432,7 +680,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the batch could not be found.
    */
   public async getBatch(id: string): Promise<Batch> {
-    const data = await this.client.GET<IBatch>(`batches/${id}`);
+    const data = await this.v2Client.GET<IBatch>(`batches/${id}`);
 
     return new Batch(this.protected, data);
   }
@@ -518,9 +766,10 @@ export class PrintOne {
       };
     }
 
-    const data = await this.client.GET<IPaginatedResponse<IBatch>>("batches", {
-      params: params,
-    });
+    const data = await this.v2Client.GET<IPaginatedResponse<IBatch>>(
+      "batches",
+      { params: params },
+    );
 
     return PaginatedResponse.safe(
       this.protected,
@@ -534,7 +783,7 @@ export class PrintOne {
    * @param data The coupon data
    */
   public async createCoupon(data: CreateCoupon): Promise<Coupon> {
-    const response = await this.client.POST<ICoupon>("coupons", {
+    const response = await this.v2Client.POST<ICoupon>("coupons", {
       name: data.name,
     });
 
@@ -562,9 +811,10 @@ export class PrintOne {
       ...inFilterToQuery("name", options.filter?.name),
     };
 
-    const data = await this.client.GET<IPaginatedResponse<ICoupon>>("coupons", {
-      params: params,
-    });
+    const data = await this.v2Client.GET<IPaginatedResponse<ICoupon>>(
+      "coupons",
+      { params: params },
+    );
 
     return PaginatedResponse.safe(
       this.protected,
@@ -579,7 +829,7 @@ export class PrintOne {
    * @throws { PrintOneError } If the coupon could not be found.
    */
   public async getCoupon(id: string): Promise<Coupon> {
-    const data = await this.client.GET<ICoupon>(`coupons/${id}`);
+    const data = await this.v2Client.GET<ICoupon>(`coupons/${id}`);
 
     return new Coupon(this.protected, data);
   }
@@ -614,7 +864,7 @@ export class PrintOne {
 
   public async getWebhooks(): Promise<PaginatedResponse<Webhook>> {
     const data =
-      await this.client.GET<IPaginatedResponse<IWebhook>>("webhooks");
+      await this.v2Client.GET<IPaginatedResponse<IWebhook>>("webhooks");
 
     return PaginatedResponse.safe(
       this.protected,
@@ -624,13 +874,13 @@ export class PrintOne {
   }
 
   public async getWebhook(id: string): Promise<Webhook> {
-    const data = await this.client.GET<IWebhook>(`webhooks/${id}`);
+    const data = await this.v2Client.GET<IWebhook>(`webhooks/${id}`);
 
     return new Webhook(this.protected, data);
   }
 
   public async createWebhook(data: CreateWebhook): Promise<Webhook> {
-    const response = await this.client.POST<IWebhook>("webhooks", {
+    const response = await this.v2Client.POST<IWebhook>("webhooks", {
       name: data.name,
       url: data.url,
       events: data.events,
@@ -643,7 +893,7 @@ export class PrintOne {
   }
 
   public async getWebhookSecret(): Promise<string> {
-    const data = await this.client.POST<{
+    const data = await this.v2Client.POST<{
       secret: string;
     }>(`webhooks/secret`, {});
 

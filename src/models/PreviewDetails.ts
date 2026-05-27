@@ -1,16 +1,7 @@
-import { Protected } from "~/PrintOne";
 import { IPreviewDetails } from "~/models/_interfaces/IPreviewDetails";
+import { Model } from "~/Model";
 
-export class PreviewDetails {
-  private _data: IPreviewDetails;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IPreviewDetails,
-  ) {
-    this._data = _data;
-  }
-
+export class PreviewDetails extends Model<IPreviewDetails> {
   public get id(): string {
     return this._data.id;
   }
@@ -28,6 +19,6 @@ export class PreviewDetails {
    * @throws { PrintOneError } If the preview could not be downloaded.
    */
   public async download(): Promise<Uint8Array> {
-    return this._protected.client.GETBuffer(this.imageUrl);
+    return this._protected.clientV2.GETBuffer(this.imageUrl);
   }
 }

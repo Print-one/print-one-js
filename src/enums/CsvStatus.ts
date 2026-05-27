@@ -1,9 +1,13 @@
 export const CsvStatus: {
-  order_created: "order_created";
-  order_processed: "order_processed";
+  import_created: "import_created";
+  import_failed: "import_failed";
+  import_processed: "import_processed";
+  import_cancelled: "import_cancelled";
 } = {
-  order_created: "order_created",
-  order_processed: "order_processed",
+  import_created: "import_created",
+  import_failed: "import_failed",
+  import_processed: "import_processed",
+  import_cancelled: "import_cancelled",
 };
 
 export type CsvStatus = (typeof CsvStatus)[keyof typeof CsvStatus];
@@ -11,9 +15,13 @@ export type CsvStatus = (typeof CsvStatus)[keyof typeof CsvStatus];
 export const FriendlyCsvStatusText: {
   Processing: "Processing";
   Success: "Success";
+  Failed: "Failed";
+  Cancelled: "Cancelled";
 } = {
   Processing: "Processing",
   Success: "Success",
+  Failed: "Failed",
+  Cancelled: "Cancelled",
 };
 
 export type FriendlyCsvStatusText =
@@ -22,8 +30,10 @@ export type FriendlyCsvStatusText =
 export const FriendlyCsvStatus: {
   [key in CsvStatus]: FriendlyCsvStatusText;
 } = {
-  order_created: "Processing",
-  order_processed: "Success",
+  import_created: "Processing",
+  import_failed: "Failed",
+  import_processed: "Success",
+  import_cancelled: "Cancelled",
 };
 
 export type FriendlyCsvStatus = typeof FriendlyCsvStatus;

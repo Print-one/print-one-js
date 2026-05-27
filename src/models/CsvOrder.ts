@@ -1,15 +1,15 @@
-import { OrderPaginatedQuery, Protected } from "~/PrintOne";
+import { OrderPaginatedQuery } from "~/PrintOne";
 import { Finish } from "~/enums/Finish";
-import { Format } from "~/enums/Format";
 import { Address } from "~/models/Address";
 import { Template } from "~/models/Template";
 import { ICsvOrder } from "~/models/_interfaces/ICsvOrder";
 import { CsvStatus, FriendlyCsvStatusText } from "~/enums/CsvStatus";
 import { Order } from "~/models/Order";
 import { PaginatedResponse } from "~/models/PaginatedResponse";
+import { Model } from "~/Model";
 
 export type CreateCsvOrder = {
-  file: ArrayBuffer;
+  file: ArrayBuffer | Uint8Array;
   mapping: {
     recipient: Address;
     mergeVariables?: Record<string, string>;
@@ -17,6 +17,12 @@ export type CreateCsvOrder = {
   finish?: Finish;
   billingId?: string;
   sender?: Address;
+  /** @internal */
+  __source?: {
+    integrationId: string;
+    integrationType: string;
+    scheduleId?: string;
+  };
 } & (
   | {
       template: Template | string;
@@ -28,32 +34,14 @@ export type CreateCsvOrder = {
     }
 );
 
-export type CreateBatchCsvOrder = Pick<CreateCsvOrder, "file" | "mapping">;
+export type CreateBatchCsvOrder = Pick<
+  CreateCsvOrder,
+  "file" | "mapping" | "__source"
+>;
 
-export class CsvOrder {
-  private _data: ICsvOrder;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: ICsvOrder,
-  ) {
-    this._data = _data;
-  }
-
+export class CsvOrder extends Model<ICsvOrder> {
   public get id(): string {
     return this._data.id;
-  }
-
-  public get templateId(): string {
-    return this._data.templateId;
-  }
-
-  public get finish(): Finish {
-    return this._data.finish as Finish;
-  }
-
-  public get format(): Format {
-    return this._data.format as Format;
   }
 
   public get recipientMapping(): Address {
@@ -116,14 +104,6 @@ export class CsvOrder {
   }
 
   /**
-   * Get the template of the order
-   * @throws { PrintOneError } If the template could not be fetched.
-   */
-  public async getTemplate(): Promise<Template> {
-    return this._protected.printOne.getTemplate(this.templateId);
-  }
-
-  /**
    * Get all orders from a csv order
    */
   public async getOrders(
@@ -145,7 +125,7 @@ export class CsvOrder {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<ICsvOrder>(
+    this._data = await this._protected.clientV2.GET<ICsvOrder>(
       `orders/csv/${this.id}`,
     );
   }

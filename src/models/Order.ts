@@ -1,11 +1,11 @@
 import { IOrder } from "~/models/_interfaces/IOrder";
-import { Protected } from "~/PrintOne";
 import { Finish } from "~/enums/Finish";
 import { Format } from "~/enums/Format";
 import { Address } from "~/models/Address";
 import { Template } from "~/models/Template";
 import { FriendlyStatus, Status } from "~/enums/Status";
 import { sleep } from "~/utils";
+import { Model } from "~/Model";
 
 export type CreateOrder = {
   recipient: Address;
@@ -17,6 +17,8 @@ export type CreateOrder = {
   mergeVariables?: Record<string, unknown>;
   billingId?: string;
   sendDate?: Date | string;
+  sendDateOffset?: number;
+  metadata?: Record<string, string | undefined>;
 } & (
   | {
       template: Template | string;
@@ -28,16 +30,7 @@ export type CreateOrder = {
     }
 );
 
-export class Order {
-  private _data: IOrder;
-
-  constructor(
-    private readonly _protected: Protected,
-    _data: IOrder,
-  ) {
-    this._data = _data;
-  }
-
+export class Order extends Model<IOrder> {
   public get id(): string {
     return this._data.id;
   }
@@ -141,7 +134,7 @@ export class Order {
    * @throws { PrintOneError } If the order could not be refreshed.
    */
   public async refresh(): Promise<void> {
-    this._data = await this._protected.client.GET<IOrder>(
+    this._data = await this._protected.clientV2.GET<IOrder>(
       `${this.urlPrefix}orders/${this.id}`,
     );
   }
@@ -167,7 +160,7 @@ export class Order {
       time++;
     }
 
-    return await this._protected.client.GETBuffer(
+    return await this._protected.clientV2.GETBuffer(
       `storage/order/preview/${this.id}`,
     );
   }
@@ -186,7 +179,7 @@ export class Order {
       time++;
     }
 
-    this._data = await this._protected.client.POST<IOrder>(
+    this._data = await this._protected.clientV2.POST<IOrder>(
       `${this.urlPrefix}orders/${this.id}/cancel`,
       {},
     );
