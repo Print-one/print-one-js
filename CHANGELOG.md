@@ -1,3 +1,23 @@
+# [1.5.0](https://github.com/Print-one/print-one-js/compare/v1.4.0...v1.5.0) (2026-05-27)
+
+
+### Bug Fixes
+
+* enhance types ([4209d65](https://github.com/Print-one/print-one-js/commit/4209d654dd4abf21763b43b32a2d72b6358de161))
+* knip ([de9b79b](https://github.com/Print-one/print-one-js/commit/de9b79bdd40d58962a0e97758bd6018e95f00820))
+* lint ([72b37d5](https://github.com/Print-one/print-one-js/commit/72b37d535021e3dc1c6d803c476c7382fb624d89))
+* npm release ([f26aa58](https://github.com/Print-one/print-one-js/commit/f26aa58616bc69171e2a132bf43a7f1bd3ff459a))
+* shopify send date offset ([9c0f462](https://github.com/Print-one/print-one-js/commit/9c0f4626859c66fd3664fb8ec14a4c3f3103206f))
+
+
+### Features
+
+* :sparkles: Campaign Item support ([61b2242](https://github.com/Print-one/print-one-js/commit/61b22420d62a3eedadb9ff323690ab954b9596eb))
+* :sparkles: make sender in batch create optional ([ec77455](https://github.com/Print-one/print-one-js/commit/ec77455503156677c258be89f5b5540aad1e854b))
+* ✨ Add Campaign Support ([#32](https://github.com/Print-one/print-one-js/issues/32)) ([7de2121](https://github.com/Print-one/print-one-js/commit/7de2121b0e1e85f8571305f229b88e7b1b739c75))
+* ✨ Campaign Item support ([970a71d](https://github.com/Print-one/print-one-js/commit/970a71df8318ba550221390c1a22c25242548e4e))
+* qr code webhook ([379b3bd](https://github.com/Print-one/print-one-js/commit/379b3bd8e31b7de2c25a163da498f67d3717b634))
+
 # [1.4.0](https://github.com/Print-one/print-one-js/compare/v1.3.0...v1.4.0) (2024-08-28)
 
 
