@@ -19,7 +19,8 @@ on:
       skip-tests: 
         description: "Skip tests (not recommended)"
         required: false
-        default: "false"
+        type: boolean
+        default: false
 
 jobs:
   release:
