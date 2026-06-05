@@ -39,3 +39,7 @@ export * from "./enums/WebhookEvent";
 // Errors
 export { PrintOneError } from "./errors/PrintOneError";
 export { TimeoutError } from "./errors/TimeoutError";
+
+// Handlers
+export { HttpHandler } from "./HttpHandler";
+export { AxiosHTTPHandler } from "./AxiosHttpHandler";

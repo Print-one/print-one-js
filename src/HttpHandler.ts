@@ -6,7 +6,7 @@ export abstract class HttpHandler<RequestOptions, Response> {
   protected readonly debug: PrintOneDebugger;
 
   constructor(
-    token: string,
+    protected readonly token: string,
     protected readonly options: Required<PrintOneOptions>,
     debug: PrintOneDebugger,
   ) {
