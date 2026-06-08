@@ -6,10 +6,10 @@ export class AxiosHTTPHandler extends HttpHandler<
   AxiosRequestConfig,
   AxiosResponse
 > {
-  private readonly client: Axios;
+  protected readonly client: Axios;
 
   constructor(
-    token: string,
+    protected readonly token: string,
     options: Required<PrintOneOptions>,
     debug: PrintOneDebugger,
   ) {
@@ -19,9 +19,15 @@ export class AxiosHTTPHandler extends HttpHandler<
       responseType: "json",
       validateStatus: () => true,
       headers: {
-        "x-api-key": token,
+        ...this.getAuthHeaders(),
       },
     });
+  }
+
+  protected getAuthHeaders(): Record<string, string> {
+    return {
+      "x-api-key": this.token,
+    };
   }
 
   /**
