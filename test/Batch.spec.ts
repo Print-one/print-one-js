@@ -35,14 +35,14 @@ beforeAll(async function () {
   });
 });
 
-// beforeEach(async function () {
-//   batch = await client.createBatch({
-//     template: template,
-//     name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
-//     finish: Finish.GLOSSY,
-//     sender: address,
-//   });
-// });
+beforeEach(async function () {
+  batch = await client.createBatch({
+    template: template,
+    name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
+    finish: Finish.GLOSSY,
+    sender: address,
+  });
+});
 
 async function addOrders(count: number): Promise<void> {
   await Promise.all(
