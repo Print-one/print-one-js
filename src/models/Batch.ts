@@ -19,6 +19,7 @@ export type CreateBatch = {
   template: string | Template;
   finish: Finish;
   ready?: Date | boolean;
+  isLive?: boolean;
   sender?: Address;
 };
 

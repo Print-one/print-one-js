@@ -35,14 +35,14 @@ beforeAll(async function () {
   });
 });
 
-beforeEach(async function () {
-  batch = await client.createBatch({
-    template: template,
-    name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
-    finish: Finish.GLOSSY,
-    sender: address,
-  });
-});
+// beforeEach(async function () {
+//   batch = await client.createBatch({
+//     template: template,
+//     name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
+//     finish: Finish.GLOSSY,
+//     sender: address,
+//   });
+// });
 
 async function addOrders(count: number): Promise<void> {
   await Promise.all(
@@ -59,6 +59,26 @@ async function addOrders(count: number): Promise<void> {
     ),
   );
 }
+
+describe("createLiveBatch", function () {
+  it("should create a live batch", async function () {
+    // arrange
+
+    // act
+    const batch = await client.createBatch({
+      template: template,
+      name: `Test Batch ${new Date().toISOString().replaceAll(":", "-")}`,
+      finish: Finish.GLOSSY,
+      sender: address,
+      isLive: true,
+    });
+
+    // assert
+    expect(batch).toBeDefined();
+    expect(batch).toBeInstanceOf(Batch);
+    expect(batch.isBillable).toBeTrue();
+  });
+});
 
 describe("createOrder", function () {
   it("should create an order to the batch", async function () {

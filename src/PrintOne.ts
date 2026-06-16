@@ -661,15 +661,19 @@ export class PrintOne extends UnsafeCreationContext {
       data.ready instanceof Date ? data.ready.toISOString() : data.ready;
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
+    const searchParams = `?isLive=${String(data.isLive ?? false)}`;
 
-    const response = await this.v2Client.POST<IBatch>("batches", {
-      name: data.name,
-      billingId: data.billingId,
-      templateId: templateId,
-      finish: data.finish,
-      ready: ready ? ready : null,
-      sender: data.sender,
-    });
+    const response = await this.v2Client.POST<IBatch>(
+      "batches" + searchParams,
+      {
+        name: data.name,
+        billingId: data.billingId,
+        templateId: templateId,
+        finish: data.finish,
+        ready: ready ? ready : null,
+        sender: data.sender,
+      },
+    );
 
     return new Batch(this.protected, response);
   }
