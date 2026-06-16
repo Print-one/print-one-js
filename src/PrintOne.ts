@@ -497,13 +497,14 @@ export class PrintOne extends UnsafeCreationContext {
   public async createOrder(data: CreateOrder): Promise<Order> {
     const template = data.templateId ?? data.template;
     const templateId = template instanceof Template ? template.id : template;
+    const searchParams = `?isLive=${String(data.isLive ?? false)}`;
 
     const sendDateStr =
       data.sendDate instanceof Date
         ? data.sendDate.toISOString()
         : data.sendDate;
 
-    const response = await this.v2Client.POST<IOrder>("orders", {
+    const response = await this.v2Client.POST<IOrder>("orders" + searchParams, {
       sender: data.sender,
       recipient: data.recipient,
       templateId: templateId,

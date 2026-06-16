@@ -28,6 +28,7 @@ export type CreateBatchOrder = {
   mergeVariables?: Record<string, string>;
   autoGenNextBatch?: boolean;
   metadata?: Record<string, string | undefined>;
+  isLive?: boolean;
 };
 
 export class Batch extends Model<IBatch> {
@@ -152,8 +153,10 @@ export class Batch extends Model<IBatch> {
    * Create a new order in the batch
    */
   public async createOrder(order: CreateBatchOrder): Promise<Order> {
+    const searchParams = `?isLive=${String(this.isBillable)}`;
+
     const data = await this._protected.clientV2.POST<IOrder>(
-      `/batches/${this.id}/orders`,
+      `/batches/${this.id}/orders` + searchParams,
       {
         recipient: order.recipient,
         mergeVariables: order.mergeVariables,
