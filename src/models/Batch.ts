@@ -28,7 +28,6 @@ export type CreateBatchOrder = {
   mergeVariables?: Record<string, string>;
   autoGenNextBatch?: boolean;
   metadata?: Record<string, string | undefined>;
-  isLive?: boolean;
 };
 
 export class Batch extends Model<IBatch> {
