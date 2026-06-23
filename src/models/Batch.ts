@@ -19,6 +19,7 @@ export type CreateBatch = {
   template: string | Template;
   finish: Finish;
   ready?: Date | boolean;
+  /** @default false */
   isLive?: boolean;
   sender?: Address;
 };
@@ -152,16 +153,15 @@ export class Batch extends Model<IBatch> {
    * Create a new order in the batch
    */
   public async createOrder(order: CreateBatchOrder): Promise<Order> {
-    const searchParams = `?isLive=${String(this.isBillable)}`;
-
     const data = await this._protected.clientV2.POST<IOrder>(
-      `/batches/${this.id}/orders` + searchParams,
+      `/batches/${this.id}/orders`,
       {
         recipient: order.recipient,
         mergeVariables: order.mergeVariables,
         autoGenNextBatch: order.autoGenNextBatch,
         metadata: order.metadata,
       },
+      { params: { isLive: this.isBillable } },
     );
 
     return new Order(this._protected, data);

@@ -59,7 +59,11 @@ export type RequestHandler = new (
   token: string,
   options: Required<PrintOneOptions>,
   debug: PrintOneDebugger,
-) => HttpHandler<{ headers: Record<string, string> }, unknown>;
+) => HttpHandler<
+  { headers: Record<string, string>; params: Record<string, string> },
+  unknown
+>;
+
 export type PrintOneOptions = Partial<{
   url: string;
   /**
@@ -497,24 +501,26 @@ export class PrintOne extends UnsafeCreationContext {
   public async createOrder(data: CreateOrder): Promise<Order> {
     const template = data.templateId ?? data.template;
     const templateId = template instanceof Template ? template.id : template;
-    const searchParams = `?isLive=${String(data.isLive ?? false)}`;
-
     const sendDateStr =
       data.sendDate instanceof Date
         ? data.sendDate.toISOString()
         : data.sendDate;
 
-    const response = await this.v2Client.POST<IOrder>("orders" + searchParams, {
-      sender: data.sender,
-      recipient: data.recipient,
-      templateId: templateId,
-      finish: data.finish,
-      mergeVariables: data.mergeVariables,
-      billingId: data.billingId,
-      sendDate: sendDateStr,
-      sendDateOffset: data.sendDateOffset,
-      metadata: data.metadata,
-    });
+    const response = await this.v2Client.POST<IOrder>(
+      "orders",
+      {
+        sender: data.sender,
+        recipient: data.recipient,
+        templateId: templateId,
+        finish: data.finish,
+        mergeVariables: data.mergeVariables,
+        billingId: data.billingId,
+        sendDate: sendDateStr,
+        sendDateOffset: data.sendDateOffset,
+        metadata: data.metadata,
+      },
+      { params: { isLive: data.isLive ?? false } },
+    );
 
     return new Order(this.protected, response);
   }
@@ -662,10 +668,9 @@ export class PrintOne extends UnsafeCreationContext {
       data.ready instanceof Date ? data.ready.toISOString() : data.ready;
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
-    const searchParams = `?isLive=${String(data.isLive ?? false)}`;
 
     const response = await this.v2Client.POST<IBatch>(
-      "batches" + searchParams,
+      "batches",
       {
         name: data.name,
         billingId: data.billingId,
@@ -673,6 +678,9 @@ export class PrintOne extends UnsafeCreationContext {
         finish: data.finish,
         ready: ready ? ready : null,
         sender: data.sender,
+      },
+      {
+        params: { isLive: data.isLive ?? false },
       },
     );
 
