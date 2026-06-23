@@ -79,6 +79,10 @@ export class Batch extends Model<IBatch> {
     return this._data.estimatedTax;
   }
 
+  public get requiredCount(): number {
+    return this._data.requiredCount;
+  }
+
   public get sender(): Address {
     return this._data.sender;
   }
