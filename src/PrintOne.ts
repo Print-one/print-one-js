@@ -60,7 +60,10 @@ export type RequestHandler = new (
   options: Required<PrintOneOptions>,
   debug: PrintOneDebugger,
 ) => HttpHandler<
-  { headers: Record<string, string>; params: Record<string, string> },
+  {
+    headers: Record<string, string>;
+    params: Record<string, string | number | boolean>;
+  },
   unknown
 >;
 
