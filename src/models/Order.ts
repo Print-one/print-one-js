@@ -19,6 +19,7 @@ export type CreateOrder = {
   sendDate?: Date | string;
   sendDateOffset?: number;
   metadata?: Record<string, string | undefined>;
+  isLive?: boolean;
 } & (
   | {
       template: Template | string;

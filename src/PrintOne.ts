@@ -59,7 +59,14 @@ export type RequestHandler = new (
   token: string,
   options: Required<PrintOneOptions>,
   debug: PrintOneDebugger,
-) => HttpHandler<{ headers: Record<string, string> }, unknown>;
+) => HttpHandler<
+  {
+    headers: Record<string, string>;
+    params: Record<string, string | number | boolean>;
+  },
+  unknown
+>;
+
 export type PrintOneOptions = Partial<{
   url: string;
   /**
@@ -497,23 +504,26 @@ export class PrintOne extends UnsafeCreationContext {
   public async createOrder(data: CreateOrder): Promise<Order> {
     const template = data.templateId ?? data.template;
     const templateId = template instanceof Template ? template.id : template;
-
     const sendDateStr =
       data.sendDate instanceof Date
         ? data.sendDate.toISOString()
         : data.sendDate;
 
-    const response = await this.v2Client.POST<IOrder>("orders", {
-      sender: data.sender,
-      recipient: data.recipient,
-      templateId: templateId,
-      finish: data.finish,
-      mergeVariables: data.mergeVariables,
-      billingId: data.billingId,
-      sendDate: sendDateStr,
-      sendDateOffset: data.sendDateOffset,
-      metadata: data.metadata,
-    });
+    const response = await this.v2Client.POST<IOrder>(
+      "orders",
+      {
+        sender: data.sender,
+        recipient: data.recipient,
+        templateId: templateId,
+        finish: data.finish,
+        mergeVariables: data.mergeVariables,
+        billingId: data.billingId,
+        sendDate: sendDateStr,
+        sendDateOffset: data.sendDateOffset,
+        metadata: data.metadata,
+      },
+      { params: { isLive: data.isLive ?? false } },
+    );
 
     return new Order(this.protected, response);
   }
@@ -662,14 +672,20 @@ export class PrintOne extends UnsafeCreationContext {
     const templateId =
       typeof data.template === "string" ? data.template : data.template.id;
 
-    const response = await this.v2Client.POST<IBatch>("batches", {
-      name: data.name,
-      billingId: data.billingId,
-      templateId: templateId,
-      finish: data.finish,
-      ready: ready ? ready : null,
-      sender: data.sender,
-    });
+    const response = await this.v2Client.POST<IBatch>(
+      "batches",
+      {
+        name: data.name,
+        billingId: data.billingId,
+        templateId: templateId,
+        finish: data.finish,
+        ready: ready ? ready : null,
+        sender: data.sender,
+      },
+      {
+        params: { isLive: data.isLive ?? false },
+      },
+    );
 
     return new Batch(this.protected, response);
   }

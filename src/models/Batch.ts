@@ -19,6 +19,8 @@ export type CreateBatch = {
   template: string | Template;
   finish: Finish;
   ready?: Date | boolean;
+  /** @default false */
+  isLive?: boolean;
   sender?: Address;
 };
 
@@ -75,6 +77,10 @@ export class Batch extends Model<IBatch> {
 
   public get estimatedTax(): number {
     return this._data.estimatedTax;
+  }
+
+  public get requiredCount(): number {
+    return this._data.requiredCount;
   }
 
   public get sender(): Address {
@@ -159,6 +165,7 @@ export class Batch extends Model<IBatch> {
         autoGenNextBatch: order.autoGenNextBatch,
         metadata: order.metadata,
       },
+      { params: { isLive: this.isBillable } },
     );
 
     return new Order(this._protected, data);
