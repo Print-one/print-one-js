@@ -11,6 +11,7 @@ export type IBatch = {
   templateId: string;
   estimatedPrice: number;
   estimatedTax: number;
+  requiredCount: number;
   sender: Address;
   sendDate: string | null;
   status: string;
