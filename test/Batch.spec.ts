@@ -11,8 +11,8 @@ import {
 } from "~/index";
 import { client } from "./client";
 import { BatchStatus } from "~/enums/BatchStatus";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { sleep } from "~/utils";
 
 let batch: Batch = null as unknown as Batch;

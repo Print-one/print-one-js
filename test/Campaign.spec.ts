@@ -11,8 +11,8 @@ import {
 import { client } from "./client";
 import { addDesignData, contCampaignId, oneOffCampaignId } from "./utils";
 import { PaginatedResponseV3 } from "~/models/Response.v3";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { CampaignImport, CreateCampaignImport } from "~/models/CampaignImport";
 
 describe("Campaign Model", function () {

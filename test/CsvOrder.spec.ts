@@ -9,8 +9,8 @@ import {
 } from "~/index";
 import { client } from "./client";
 import { sleep } from "~/utils";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 let file: Uint8Array = null as unknown as Uint8Array;
 let order: CsvOrder = null as unknown as CsvOrder;

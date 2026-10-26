@@ -64,7 +64,7 @@ Upload a custom file. The file must be a image or font.
 **Example**
 
 ```js
-import fs from "fs";
+import fs from "node:"";;
 
 const data = fs.readFileSync("example.png").buffer;
 const file = await client.uploadCustomFile("example.png", data);

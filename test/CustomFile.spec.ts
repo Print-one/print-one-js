@@ -1,7 +1,7 @@
 import { CustomFile } from "~/index";
 import { client } from "./client";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 let file: CustomFile = null as unknown as CustomFile;
 

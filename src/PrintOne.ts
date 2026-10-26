@@ -32,7 +32,7 @@ import { ICsvOrder } from "./models/_interfaces/ICsvOrder";
 import { Batch, CreateBatch } from "./models/Batch";
 import { IBatch } from "./models/_interfaces/IBatch";
 import { BatchStatus } from "./enums/BatchStatus";
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 import { Webhook } from "./models/Webhook";
 import { CreateWebhook, IWebhook } from "./models/_interfaces/IWebhook";
 import { WebhookRequest, webhookRequestFactory } from "./models/WebhookRequest";
